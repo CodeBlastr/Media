@@ -48,6 +48,7 @@ class MediaController extends AppController {
 	public function notification() {
 		
 		if($this->request->data) {
+			$this->request->data = json_decode($this->request->data, true);
 #			$this->Media->notify($data);
 			// zencoder is notifying us that a Job is complete
 			if($this->request->data['output']['state'] == 'finished') {
