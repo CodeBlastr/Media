@@ -5,7 +5,7 @@ class MediaController extends AppController {
 	var $name = 'Media';
 	#var $uid;
 	#var $uses = array('');
-	var $allowedActions = array('view', 'notification');
+	var $allowedActions = array('index', 'view', 'notification');
 	
 	
 	/*
@@ -13,7 +13,7 @@ class MediaController extends AppController {
 	*/
 	public function index() {
 		$allMedia = $this->Media->find('all', array(
-				'conditions' => array('Media.filename != ""')
+				'conditions' => array('Media.filename !=' => '')
 			));
 			
 		$this->set('media', $allMedia);
@@ -46,7 +46,7 @@ class MediaController extends AppController {
 	
 	
 	public function notification() {
-		
+		debug($this->request->data);
 		if($this->request->data) {
 			$this->request->data = json_decode($this->request->data, true);
 #			$this->Media->notify($data);
