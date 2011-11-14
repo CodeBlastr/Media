@@ -12,18 +12,23 @@ class MediaController extends AppController {
 	*	show an admin index or the videos of the current user?
 	*/
 	public function index() {
-		$this->Media->paginate();
+		$allMedia = $this->Media->find('all', array(
+				'conditions' => array('Media.filename != ""')
+			));
+			
+		$this->set('media', $allMedia);
 	}//index()
 	
 	
 	public function add() {
-		
+		#debug($this->request->data);
+		#debug($this->request->params);
 		if($this->request->data) {
 			#debug($this->request->data);break;
 			if ($this->Media->save($this->request->data)) {
-			
+				$this->Session->setFlash('Media saved and being encoded.');
 			} else {
-				$this->flash(__('Invalid Upload.', true), array('action'=>'add'));
+				$this->Session->setFlash('Invalid Upload.');
 			}
 		}
 		
@@ -40,19 +45,25 @@ class MediaController extends AppController {
 	}//view()
 	
 	
-	public function notification($outputID = null) {
+	public function notification() {
 		
-		if($outputID) {
+		if($this->request->data) {
 #			$this->Media->notify($data);
 			// zencoder is notifying us that a Job is complete
 			if($this->request->data['output']['state'] == 'finished') {
 				
-				echo "w00t!\n";
+				#echo "w00t!\n";
 				
 				// If you're encoding to multiple outputs and only care when all of the outputs are finished
 				// you can check if the entire job is finished.
 				if($this->request->data['job']['state'] == 'finished') {
 					echo "Dubble w00t!\n";
+					
+					// find this zencoder_job_id
+					$encoder_job = $this->Media->find('first', array('conditions' => array('Media.zen_job_id' => $this->request->data['job']['id'])));
+					# TODO : allow for multiple output URL's....
+					$encoder_job['Media']['filename'] = $this->request->data['output']['url'];
+					$this->Media->save($encoder_job);
 				}
 				
 			} elseif($this->request->data['output']['state'] == 'cancelled') {
@@ -63,7 +74,10 @@ class MediaController extends AppController {
 				echo $this->request->data['output']['error_message']."\n";
 				echo $this->request->data['output']['error_link'];
 			}
+			
 		}//if($outputID)
+		
+		$this->render(false);
 		
 	}//notification()
 	
