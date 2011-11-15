@@ -35,6 +35,8 @@ class MediaController extends AppController {
 	}//upload()
 	
 	
+	
+	
 	public function view($mediaID = null) {
 		
 		if($mediaID) {
