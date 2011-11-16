@@ -5,8 +5,8 @@ if(!empty($media)) {
 	echo '<ul>';
 	foreach($media as $medium) {
 		echo '<li>'
-			.	'<div><a href="' . $medium['filename'] . '">' . $medium['title'] . '</a></div>'
-			.	'<div>' . $medium['description'] . '</div>'
+			.	'<div><a href="' . $medium['Media']['filename'] . '">' . $medium['Media']['title'] . '</a></div>'
+			.	'<div>' . $medium['Media']['description'] . '</div>'
 			.'</li>';
 	}//foreach()
 	echo '</ul>';
