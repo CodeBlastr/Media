@@ -32,6 +32,7 @@ class MediaController extends AppController {
 			#debug($this->request->data);break;
 			if ($this->Media->save($this->request->data)) {
 				$this->Session->setFlash('Media saved and being encoded.');
+                                $this->redirect('/media/media/edit/'.$this->Media->id);
 			} else {
 				$this->Session->setFlash('Invalid Upload.');
 			}
@@ -39,12 +40,24 @@ class MediaController extends AppController {
 
 	}//upload()
 
-
-	public function view($mediaID = null) {
-
+        
+        public function edit($mediaID = null) {
+            /** @todo Finish up the edit code.. put in thumbnails probably */
 		if($mediaID) {
 			$theMedia = $this->Media->findById($mediaID);
 			$this->set('theMedia', $theMedia);
+		}
+        }//edit()
+
+
+
+        public function view($mediaID = null) {
+
+		if($mediaID) {
+                    $theMedia = $this->Media->findById($mediaID);
+                    
+                    $this->pageTitle = $theMedia['Media']['title'];
+                    $this->set('theMedia', $theMedia);
 		}
 
 	}//view()
