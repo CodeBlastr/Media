@@ -9,7 +9,7 @@ class MediaController extends AppController {
 	var $name = 'Media';
 	#var $uid;
 	#var $uses = array('');
-	var $allowedActions = array('index', 'view', 'notification');
+	var $allowedActions = array('index', 'view', 'notification', 'stream');
 
 
 	/*
@@ -41,6 +41,10 @@ class MediaController extends AppController {
 	}//upload()
 
         
+        /**
+         *
+         * @param char $mediaID The UUID of the media in question.
+         */
         public function edit($mediaID = null) {
             /** @todo Finish up the edit code.. put in thumbnails probably */
 		if($mediaID) {
@@ -50,7 +54,10 @@ class MediaController extends AppController {
         }//edit()
 
 
-
+        /**
+         *
+         * @param char $mediaID The UUID of the media in question.
+         */
         public function view($mediaID = null) {
 
 		if($mediaID) {
@@ -63,6 +70,9 @@ class MediaController extends AppController {
 	}//view()
 
 
+        /**
+         * @todo JSON POST's to this URL do not seem to be received...
+         */
 	public function notification() {
 		debug($this->request->data);
 		if($this->request->data) {
@@ -100,5 +110,41 @@ class MediaController extends AppController {
 
 	}//notification()
 
+        
+        /**
+         * This action can stream or download a media file.
+         * @param char $mediaID The UUID of the media in question.
+         */
+        function stream($mediaID = null) {
+            
+            if($mediaID) {
+                // find the filetype
+                $theMedia = $this->Media->findById($mediaID);
+
+                if(!empty($theMedia['Media']['type'])) {
+                    
+                    /** @todo Use the Media.output maybe.. to serve other filetypes.. **/
+                    if($theMedia['Media']['type'] == 'audio') {
+                        $filetype = array('extension' => 'mp3', 'mimeType' => array('mp3' => 'audio/mp3'));
+                    } elseif($theMedia['Media']['type'] == 'video') {
+                        $filetype = array('extension' => 'mp4', 'mimeType' => array('mp4' => 'video/mp4'));
+                    }
+
+                    $this->viewClass = 'Media'; // <-- magic!
+                    $params = array(
+                          'id' => $mediaID . '.' . $filetype['extension'], // this is the full filename.. perhaps the one shown to the user if they download
+                          'name' => $mediaID, // this is the filename minus extension
+                          'download' => false, // if true, then a download box pops up
+                          'extension' => $filetype['extension'],
+                          'mimeType' => $filetype['mimeType'],
+                          'path' => ROOT.DS.SITE_DIR.DS.'View'.DS.'Themed'.DS.'Default'.DS.WEBROOT_DIR . DS . 'media' . DS . 'streams' . DS . $theMedia['Media']['type'] . DS
+                   );
+                    
+                   $this->set($params);
+                }//if(Media.type)
+
+            }//if(mediaID)
+
+        }//stream()
 
 }//class{}
