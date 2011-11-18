@@ -43,8 +43,8 @@ class MediaController extends AppController {
 	public function view($mediaID = null) {
 
 		if($mediaID) {
-			$the_media = $this->Media->findById($mediaID);
-			$this->set('the_media', $the_media);
+			$theMedia = $this->Media->findById($mediaID);
+			$this->set('theMedia', $theMedia);
 		}
 
 	}//view()
