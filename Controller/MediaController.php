@@ -40,7 +40,7 @@ class MediaController extends AppController {
 
 	}//upload()
 
-        
+
         /**
          *
          * @param char $mediaID The UUID of the media in question.
@@ -62,7 +62,7 @@ class MediaController extends AppController {
 
 		if($mediaID) {
                     $theMedia = $this->Media->findById($mediaID);
-                    
+
                     $this->pageTitle = $theMedia['Media']['title'];
                     $this->set('theMedia', $theMedia);
 		}
@@ -74,34 +74,36 @@ class MediaController extends AppController {
          * @todo JSON POST's to this URL do not seem to be received...
          */
 	public function notification() {
-		debug($this->request->data);
-		if($this->request->data) {
-			$this->request->data = json_decode($this->request->data, true);
+
+                $data = $this->request->input('json_decode');
+                debug($data);break;
+		if($data) {
+
 #			$this->Media->notify($data);
 			// zencoder is notifying us that a Job is complete
-			if($this->request->data['output']['state'] == 'finished') {
+			if($data['output']['state'] == 'finished') {
 
 				#echo "w00t!\n";
 
 				// If you're encoding to multiple outputs and only care when all of the outputs are finished
 				// you can check if the entire job is finished.
-				if($this->request->data['job']['state'] == 'finished') {
+				if($$data['job']['state'] == 'finished') {
 					echo "Dubble w00t!\n";
 
 					// find this zencoder_job_id
-					$encoder_job = $this->Media->find('first', array('conditions' => array('Media.zen_job_id' => $this->request->data['job']['id'])));
+					$encoder_job = $this->Media->find('first', array('conditions' => array('Media.zen_job_id' => $data['job']['id'])));
 					# TODO : allow for multiple output URL's....
-					$encoder_job['Media']['filename'] = $this->request->data['output']['url'];
-					$this->Media->save($encoder_job);
+					$encoder_job['Media']['filename'] = $data['output']['url'];
+					#$this->Media->save($encoder_job);
 				}
 
-			} elseif($this->request->data['output']['state'] == 'cancelled') {
+			} elseif($data['output']['state'] == 'cancelled') {
 				echo "Cancelled!\n";
 			} else {
 				echo "Fail!\n";
-				debug($this->request->data);
-				echo $this->request->data['output']['error_message']."\n";
-				echo $this->request->data['output']['error_link'];
+				debug($data);
+				echo $data['output']['error_message']."\n";
+				echo $data['output']['error_link'];
 			}
 
 		}//if($outputID)
@@ -110,41 +112,79 @@ class MediaController extends AppController {
 
 	}//notification()
 
-        
+
         /**
          * This action can stream or download a media file.
+         * Expected Use: /media/media/stream/{UUID}/{FORMAT}
          * @param char $mediaID The UUID of the media in question.
          */
         function stream($mediaID = null) {
-            
-            if($mediaID) {
+            #debug($this->request->params);break;
+
+            $requestedFormat = isset($this->request->params[1]) ? $this->request->params[1] : false;
+
+            if($mediaID && $requestedFormat) {
                 // find the filetype
                 $theMedia = $this->Media->findById($mediaID);
 
-                if(!empty($theMedia['Media']['type'])) {
-                    
-                    /** @todo Use the Media.output maybe.. to serve other filetypes.. **/
-                    if($theMedia['Media']['type'] == 'audio') {
-                        $filetype = array('extension' => 'mp3', 'mimeType' => array('mp3' => 'audio/mp3'));
-                    } elseif($theMedia['Media']['type'] == 'video') {
-                        $filetype = array('extension' => 'mp4', 'mimeType' => array('mp4' => 'video/mp4'));
-                    }
+                // what formats did we receive from the encoder?
+                $outputs = json_decode($theMedia['filename']);
 
-                    $this->viewClass = 'Media'; // <-- magic!
-                    $params = array(
-                          'id' => $mediaID . '.' . $filetype['extension'], // this is the full filename.. perhaps the one shown to the user if they download
-                          'name' => $mediaID, // this is the filename minus extension
-                          'download' => false, // if true, then a download box pops up
-                          'extension' => $filetype['extension'],
-                          'mimeType' => $filetype['mimeType'],
-                          'path' => ROOT.DS.SITE_DIR.DS.'View'.DS.'Themed'.DS.'Default'.DS.WEBROOT_DIR . DS . 'media' . DS . 'streams' . DS . $theMedia['Media']['type'] . DS
-                   );
-                    
-                   $this->set($params);
-                }//if(Media.type)
+                if(isset($outputs['outputs'][$requestedFormat])) {
+                    // yes, we should have this media in the requested format
 
-            }//if(mediaID)
+                    if(!empty($theMedia['Media']['type'])) {
+                        // determine what data to send to the browser
+
+                        if($theMedia['Media']['type'] == 'audio') {
+
+                            switch($outputs['outputs'][$requestedFormat]) {
+                                case ('mp3'):
+                                    $filetype = array('extension' => 'mp3', 'mimeType' => array('mp3' => 'audio/mp3'));
+                                    break;
+                                case ('ogg'):
+                                    $filetype = array('extension' => 'ogg', 'mimeType' => array('ogg' => 'audio/ogg'));
+                                    break;
+                            }//switch()
+
+                        } elseif($theMedia['Media']['type'] == 'video') {
+
+                            switch($outputs['outputs'][$requestedFormat]) {
+                                case ('mp4'):
+                                    $filetype = array('extension' => 'mp4', 'mimeType' => array('mp4' => 'video/mp4'));
+                                    break;
+                                case ('webm'):
+                                    $filetype = array('extension' => 'webm', 'mimeType' => array('mp4' => 'video/webm'));
+                                    break;
+                            }//switch()
+
+                        }// audio/video
+
+                        if(isset($filetype)) {
+                            // send the file to the browser
+
+                            $this->viewClass = 'Media'; // <-- magic!
+                            $params = array(
+                                  'id' => $mediaID . '.' . $filetype['extension'], // this is the full filename.. perhaps the one shown to the user if they download
+                                  'name' => $mediaID, // this is the filename minus extension
+                                  'download' => false, // if true, then a download box pops up
+                                  'extension' => $filetype['extension'],
+                                  'mimeType' => $filetype['mimeType'],
+                                  'path' => ROOT.DS.SITE_DIR.DS.'View'.DS.'Themed'.DS.'Default'.DS.WEBROOT_DIR . DS . 'media' . DS . 'streams' . DS . $theMedia['Media']['type'] . DS
+                           );
+
+                           $this->set($params);
+
+                        }
+                    }//if(Media.type)
+
+                } else {
+                    #$this->Session->setFlash('Requested file format not found.');
+                }
+
+            }//if($mediaID && $requestedFormat)
 
         }//stream()
+
 
 }//class{}
