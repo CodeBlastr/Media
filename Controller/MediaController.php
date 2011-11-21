@@ -121,16 +121,23 @@ class MediaController extends AppController {
         function stream($mediaID = null) {
             #debug($this->request->params);break;
 
-            $requestedFormat = isset($this->request->params[1]) ? $this->request->params[1] : false;
+            $requestedFormat = isset($this->request->pass[1]) ? $this->request->pass[1] : false;
 
             if($mediaID && $requestedFormat) {
+                
                 // find the filetype
                 $theMedia = $this->Media->findById($mediaID);
 
                 // what formats did we receive from the encoder?
-                $outputs = json_decode($theMedia['filename']);
+                $outputs = json_decode($theMedia['Media']['filename'], true);
+                #debug($outputs);
+                foreach($outputs['outputs'] as $output) {
+                    #debug($output);
+                    if($output['label'] == $requestedFormat) $outputTypeFound = true;
+                }
+                
 
-                if(isset($outputs['outputs'][$requestedFormat])) {
+                if($outputTypeFound) {
                     // yes, we should have this media in the requested format
 
                     if(!empty($theMedia['Media']['type'])) {
@@ -138,7 +145,7 @@ class MediaController extends AppController {
 
                         if($theMedia['Media']['type'] == 'audio') {
 
-                            switch($outputs['outputs'][$requestedFormat]) {
+                            switch($requestedFormat) {
                                 case ('mp3'):
                                     $filetype = array('extension' => 'mp3', 'mimeType' => array('mp3' => 'audio/mp3'));
                                     break;
@@ -149,7 +156,7 @@ class MediaController extends AppController {
 
                         } elseif($theMedia['Media']['type'] == 'video') {
 
-                            switch($outputs['outputs'][$requestedFormat]) {
+                            switch($requestedFormat) {
                                 case ('mp4'):
                                     $filetype = array('extension' => 'mp4', 'mimeType' => array('mp4' => 'video/mp4'));
                                     break;

@@ -1,9 +1,9 @@
 <?PHP
 #debug($theMedia);
  // what formats did we receive from the encoder?
-$outputs = json_decode($theMedia['filename']);
+$outputs = json_decode($theMedia['filename'], true);
 foreach ($outputs['outputs'] as $output) {
-    $outputArray[] = '/media/media/stream/' . $theMedia['Media']['id'] . '/' . $output['label'];
+    $outputArray[] = 'http://' . $_SERVER['HTTP_HOST'] . '/media/media/stream/' . $theMedia['Media']['id'] . '/' . $output['label'];
 }
 
 echo '<h2>';
