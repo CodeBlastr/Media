@@ -10,6 +10,8 @@ class MediaController extends AppController {
 	#var $uid;
 	#var $uses = array('');
 	var $allowedActions = array('index', 'view', 'notification', 'stream');
+        #public $helpers = array('Ratings.Rating'); # will be loaded regardless
+        public $components = array('Ratings.Ratings');
 
 
 	/*
@@ -61,10 +63,19 @@ class MediaController extends AppController {
         public function view($mediaID = null) {
 
 		if($mediaID) {
+                    
+                    // Use this to save the Overall Rating to Media.rating
+                    #$this->Media->calculateRating($mediaID, 'rating');
+                    
                     $theMedia = $this->Media->findById($mediaID);
+                    
+                    // Use these two lines to get the Overall Rating on the fly
+                    $theMediaRating = $this->Media->calculateRating($mediaID);
+                    $theMedia = array_merge($theMediaRating, $theMedia);
 
                     $this->pageTitle = $theMedia['Media']['title'];
                     $this->set('theMedia', $theMedia);
+                    
 		}
 
 	}//view()

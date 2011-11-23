@@ -10,6 +10,11 @@ class Media extends AppModel {
 	var $actsAs = array(
             'Encoders.Encodable' => array(
                 'type' => 'Zencoder'
+            ),
+            'Ratings.Ratable' => array(
+                'saveToField' => true,
+                //'field' => 'rating'
+                //'modelClass' => 'Media.Media'
             )
         );
 
@@ -20,6 +25,11 @@ class Media extends AppModel {
 	);
 
 
+        function afterRate($data) {
+            #debug($data);
+            
+        }//afterRate()
+        
     function _generateUUID() {
         $uuid = $this->query('SELECT UUID() AS uuid');
         return $uuid[0][0]['uuid'];
