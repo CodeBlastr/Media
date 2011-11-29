@@ -6,7 +6,7 @@
 
 
 // what formats did we receive from the encoder?
-$outputs = json_decode($theMedia['filename'], true);
+$outputs = json_decode($theMedia['Media']['filename'], true);
 foreach ($outputs['outputs'] as $output) {
     $outputArray[] = 'http://' . $_SERVER['HTTP_HOST'] . '/media/media/stream/' . $theMedia['Media']['id'] . '/' . $output['label'];
 }
@@ -21,10 +21,10 @@ $this->Html->css('/ratings/css/jquery.ui.stars.min', null, array('inline' => fal
 
     <?php
     if($theMedia['Media']['type'] == 'audio') {
-        echo $this->Html->video($outputArray, array('width'=>'450', 'height'=>'150'));
+        echo $this->Html->video($outputArray, array('width'=>'709', 'height'=>'404'));
     }
     elseif($theMedia['Media']['type'] == 'video') {
-        echo $this->Html->video($outputArray, array('width'=>'450', 'height'=>'300'));
+        echo $this->Html->video($outputArray, array('width'=>'709', 'height'=>'404'));
     }
     ?>
 

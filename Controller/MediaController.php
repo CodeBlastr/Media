@@ -15,11 +15,19 @@ class MediaController extends AppController {
 
 
 	/*
-	*	show an admin index or the videos of the current user?
+         * kinda expects URL to be: /media/media/index/(audio|video)
+         * shows media of the type passed in the request
 	*/
 	public function index() {
+            #debug($this->request->pass);
+            if(isset($this->request->pass[0])) {
+                $mediaType = $this->request->pass[0];
+            }
 		$allMedia = $this->Media->find('all', array(
-				'conditions' => array('Media.filename !=' => '')
+				'conditions' => array(
+                                    'Media.filename !=' => '',
+                                    'Media.type' => $mediaType
+                                )
 			));
 
 		$this->set('media', $allMedia);
@@ -82,7 +90,7 @@ class MediaController extends AppController {
 
 
         /**
-         * @todo JSON POST's to this URL do not seem to be received...
+         * @todo parse the response and activate the video when it's encoding job is completed
          */
 	public function notification() {
 
