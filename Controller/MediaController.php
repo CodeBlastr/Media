@@ -42,7 +42,8 @@ class MediaController extends AppController {
 			#debug($this->request->data);break;
 			if ($this->Media->save($this->request->data)) {
 				$this->Session->setFlash('Media saved and being encoded.');
-                                $this->redirect('/media/media/edit/'.$this->Media->id);
+                                #$this->redirect('/media/media/edit/'.$this->Media->id);
+                                $this->redirect('/media/my/');
 			} else {
 				$this->Session->setFlash('Invalid Upload.');
 			}
