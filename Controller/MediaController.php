@@ -88,6 +88,23 @@ class MediaController extends AppController {
 
 	}//view()
 
+        
+	public function my() {
+            $userID = ($this->Auth->user('id')) ? $this->Auth->user('id') : false;
+            if($userID) {
+                $allMedia = $this->Media->find('all', array(
+                    'conditions' => array(
+                        'Media.user_id' => $userID,
+                        #'Media.type' => $mediaType
+                        )
+                    ));
+
+                $this->set('media', $allMedia);
+            } else {
+                $this->redirect('/');
+            }
+	}//my()
+        
 
         /**
          * @todo parse the response and activate the video when it's encoding job is completed
