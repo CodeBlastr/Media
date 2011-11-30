@@ -9,7 +9,7 @@ class MediaController extends MediaAppController {
 	var $name = 'Media';
 	#var $uid;
 	#var $uses = array('');
-	var $allowedActions = array('index', 'view', 'notification', 'stream', 'my');
+	var $allowedActions = array('index', 'view', 'notification', 'stream', 'my', 'add');
         #public $helpers = array('Ratings.Rating'); # will be loaded regardless
         public $components = array('Ratings.Ratings');
 
@@ -43,7 +43,7 @@ class MediaController extends MediaAppController {
 			if ($this->Media->save($this->request->data)) {
 				$this->Session->setFlash('Media saved and being encoded.');
                                 #$this->redirect('/media/media/edit/'.$this->Media->id);
-                                $this->redirect('/media/my/');
+                                $this->redirect(array('action' => 'my'));
 			} else {
 				$this->Session->setFlash('Invalid Upload.');
 			}
