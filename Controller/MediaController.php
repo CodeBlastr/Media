@@ -3,13 +3,13 @@
  * @author <joel@razorit.com>
  * @property Media $Media
  */
-class MediaController extends AppController {
+class MediaController extends MediaAppController {
 
 
 	var $name = 'Media';
 	#var $uid;
 	#var $uses = array('');
-	var $allowedActions = array('index', 'view', 'notification', 'stream');
+	var $allowedActions = array('index', 'view', 'notification', 'stream', 'my');
         #public $helpers = array('Ratings.Rating'); # will be loaded regardless
         public $components = array('Ratings.Ratings');
 

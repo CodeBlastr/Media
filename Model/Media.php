@@ -2,7 +2,7 @@
 /**
  * @author <joel@razorit.com>
  */
-class Media extends AppModel {
+class Media extends MediaAppModel {
 
 
 	var $name = 'Media';
