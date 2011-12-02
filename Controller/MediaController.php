@@ -26,6 +26,7 @@ class MediaController extends MediaAppController {
 		$allMedia = $this->Media->find('all', array(
 				'conditions' => array(
                                     'Media.filename !=' => '',
+                                    'Media.is_visible' => '1',
                                     'Media.type' => $mediaType
                                 )
 			));
@@ -113,7 +114,7 @@ class MediaController extends MediaAppController {
 	public function notification() {
 
                 $data = $this->request->input('json_decode');
-                debug($data);break;
+                #debug($data);break;
 		if($data) {
 
 #			$this->Media->notify($data);
@@ -124,14 +125,13 @@ class MediaController extends MediaAppController {
 
 				// If you're encoding to multiple outputs and only care when all of the outputs are finished
 				// you can check if the entire job is finished.
-				if($$data['job']['state'] == 'finished') {
+				if($data['job']['state'] == 'finished') {
 					echo "Dubble w00t!\n";
 
 					// find this zencoder_job_id
 					$encoder_job = $this->Media->find('first', array('conditions' => array('Media.zen_job_id' => $data['job']['id'])));
-					# TODO : allow for multiple output URL's....
-					$encoder_job['Media']['filename'] = $data['output']['url'];
-					#$this->Media->save($encoder_job);
+					$encoder_job['Media']['is_visible'] = '1';
+					$this->Media->save($encoder_job);
 				}
 
 			} elseif($data['output']['state'] == 'cancelled') {
