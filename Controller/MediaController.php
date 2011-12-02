@@ -26,7 +26,7 @@ class MediaController extends MediaAppController {
 		$allMedia = $this->Media->find('all', array(
 				'conditions' => array(
                                     'Media.filename !=' => '',
-                                    'Media.is_visible' => '1',
+                                    'Media.is_visible' => '2', // 0 = not on our server; 1 = on server, but no thumbnail; 2 = good to go
                                     'Media.type' => $mediaType
                                 )
 			));

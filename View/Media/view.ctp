@@ -24,7 +24,7 @@ $this->Html->css('/ratings/css/jquery.ui.stars.min', null, array('inline' => fal
         echo $this->Html->video($outputArray, array('width'=>'709', 'height'=>'404'));
     }
     elseif($theMedia['Media']['type'] == 'video') {
-        echo $this->Html->video($outputArray, array('width'=>'709', 'height'=>'404'));
+        echo $this->Html->video($outputArray, array('width'=>'709', 'height'=>'404', 'poster'=>'/media/media/thumbs/'.$medium['Media']['id'].'_000'.$medium['Media']['thumbnail'].'.png'));
     }
     ?>
 
