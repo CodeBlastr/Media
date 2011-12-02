@@ -109,7 +109,7 @@ class MediaController extends MediaAppController {
         
 
         /**
-         * @todo parse the response and activate the video when it's encoding job is completed
+         * receives a notification from the encoder and if successful, upgrades the is_visible from 0 to 1
          */
 	public function notification() {
 
@@ -119,19 +119,26 @@ class MediaController extends MediaAppController {
 
 #			$this->Media->notify($data);
 			// zencoder is notifying us that a Job is complete
-			if($data['output']['state'] == 'finished') {
+			if($data->output->state == 'finished') {
 
 				#echo "w00t!\n";
 
 				// If you're encoding to multiple outputs and only care when all of the outputs are finished
 				// you can check if the entire job is finished.
-				if($data['job']['state'] == 'finished') {
+				if($data->job->state == 'finished') {
 					echo "Dubble w00t!\n";
 
 					// find this zencoder_job_id
-					$encoder_job = $this->Media->find('first', array('conditions' => array('Media.zen_job_id' => $data['job']['id'])));
-					$encoder_job['Media']['is_visible'] = '1';
-					$this->Media->save($encoder_job);
+					$encoder_job = $this->Media->find('first', array('conditions' => array('Media.zen_job_id' => $data->job->id)));
+					#$encoder_job['Media']['is_visible'] = '1';
+                                        #debug($encoder_job['Media']['id']);
+					#if($this->Media->save($encoder_job)) {
+                                        $this->Media->id = $encoder_job['Media']['id'];
+					if($this->Media->saveField('is_visible', '1')) {
+                                            echo 'hooray!';
+                                        } else {
+                                            echo 'wtf?'; /** @todo this is not saving due to the beforeSave() .... **/
+                                        }
 				}
 
 			} elseif($data['output']['state'] == 'cancelled') {
