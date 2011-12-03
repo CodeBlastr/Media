@@ -134,6 +134,7 @@ class MediaController extends MediaAppController {
                                         #debug($encoder_job['Media']['id']);
 					#if($this->Media->save($encoder_job)) {
                                         $this->Media->id = $encoder_job['Media']['id'];
+                                        $this->Media->Behaviors->disable('Encoders');
 					if($this->Media->saveField('is_visible', '1')) {
                                             echo 'hooray!';
                                         } else {
