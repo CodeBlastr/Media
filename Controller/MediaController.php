@@ -9,7 +9,7 @@ class MediaController extends MediaAppController {
 	var $name = 'Media';
 	#var $uid;
 	#var $uses = array('');
-	var $allowedActions = array('index', 'view', 'notification', 'stream', 'my', 'add');
+	var $allowedActions = array('index', 'view', 'notification', 'stream', 'my', 'add', 'edit');
         #public $helpers = array('Ratings.Rating'); # will be loaded regardless
         public $components = array('Ratings.Ratings');
 
@@ -55,14 +55,21 @@ class MediaController extends MediaAppController {
 
         /**
          *
-         * @param char $mediaID The UUID of the media in question.
+         * @param char $uid The UUID of the media in question.
          */
-        public function edit($mediaID = null) {
+        public function edit($uid = null) {
             /** @todo Finish up the edit code.. put in thumbnails probably */
-		if($mediaID) {
-			$theMedia = $this->Media->findById($mediaID);
-			$this->set('theMedia', $theMedia);
-		}
+            $this->Media->id = $uid;
+            if (empty($this->data)) {
+                    $this->data = $this->Media->findById($mediaID);
+            } else {
+                    $this->Media->Behaviors->disable('Encodable');
+                    if ($this->Media->save($this->data)) {
+                            $this->Session->setFlash('Your media has been updated.');
+                            $this->redirect(array('action' => 'my'));
+                    }
+            }
+
         }//edit()
 
 
@@ -134,7 +141,7 @@ class MediaController extends MediaAppController {
                                         #debug($encoder_job['Media']['id']);
 					#if($this->Media->save($encoder_job)) {
                                         $this->Media->id = $encoder_job['Media']['id'];
-                                        $this->Media->Behaviors->disable('Encoders');
+                                        $this->Media->Behaviors->disable('Encodable');
 					if($this->Media->saveField('is_visible', '1')) {
                                             echo 'hooray!';
                                         } else {
