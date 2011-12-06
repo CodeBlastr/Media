@@ -58,13 +58,16 @@ class MediaController extends MediaAppController {
          * @param char $uid The UUID of the media in question.
          */
         public function edit($uid = null) {
-            /** @todo Finish up the edit code.. put in thumbnails probably */
             $this->Media->id = $uid;
-            if (empty($this->data)) {
-                    $this->data = $this->Media->findById($mediaID);
+            if (empty($this->request->data)) {
+                    $this->request->data = $this->Media->findById($uid);
             } else {
+                    // set is_visible = 2 when there is a thumbnail (for public view status)
+                    if(!empty($this->request->data['Media']['thumbnail'])) $this->data['Media']['is_visible'] = 2;
+                    // disable Encodeable so we don't process the media
                     $this->Media->Behaviors->disable('Encodable');
-                    if ($this->Media->save($this->data)) {
+                    // save the new media metadata
+                    if ($this->Media->save($this->request->data)) {
                             $this->Session->setFlash('Your media has been updated.');
                             $this->redirect(array('action' => 'my'));
                     }

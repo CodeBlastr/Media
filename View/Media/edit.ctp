@@ -17,9 +17,9 @@
     echo '<br />';
 
 
-    if($this->data['Media']['type'] == 'video') {
+    if($this->request->data['Media']['type'] == 'video') {
         // thumbnail selector
-        if($this->data['Media']['is_visible'] == '1') {  // they need to choose a Thumbnail still
+        if($this->request->data['Media']['is_visible'] == '1') {  // they need to choose a Thumbnail still
             
             $options = array(
                 '0'=>'<img src="/theme/default/media/thumbs/'.$this->data['Media']['id'].'_0000.png" height="200" width="200" />',
