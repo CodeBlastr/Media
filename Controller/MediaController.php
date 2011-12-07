@@ -63,7 +63,7 @@ class MediaController extends MediaAppController {
                     $this->request->data = $this->Media->findById($uid);
             } else {
                     // set is_visible = 2 when there is a thumbnail (for public view status)
-                    if(!empty($this->request->data['Media']['thumbnail'])) $this->data['Media']['is_visible'] = 2;
+                    if(!empty($this->request->data['Media']['thumbnail'])) $this->request->data['Media']['is_visible'] = 2;
                     // disable Encodeable so we don't process the media
                     $this->Media->Behaviors->disable('Encodable');
                     // save the new media metadata
