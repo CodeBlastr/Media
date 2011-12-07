@@ -24,7 +24,7 @@ $this->Html->css('/ratings/css/jquery.ui.stars.min', null, array('inline' => fal
         echo $this->Html->video($outputArray, array('width'=>'709', 'height'=>'404'));
     }
     elseif($theMedia['Media']['type'] == 'video') {
-        echo $this->Html->video($outputArray, array('width'=>'709', 'height'=>'404', 'poster'=>'/media/media/thumbs/'.$theMedia['Media']['id'].'_000'.$theMedia['Media']['thumbnail'].'.png'));
+        echo $this->Html->video($outputArray, array('width'=>'709', 'height'=>'404', 'poster'=>'/theme/default/media/thumbs/'.$theMedia['Media']['id'].'_000'.$theMedia['Media']['thumbnail'].'.png'));
     }
     ?>
 
@@ -37,7 +37,7 @@ $this->Html->css('/ratings/css/jquery.ui.stars.min', null, array('inline' => fal
             ?>
         </div><!-- #mediaView_titleInfo -->
         <div id="mediaView_ratingBox">
-            <?php 
+            <?php
             #debug($this->passedArgs);
             echo $this->Rating->display(array(
                 'item' => $theMedia['Media']['id'],
@@ -49,7 +49,7 @@ $this->Html->css('/ratings/css/jquery.ui.stars.min', null, array('inline' => fal
             ?>
         </div>
     </div>
-    
+
     <?php echo '<div class="mediaViewDescription">' . $theMedia['Media']['description'] . '</div>'; ?>
 
 </div><!-- #MediaMediaBox -->

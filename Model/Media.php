@@ -5,9 +5,9 @@
 class Media extends MediaAppModel {
 
 
-	var $name = 'Media';
+	public $name = 'Media';
 
-	var $actsAs = array(
+	public $actsAs = array(
             'Encoders.Encodable' => array(
                 'type' => 'Zencoder'
             ),
@@ -18,22 +18,23 @@ class Media extends MediaAppModel {
             )
         );
 
-	var $belongsTo = array(
-		'User' => array(
-			'foreignKey' => 'user_id'
-		)
+	public $belongsTo = array(
+	    'User' => array(
+		'className' => 'User',
+		'foreignKey' => 'user_id'
+	    )
 	);
 
 
         function afterRate($data) {
             #debug($data);
-            
+
         }//afterRate()
-        
+
     function _generateUUID() {
         $uuid = $this->query('SELECT UUID() AS uuid');
         return $uuid[0][0]['uuid'];
     }//_generateUUID()
-        
-        
+
+
 }//class{}

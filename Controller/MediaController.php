@@ -83,24 +83,27 @@ class MediaController extends MediaAppController {
         public function view($mediaID = null) {
 
 		if($mediaID) {
-                    
+
                     // Use this to save the Overall Rating to Media.rating
                     #$this->Media->calculateRating($mediaID, 'rating');
-                    
-                    $theMedia = $this->Media->findById($mediaID);
-                    
+
+                    $theMedia = $this->Media->find('first', array(
+			'conditions' => array('Media.id' => $mediaID),
+			'contain' => 'User'
+		    ));
+
                     // Use these two lines to get the Overall Rating on the fly
                     $theMediaRating = $this->Media->calculateRating($mediaID);
                     $theMedia = array_merge($theMediaRating, $theMedia);
 
                     $this->pageTitle = $theMedia['Media']['title'];
                     $this->set('theMedia', $theMedia);
-                    
+
 		}
 
 	}//view()
 
-        
+
 	public function my() {
             $userID = ($this->Auth->user('id')) ? $this->Auth->user('id') : false;
             if($userID) {
@@ -116,7 +119,7 @@ class MediaController extends MediaAppController {
                 $this->redirect('/');
             }
 	}//my()
-        
+
 
         /**
          * receives a notification from the encoder and if successful, upgrades the is_visible from 0 to 1
@@ -179,7 +182,7 @@ class MediaController extends MediaAppController {
             $requestedFormat = isset($this->request->pass[1]) ? $this->request->pass[1] : false;
 
             if($mediaID && $requestedFormat) {
-                
+
                 // find the filetype
                 $theMedia = $this->Media->findById($mediaID);
 
@@ -190,7 +193,7 @@ class MediaController extends MediaAppController {
                     #debug($output);
                     if($output['label'] == $requestedFormat) $outputTypeFound = true;
                 }
-                
+
 
                 if($outputTypeFound) {
                     // yes, we should have this media in the requested format
