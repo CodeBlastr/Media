@@ -9,7 +9,7 @@
     echo $this->Form->hidden('Media.user_id', array('value'=> $this->Session->read('Auth.User.id')));
 
 
-    $options = array('A'=>'Audio','V'=>'Video');
+    $options = array('audio'=>'Audio','video'=>'Video');
     $attributes = array('legend'=>'Type of Media');
     echo $this->Form->radio('Media.type', $options, $attributes);
 

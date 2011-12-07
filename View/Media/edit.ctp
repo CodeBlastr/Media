@@ -9,7 +9,7 @@
     echo $this->Form->input('Media.id');
 
 
-    $options = array('A'=>'Audio','V'=>'Video');
+    $options = array('audio'=>'Audio','video'=>'Video');
     $attributes = array('legend'=>'Type of Media');
     echo $this->Form->radio('Media.type', $options, $attributes);
 
@@ -20,7 +20,7 @@
     if($this->request->data['Media']['type'] == 'video') {
         // thumbnail selector
         if($this->request->data['Media']['is_visible'] == '1') {  // they need to choose a Thumbnail still
-            
+
             $options = array(
                 '0'=>'<img src="/theme/default/media/thumbs/'.$this->data['Media']['id'].'_0000.png" height="200" width="200" />',
                 '1'=>'<img src="/theme/default/media/thumbs/'.$this->data['Media']['id'].'_0001.png" height="200" width="200" />',
@@ -30,7 +30,7 @@
                 );
             $attributes = array('legend'=>'Video Preview Image');
             echo $this->Form->radio('Media.thumbnail', $options, $attributes);
-            
+
         }
     }
 
