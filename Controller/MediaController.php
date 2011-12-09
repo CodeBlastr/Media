@@ -85,7 +85,7 @@ class MediaController extends MediaAppController {
 		if($mediaID) {
 
                     // Use this to save the Overall Rating to Media.rating
-                    #$this->Media->calculateRating($mediaID, 'rating');
+                    $this->Media->calculateRating($mediaID, 'rating');
 
                     $theMedia = $this->Media->find('first', array(
 			'conditions' => array('Media.id' => $mediaID),
@@ -93,8 +93,8 @@ class MediaController extends MediaAppController {
 		    ));
 
                     // Use these two lines to get the Overall Rating on the fly
-                    $theMediaRating = $this->Media->calculateRating($mediaID);
-                    $theMedia = array_merge($theMediaRating, $theMedia);
+                    //$theMediaRating = $this->Media->calculateRating($mediaID);
+                    //$theMedia = array_merge($theMediaRating, $theMedia);
 
                     $this->pageTitle = $theMedia['Media']['title'];
                     $this->set('theMedia', $theMedia);
@@ -250,6 +250,34 @@ class MediaController extends MediaAppController {
             }//if($mediaID && $requestedFormat)
 
         }//stream()
+
+
+	/**
+	 * ACTION FOR ELEMENTS
+	 */
+
+	/**
+	 *
+	 * @param string $mediaType
+	 * @param string $sort
+	 * @param integer $numberOfResults
+	 * @return array|boolean
+	 */
+	function sorted($mediaType, $field, $sort, $numberOfResults) {
+
+	    $options = array(
+		'conditions' => array(
+		    'Media.type' => strtolower($mediaType),
+		    'Media.is_visible' => '2'
+		),
+		'order' => 'Media.'.$field.' '.$sort,
+		'limit' => $numberOfResults
+	    );
+
+	    return $this->Media->find('all', $options);
+
+	}//sorted()
+
 
 
 }//class{}
