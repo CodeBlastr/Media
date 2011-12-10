@@ -175,11 +175,10 @@ class MediaController extends MediaAppController {
          * This action can stream or download a media file.
          * Expected Use: /media/media/stream/{UUID}/{FORMAT}
          * @param char $mediaID The UUID of the media in question.
+         * @param string $requestedFormat The filetype of the media expected.
          */
-        function stream($mediaID = null) {
+        function stream($mediaID = null, $requestedFormat = FALSE) {
             #debug($this->request->params);break;
-
-            $requestedFormat = isset($this->request->pass[1]) ? $this->request->pass[1] : false;
 
             if($mediaID && $requestedFormat) {
 
@@ -189,6 +188,15 @@ class MediaController extends MediaAppController {
                 // what formats did we receive from the encoder?
                 $outputs = json_decode($theMedia['Media']['filename'], true);
                 #debug($outputs);
+
+                // audio files have 1 output currently.. arrays are not the same.. make them so.
+                /** @todo this is kinda hacky.. also exists in media/view **/
+                if(!is_array($outputs[0])) {
+                    $temp['outputs'] = $outputs['outputs'];
+                    $outputs = null;
+                    $outputs['outputs'][0] = $temp['outputs'];
+                }
+
                 foreach($outputs['outputs'] as $output) {
                     #debug($output);
                     if($output['label'] == $requestedFormat) $outputTypeFound = true;

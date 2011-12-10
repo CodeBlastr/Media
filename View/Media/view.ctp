@@ -7,12 +7,21 @@
 
 // what formats did we receive from the encoder?
 $outputs = json_decode($theMedia['Media']['filename'], true);
+
+// audio files have 1 output currently.. arrays are not the same.. make them so.
+/** @todo this is kinda hacky.. also exists in Media::Stream **/
+if(!is_array($outputs[0])) {
+	$temp['outputs'] = $outputs['outputs'];
+	$outputs = null;
+	$outputs['outputs'][0] = $temp['outputs'];
+}
+
 foreach ($outputs['outputs'] as $output) {
     $outputArray[] = 'http://' . $_SERVER['HTTP_HOST'] . '/media/media/stream/' . $theMedia['Media']['id'] . '/' . $output['label'];
 }
-?>
+#debug($outputArray);
 
-<?php
+// load the star ratings files
 $this->Html->script('/ratings/js/jquery.ui.stars.min', null, array('inline'=>false));
 $this->Html->css('/ratings/css/jquery.ui.stars.min', null, array('inline' => false));
 ?>
