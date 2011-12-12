@@ -278,7 +278,6 @@ class MediaController extends MediaAppController {
  * record video
  */
 	function record($model = 'Media', $foreignKey = null) {
-
 		$this->set('uuid', $this->Media->_generateUUID());
 		$this->set('model', $model);
 		$this->set('foreignKey', $foreignKey);
@@ -312,14 +311,6 @@ class MediaController extends MediaAppController {
 				$this->Session->setFlash('Invalid Upload.');
 			}
 		endif;
-
-
-
-
-		/*
-		this will move the file to a usable place once its been recorded
-		*/
-
 
 	}
 
