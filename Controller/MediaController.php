@@ -4,10 +4,10 @@ class MediaController extends MediaAppController {
 	public $name = 'Media';
 	#var $uid;
 	#var $uses = array('');
-	public $allowedActions = array('index', 'view', 'notification', 'stream', 'my', 'add', 'edit', 'record');
+	public $allowedActions = array('index', 'view', 'notification', 'stream', 'my', 'add', 'edit');
     #public $helpers = array('Ratings.Rating'); # will be loaded regardless
 	public $components = array('Ratings.Ratings');
-	
+
 	public function beforeFilter() {
 		parent::beforeFilter();
 		if (!file_exists(ROOT.DS.SITE_DIR.DS.'View'.DS.'Themed'.DS.'Default'.DS.WEBROOT_DIR . DS . 'media')) :
@@ -93,7 +93,7 @@ class MediaController extends MediaAppController {
 				'conditions' => array('Media.id' => $mediaID),
 				'contain' => 'User'
 				));
-			
+
 			# Use these two lines to get the Overall Rating on the fly
 			# $theMediaRating = $this->Media->calculateRating($mediaID);
 			# $theMedia = array_merge($theMediaRating, $theMedia);
@@ -172,32 +172,32 @@ class MediaController extends MediaAppController {
 		if($mediaID && $requestedFormat) {
 			// find the filetype
 			$theMedia = $this->Media->findById($mediaID);
-			
+
 			// what formats did we receive from the encoder?
 			$outputs = json_decode($theMedia['Media']['filename'], true);
 			#debug($outputs);
-			
+
 			// audio files have 1 output currently.. arrays are not the same.. make them so.
 			/** @todo this is kinda hacky.. also exists in media/view **/
-			if(!is_array($outputs[0])) {
+			if($theMedia['Media']['type'] == 'audio') {
 				$temp['outputs'] = $outputs['outputs'];
 				$outputs = null;
 				$outputs['outputs'][0] = $temp['outputs'];
 			}
-				
+
 			foreach($outputs['outputs'] as $output) {
 				#debug($output);
 				if($output['label'] == $requestedFormat) $outputTypeFound = true;
 			}
-					
+
 			if($outputTypeFound) {
 				// yes, we should have this media in the requested format
-				
+
 				if(!empty($theMedia['Media']['type'])) {
 					// determine what data to send to the browser
-					
+
 					if($theMedia['Media']['type'] == 'audio') {
-						
+
 						switch($requestedFormat) {
 							case ('mp3'):
 								$filetype = array('extension' => 'mp3', 'mimeType' => array('mp3' => 'audio/mp3'));
@@ -216,12 +216,12 @@ class MediaController extends MediaAppController {
 								$filetype = array('extension' => 'webm', 'mimeType' => array('mp4' => 'video/webm'));
 								break;
 						}//switch()
-					
+
 					}// audio/video
-                    
+
 					if(isset($filetype)) {
 						// send the file to the browser
-						
+
 						$this->viewClass = 'Media'; // <-- magic!
 						$params = array(
 							'id' => $mediaID . '.' . $filetype['extension'], // this is the full filename.. perhaps the one shown to the user if they download
@@ -233,14 +233,14 @@ class MediaController extends MediaAppController {
                            );
 
 						$this->set($params);
-						
+
 					}
 				}//if(Media.type)
-				
+
 			} else {
                     #$this->Session->setFlash('Requested file format not found.');
 			}
-			
+
 		}//if($mediaID && $requestedFormat)
 
 	}//stream()
@@ -277,9 +277,11 @@ class MediaController extends MediaAppController {
 /**
  * record video
  */
-	function record() {
-		
+	function record($model = 'Media', $foreignKey = null) {
+
 		$this->set('uuid', $this->Media->_generateUUID());
+		$this->set('model', $model);
+		$this->set('foreignKey', $foreignKey);
 
 		if(!empty($this->request->data)) :
             $this->request->data['User']['id'] = $this->Auth->user('id');
@@ -294,14 +296,14 @@ class MediaController extends MediaAppController {
 			#} else {
 			#	echo 'File does not exist.';
 			#}
-			
+
 			#echo '<a href="http://'.$_SERVER['HTTP_HOST'].$url.'">right click this one</a>';
 			$this->request->data['Media']['submittedfile']['name'] = $fileName.'.flv';
 			$this->request->data['Media']['submittedfile']['type'] = 'video/x-flv';
 			$this->request->data['Media']['submittedfile']['tmp_name'] = '/home/razorit/source/red5-read-only/dist/webapps/oflaDemo/streams/'.$fileName.'.flv';
 			$this->request->data['Media']['submittedfile']['error'] = 0;
 			$this->request->data['Media']['submittedfile']['size'] = 99999;
-			
+
 			if ($this->Media->save($this->request->data)) {
 				$this->Session->setFlash('Media saved and being encoded.');
 				#$this->redirect('/media/media/edit/'.$this->Media->id);
@@ -310,10 +312,10 @@ class MediaController extends MediaAppController {
 				$this->Session->setFlash('Invalid Upload.');
 			}
 		endif;
-		
-		
-		
-		
+
+
+
+
 		/*
 		this will move the file to a usable place once its been recorded
 		*/

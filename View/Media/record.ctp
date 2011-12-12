@@ -87,5 +87,7 @@ if ( hasProductInstall && !hasRequestedVersion ) {
     echo $this->Form->hidden('Media.uuid', array('value' => $uuid));
     echo $this->Form->hidden('Media.user_id', array('value'=> $this->Session->read('Auth.User.id')));
     echo $this->Form->hidden('Media.type', array('value' => 'video'));
+    echo $this->Form->hidden('Media.model', array('value' => $model));
+    echo $this->Form->hidden('Media.foreign_key', array('value' => $foreignKey));
 	echo $this->Form->end('Submit Recording');
 ?>
