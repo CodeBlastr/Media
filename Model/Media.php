@@ -26,15 +26,9 @@ class Media extends MediaAppModel {
 	);
 
 
-        function afterRate($data) {
-            #debug($data);
-
-        }//afterRate()
-
-    function _generateUUID() {
-        $uuid = $this->query('SELECT UUID() AS uuid');
-        return $uuid[0][0]['uuid'];
-    }//_generateUUID()
+    function afterRate($data) {
+		#debug($data);
+	}//afterRate()
 
 
 }//class{}
