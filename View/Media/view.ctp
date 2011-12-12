@@ -10,7 +10,7 @@ $outputs = json_decode($theMedia['Media']['filename'], true);
 
 // audio files have 1 output currently.. arrays are not the same.. make them so.
 /** @todo this is kinda hacky.. also exists in Media::Stream **/
-if(!is_array($outputs[0])) {
+if($theMedia['Media']['type'] == 'audio') {
 	$temp['outputs'] = $outputs['outputs'];
 	$outputs = null;
 	$outputs['outputs'][0] = $temp['outputs'];
@@ -20,6 +20,10 @@ foreach ($outputs['outputs'] as $output) {
     $outputArray[] = 'http://' . $_SERVER['HTTP_HOST'] . '/media/media/stream/' . $theMedia['Media']['id'] . '/' . $output['label'];
 }
 #debug($outputArray);
+
+//default image
+$thumbnailImage = !empty($medium['Media']['thumbnail']) ? '/theme/default/media/thumbs/'.$medium['Media']['id'].'_000'.$medium['Media']['thumbnail'].'.jpg' : 'http://www.razorit.com/blog/wp-content/uploads/2011/07/logo1.jpg';
+
 
 // load the star ratings files
 $this->Html->script('/ratings/js/jquery.ui.stars.min', null, array('inline'=>false));
@@ -33,7 +37,7 @@ $this->Html->css('/ratings/css/jquery.ui.stars.min', null, array('inline' => fal
         echo $this->Html->video($outputArray, array('width'=>'709', 'height'=>'404'));
     }
     elseif($theMedia['Media']['type'] == 'video') {
-        echo $this->Html->video($outputArray, array('width'=>'709', 'height'=>'404', 'poster'=>'/theme/default/media/thumbs/'.$theMedia['Media']['id'].'_000'.$theMedia['Media']['thumbnail'].'.png'));
+        echo $this->Html->video($outputArray, array('width'=>'709', 'height'=>'404', 'poster'=>$thumbnailImage));
     }
     ?>
 
