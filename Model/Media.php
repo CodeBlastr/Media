@@ -4,7 +4,7 @@ class Media extends MediaAppModel {
 /**
  * An array of file types we accept to the media plugin.
  */
-	public $supportedFileExtensions = array('pdf', 'doc', 'docx');
+	public $supportedFileExtensions = array('pdf', 'doc', 'docx', 'ods');
 
 /**
  * An array of video types we accept to the media plugin.
@@ -35,7 +35,7 @@ class Media extends MediaAppModel {
 			'foreignKey' => 'user_id'
 			)
 		);
-	
+		
 
 	public function __construct($id = false, $table = null, $ds = null) {
 		parent::__construct($id, $table, $ds);
@@ -43,6 +43,7 @@ class Media extends MediaAppModel {
 		$this->uploadFileDirectory = $themeDirectory . 'uploads' . DS . 'files';
 		$this->uploadVideoDirectory =  $themeDirectory . 'uploads';
 		$this->uploadAudioDirectory = $themeDirectory . 'uploads';
+		$this->order = array("{$this->alias}.created");
 	}
 		
 		
