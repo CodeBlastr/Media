@@ -10,10 +10,18 @@ class MediaController extends MediaAppController {
 
 	public function beforeFilter() {
 		parent::beforeFilter();
-		if (!file_exists(ROOT.DS.SITE_DIR.DS.'View'.DS.'Themed'.DS.'Default'.DS.WEBROOT_DIR . DS . 'media')) :
-			mkdir(ROOT.DS.SITE_DIR.DS.'View'.DS.'Themed'.DS.'Default'.DS.WEBROOT_DIR . DS . 'media');
-			mkdir(ROOT.DS.SITE_DIR.DS.'View'.DS.'Themed'.DS.'Default'.DS.WEBROOT_DIR . DS . 'media' . DS . 'recordings');
-			mkdir(ROOT.DS.SITE_DIR.DS.'View'.DS.'Themed'.DS.'Default'.DS.WEBROOT_DIR . DS . 'media' . DS . 'uploads');
+		$themeDirectory = ROOT.DS.SITE_DIR.DS.'View'.DS.'Themed'.DS.'Default'.DS.WEBROOT_DIR . DS;
+		if (!file_exists($themeDirectory . 'media')) :
+			mkdir($themeDirectory . 'media');
+		endif;
+		if (!file_exists($themeDirectory . 'recordings')) :
+			mkdir($themeDirectory . 'recordings');
+		endif;
+		if (!file_exists($themeDirectory . 'uploads')) :
+			mkdir($themeDirectory . 'uploads');
+		endif;
+		if (!file_exists($themeDirectory . 'uploads' . DS . 'files')) :
+			mkdir($themeDirectory . 'uploads' . DS . 'files');
 		endif;
 	}
 
