@@ -6,7 +6,7 @@
             echo '<ul>';
             foreach($media as $medium) {
                 #debug($medium);
-                $thumbnailImage = !empty($medium['Media']['thumbnail']) ? '/theme/default/media/thumbs/'.$medium['Media']['id'].'_000'.$medium['Media']['thumbnail'].'.png' : '/theme/default/media/default.jpg';
+                $thumbnailImage = !empty($medium['Media']['thumbnail']) ? '/theme/default/media/thumbs/'.$medium['Media']['id'].'_000'.$medium['Media']['thumbnail'].'.png' : '/img/noImage.jpg';
                 ?>
                     <li class="mediaIndexLi">
                         <div class="mediaIndexThumbnail">

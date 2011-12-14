@@ -22,7 +22,7 @@ foreach ($outputs['outputs'] as $output) {
 #debug($outputArray);
 
 //default image
-$thumbnailImage = !empty($medium['Media']['thumbnail']) ? '/theme/default/media/thumbs/'.$medium['Media']['id'].'_000'.$medium['Media']['thumbnail'].'.jpg' : 'http://www.razorit.com/blog/wp-content/uploads/2011/07/logo1.jpg';
+$thumbnailImage = !empty($medium['Media']['thumbnail']) ? '/theme/default/media/thumbs/'.$medium['Media']['id'].'_000'.$medium['Media']['thumbnail'].'.jpg' : '/img/noImage.jpg';
 
 
 // load the star ratings files
@@ -34,10 +34,10 @@ echo $this->Html->css('/ratings/css/jquery.ui.stars.min');
 
     <?php
     if($theMedia['Media']['type'] == 'audio') {
-        echo $this->Html->video($outputArray, array('width'=>'709', 'height'=>'404'));
+        echo $this->Html->video($outputArray, array('width'=>'709', 'height'=>'404', 'title'=>$theMedia['Media']['title']));
     }
     elseif($theMedia['Media']['type'] == 'video') {
-        echo $this->Html->video($outputArray, array('width'=>'709', 'height'=>'404', 'poster'=>$thumbnailImage));
+        echo $this->Html->video($outputArray, array('width'=>'709', 'height'=>'404', 'poster'=>$thumbnailImage, 'title'=>$theMedia['Media']['title']));
     }
     ?>
 

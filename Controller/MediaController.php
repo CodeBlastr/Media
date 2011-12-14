@@ -37,7 +37,7 @@ class MediaController extends MediaAppController {
 		$allMedia = $this->Media->find('all', array(
 			'conditions' => array(
 				'Media.filename !=' => '',
-				'Media.is_visible' => '2', // 0 = not on our server; 1 = on server, but no thumbnail; 2 = good to go
+				'Media.is_visible' => '1', // 0 = not on our server; 1 = good to go
 				'Media.type' => $mediaType
 				)
 			));
@@ -47,7 +47,6 @@ class MediaController extends MediaAppController {
 
 	public function add() {
 		#debug($this->request->data);
-		#debug($this->request->params);
 		if(!empty($this->request->data)) {
             $this->request->data['User']['id'] = $this->Auth->user('id');
 			#debug($this->request->data);break;
@@ -72,17 +71,13 @@ class MediaController extends MediaAppController {
 		if (empty($this->request->data)) {
 			$this->request->data = $this->Media->findById($uid);
 		} else {
-			// set is_visible = 2 when there is a thumbnail (for public view status)
-			if(!empty($this->request->data['Media']['thumbnail'])) {
-				$this->request->data['Media']['is_visible'] = 2;
-				// disable Encodeable so we don't process the media
-				$this->Media->Behaviors->disable('Encodable');
-				// save the new media metadata
-				if ($this->Media->save($this->request->data)) {
-					$this->Session->setFlash('Your media has been updated.');
-					$this->redirect(array('action' => 'my'));
-				}
-			}
+            // disable Encodeable so we don't process the media
+            $this->Media->Behaviors->disable('Encodable');
+            // save the new media metadata
+            if ($this->Media->save($this->request->data)) {
+                $this->Session->setFlash('Your media has been updated.');
+                $this->redirect(array('action' => 'my'));
+            }
 		}
 	}//edit()
 
@@ -95,8 +90,14 @@ class MediaController extends MediaAppController {
 	public function view($mediaID = null) {
 
 		if($mediaID) {
+
+            // Increase the Views by 1
+            $this->Media->Behaviors->disable('Encodable');
+            $this->Media->updateAll(array('Media.views'=>'Media.views+1'), array('Media.id'=>$mediaID));
+
 			# Use this to save the Overall Rating to Media.rating
 			$this->Media->calculateRating($mediaID, 'rating');
+
 			$theMedia = $this->Media->find('first', array(
 				'conditions' => array('Media.id' => $mediaID),
 				'contain' => 'User'
@@ -105,6 +106,7 @@ class MediaController extends MediaAppController {
 			# Use these two lines to get the Overall Rating on the fly
 			# $theMediaRating = $this->Media->calculateRating($mediaID);
 			# $theMedia = array_merge($theMediaRating, $theMedia);
+
 			$this->pageTitle = $theMedia['Media']['title'];
 			$this->set('theMedia', $theMedia);
 		}
@@ -129,6 +131,7 @@ class MediaController extends MediaAppController {
 
 /**
  * receives a notification from the encoder and if successful, upgrades the is_visible from 0 to 1
+ * This is currently Zencoder specific
  */
 	public function notification() {
 		$data = $this->request->input('json_decode');
@@ -144,16 +147,13 @@ class MediaController extends MediaAppController {
 
 					// find this zencoder_job_id
 					$encoder_job = $this->Media->find('first', array('conditions' => array('Media.zen_job_id' => $data->job->id)));
-					#$encoder_job['Media']['is_visible'] = '1';
-                                        #debug($encoder_job['Media']['id']);
-					#if($this->Media->save($encoder_job)) {
-                                        $this->Media->id = $encoder_job['Media']['id'];
-                                        $this->Media->Behaviors->disable('Encodable');
+                    $this->Media->id = $encoder_job['Media']['id'];
+                    $this->Media->Behaviors->disable('Encodable');
 					if($this->Media->saveField('is_visible', '1')) {
-                                            echo 'hooray!';
-                                        } else {
-                                            echo 'wtf?'; /** @todo this is not saving due to the beforeSave() .... **/
-                                        }
+                      echo 'hooray!';
+                    } else {
+                      echo 'wtf?';
+                    }
 				}
 
 			} elseif($data['output']['state'] == 'cancelled') {
@@ -229,7 +229,6 @@ class MediaController extends MediaAppController {
 
 					if(isset($filetype)) {
 						// send the file to the browser
-
 						$this->viewClass = 'Media'; // <-- magic!
 						$params = array(
 							'id' => $mediaID . '.' . $filetype['extension'], // this is the full filename.. perhaps the one shown to the user if they download
@@ -246,7 +245,7 @@ class MediaController extends MediaAppController {
 				}//if(Media.type)
 
 			} else {
-                    #$this->Session->setFlash('Requested file format not found.');
+                /** 404 **/
 			}
 
 		}//if($mediaID && $requestedFormat)

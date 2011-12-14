@@ -7,7 +7,7 @@
             echo '<ul>';
             foreach($media as $medium) {
                 #debug($medium);
-                $thumbnailImage = !empty($medium['Media']['thumbnail']) ? '/theme/default/media/thumbs/'.$medium['Media']['id'].'_000'.$medium['Media']['thumbnail'].'.png' : '/theme/default/media/default.jpg';
+                $thumbnailImage = !empty($medium['Media']['thumbnail']) ? '/theme/default/media/thumbs/'.$medium['Media']['id'].'_000'.$medium['Media']['thumbnail'].'.jpg' : '/img/noImage.jpg';
 
 
                 ?>
@@ -23,11 +23,6 @@
                         </div>
                         <div id="media-my_actions">
                             <a href="/media/media/edit/<?php echo $medium['Media']['id'] ?>">Edit</a>
-                            <?php
-                            if(empty($medium['Media']['thumbnail']) && $medium['Media']['type'] == 'video') { // they need to choose a Thumbnail still
-                                echo '<div class="error">Click Edit to customize the Preview Image for this video</div>';
-                            }
-                            ?>
                         </div>
                     </li>
                 <?php
