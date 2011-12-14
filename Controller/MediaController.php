@@ -320,5 +320,10 @@ class MediaController extends MediaAppController {
 		endif;
 
 	}
+	
+	function images() {
+	}
+	function files() {
+	}
 
 }//class{}
