@@ -2,6 +2,7 @@
 class MediaController extends MediaAppController {
 
 	public $name = 'Media';
+	public $uses = 'Media.Media';
 	#var $uid;
 	#var $uses = array('');
 	public $allowedActions = array('index', 'view', 'notification', 'stream', 'my', 'add', 'edit');
