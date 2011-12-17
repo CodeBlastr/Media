@@ -8,13 +8,13 @@
     echo $this->Form->create('Media', array('type' => 'file'));
     echo $this->Form->hidden('Media.user_id', array('value'=> $this->Session->read('Auth.User.id')));
 
+//
+//    $options = array('audio'=>'Audio','video'=>'Video');
+//    $attributes = array('legend'=>'Type of Media');
+//    echo $this->Form->radio('Media.type', $options, $attributes);
 
-    $options = array('audio'=>'Audio','video'=>'Video');
-    $attributes = array('legend'=>'Type of Media');
-    echo $this->Form->radio('Media.type', $options, $attributes);
 
-
-    echo $this->Form->input('Media.submittedfile', array('type'=>'file', 'label' => 'Upload a file from your computer:')); // , 'accept' => 'audio/* video/*'
+    echo $this->Form->input('Media.filename', array('type'=>'file', 'label' => 'Upload a file from your computer:')); // , 'accept' => 'audio/* video/*'
 
     echo $this->Form->input('Media.submittedurl', array('type'=>'text', 'label' => 'Alternatively enter the URL of a file that is already online:'));
 

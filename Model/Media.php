@@ -11,7 +11,7 @@ class Media extends MediaAppModel {
  * @todo These appear in the encodable behavior too.  They should only appear here.
  */
 	public $supportedVideoExtensions = array('mpg', 'mov', 'wmv', 'rm', '3g2', '3gp', '3gp2', '3gpp', '3gpp2', 'avi', 'divx', 'dv', 'dv-avi', 'dvx', 'f4v', 'flv', 'h264', 'hdmov', 'm4v', 'mkv', 'mp4', 'mp4v', 'mpe', 'mpeg', 'mpeg4', 'mpg', 'nsv', 'qt', 'swf', 'xvid');
-	
+
 
 /**
  * An array of audio types we accept to the media plugin.
@@ -31,11 +31,11 @@ class Media extends MediaAppModel {
 
 	public $belongsTo = array(
 	    'User' => array(
-			'className' => 'User',
+			'className' => 'Users.User',
 			'foreignKey' => 'user_id'
 			)
 		);
-		
+
 
 	public function __construct($id = false, $table = null, $ds = null) {
 		parent::__construct($id, $table, $ds);
@@ -45,12 +45,12 @@ class Media extends MediaAppModel {
 		$this->uploadAudioDirectory = $themeDirectory . 'uploads';
 		$this->order = array("{$this->alias}.created");
 	}
-		
-		
+
+
 
 	public function beforeSave() {
-		if (!empty($this->data['Media']['filename']['size'])) : 
-			$this->fileExtension = $this->getFileExtension($this->data['Media']['filename']['name']);	
+		if (!empty($this->data['Media']['filename']['size'])) :
+			$this->fileExtension = $this->getFileExtension($this->data['Media']['filename']['name']);
 			if(in_array($this->fileExtension, $this->supportedFileExtensions)) :
 				# this means its a file (we don't need to specify a type on the input form)
 				$this->Behaviors->detach('Encoders.Encodable');
@@ -59,27 +59,29 @@ class Media extends MediaAppModel {
 				# this means its a video file (we don't need to specify a type on the input form)
 				# @todo 	this won't be any good until there is a standardized field name for the filename.  (as in, this arbitrary, "submittedurl, or  submittedfile" thing probably won't work good.
 				# @todo		put variables like, filePath, and urls, into the options part of this array.
+                $this->data['Media']['type'] = 'video';
 				$this->Behaviors->attach('Encoders.Encodable', array('type' => 'Zencoder'));
 			elseif (in_array($this->fileExtension, $this->supportedAudioExtensions)) :
 				# this means its a audio file (we don't need to specify a type on the input form)
 				# @todo 	this won't be any good until there is a standardized field name for the filename.  (as in, this arbitrary, "submittedurl, or  submittedfile" thing probably won't work good.
-				# @todo		put variables like, filePath, and urls, into the options part of this array.																												
+				# @todo		put variables like, filePath, and urls, into the options part of this array.
+              $this->data['Media']['type'] = 'audio';
 				$this->Behaviors->attach('Encoders.Encodable', array('type' => 'Zencoder'));
 			else :
 				# it must an invalid file type
 				# @todo throw an exception here
 				return false;
 			endif;
-		else : 
+		else :
 			# attach the econdable behavior by default
 			# @todo		put variables like, filePath, and urls, into the options part of this array.
 			$this->Behaviors->attach('Encoders.Encodable', array('type' => 'Zencoder'));
 		endif;
-		
+
 		return true;
 	}
-	
-	
+
+
 	public function afterRate($data) {
 		#debug($data);
 	}//afterRate()
@@ -111,15 +113,15 @@ class Media extends MediaAppModel {
             return strtolower($matches[0]);
         }
     }
-	
-	
+
+
 /**
  * Handles an uloaded file (ie. doc, pdf, etc)
  */
 	public function uploadFile($data) {
 		$uuid = $this->_generateUUID();
 		$newFile =  $this->uploadFileDirectory . DS . $uuid .'.'. $this->fileExtension;
-		if (rename($data['Media']['filename']['tmp_name'], $newFile)) : 
+		if (rename($data['Media']['filename']['tmp_name'], $newFile)) :
 			$data['Media']['id'] = $uuid; // change the filename to just the filename
 			$data['Media']['filename'] = $uuid; // change the filename to just the filename
 			$data['Media']['extension'] = $this->fileExtension; // change the extension to just the extension
