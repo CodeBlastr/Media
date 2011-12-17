@@ -4,7 +4,7 @@ class MediaController extends MediaAppController {
 	public $name = 'Media';
 	#var $uid;
 	#var $uses = array('');
-	public $allowedActions = array('index', 'view', 'notification', 'stream', 'my', 'add', 'edit');
+	public $allowedActions = array('index', 'view', 'notification', 'stream', 'my', 'add', 'edit', 'sorted');
     #public $helpers = array('Ratings.Rating'); # will be loaded regardless
 	public $components = array('Ratings.Ratings');
 
@@ -92,16 +92,20 @@ class MediaController extends MediaAppController {
 		if($mediaID) {
 
             // Increase the Views by 1
-            $this->Media->Behaviors->disable('Encodable');
+            $this->Media->Behaviors->detach('Encodable');
             $this->Media->updateAll(array('Media.views'=>'Media.views+1'), array('Media.id'=>$mediaID));
 
 			# Use this to save the Overall Rating to Media.rating
 			$this->Media->calculateRating($mediaID, 'rating');
 
 			$theMedia = $this->Media->find('first', array(
-				'conditions' => array('Media.id' => $mediaID),
+				'conditions' => array(
+                    'Media.id' => $mediaID
+                    ),
 				'contain' => 'User'
 				));
+            #debug($this->Media->actsAs);
+
 
 			# Use these two lines to get the Overall Rating on the fly
 			# $theMediaRating = $this->Media->calculateRating($mediaID);
@@ -227,7 +231,7 @@ class MediaController extends MediaAppController {
 
 					}// audio/video
 
-					if(isset($filetype)) {
+					if(isset($filetype)) { /** @todo break up to stream & to download & do download data updating **/
 						// send the file to the browser
 						$this->viewClass = 'Media'; // <-- magic!
 						$params = array(
@@ -260,19 +264,21 @@ class MediaController extends MediaAppController {
 	/**
 	 *
 	 * @param string $mediaType
-	 * @param string $sort
+	 * @param string $sortOrder
 	 * @param integer $numberOfResults
 	 * @return array|boolean
 	 */
-	function sorted($mediaType, $field, $sort, $numberOfResults) {
-
+	function sorted($mediaType, $field, $sortOrder, $numberOfResults) {
+#debug('Media.'.$field.' '.strtoupper($sortOrder));
 	    $options = array(
-		'conditions' => array(
+          'conditions' => array(
 		    'Media.type' => strtolower($mediaType),
-		    'Media.is_visible' => '2'
-		),
-		'order' => 'Media.'.$field.' '.$sort,
-		'limit' => $numberOfResults
+		    'Media.is_visible' => '1'
+          ),
+          'order' => array('Media.'.$field => $sortOrder),
+          //'order' => array('Media.id' => 'desc'),
+
+          'limit' => $numberOfResults
 	    );
 
 	    return $this->Media->find('all', $options);

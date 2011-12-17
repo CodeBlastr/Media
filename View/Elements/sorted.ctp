@@ -34,7 +34,7 @@ $sortOrder = !empty($sortOrder) ? $sortOrder : 'desc';
 $numberOfResults = !empty($numberOfResults) ? $numberOfResults : 5;
 
 // Get the Data
-$media = $this->requestAction('/media/media/sorted/'.$mediaType.'/'.$field.'/'.$sort.'/'.$numberOfResults);
+$media = $this->requestAction('/media/media/sorted/'.$mediaType.'/'.$field.'/'.$sortOrder.'/'.$numberOfResults);
 #debug($media);
 
 // Generate the Output
@@ -46,12 +46,12 @@ foreach ($media as $medium) {
        <div class="media_sorted">
 	    <div>
 		<a href="/media/media/view/{$medium['Media']['id']}">
-		    {$medium['Media']['name']}
+		    {$medium['Media']['title']}
 		</a>
 	    </div>
 	    <div>
 		<a href="/media/media/view/{$medium['Media']['id']}">
-		    <img src="/theme/default/media/thumbs/{$medium['Media']['id']}_000{$medium['Media']['thumbnail']}.png" width="144" height="94" alt="{$medium['Media']['name']}" />
+		    <img src="/theme/default/media/thumbs/{$medium['Media']['id']}_000{$medium['Media']['thumbnail']}.jpg" width="144" height="94" alt="{$medium['Media']['title']}" />
 		</a>
 	    </div>
 	    <div>

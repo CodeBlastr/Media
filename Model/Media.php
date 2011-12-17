@@ -31,7 +31,7 @@ class Media extends MediaAppModel {
 
 	public $belongsTo = array(
 	    'User' => array(
-			'className' => 'User',
+			'className' => 'Users.User',
 			'foreignKey' => 'user_id'
 			)
 		);
@@ -49,8 +49,8 @@ class Media extends MediaAppModel {
 
 
 	public function beforeSave() {
-		if (!empty($this->data['Media']['submittedfile']['size'])) :
-			$this->fileExtension = $this->getFileExtension($this->data['Media']['submittedfile']['name']);
+		if (!empty($this->data['Media']['filename']['size'])) :
+			$this->fileExtension = $this->getFileExtension($this->data['Media']['filename']['name']);
 			if(in_array($this->fileExtension, $this->supportedFileExtensions)) :
 				# this means its a file (we don't need to specify a type on the input form)
 				$this->Behaviors->detach('Encoders.Encodable');
@@ -59,11 +59,13 @@ class Media extends MediaAppModel {
 				# this means its a video file (we don't need to specify a type on the input form)
 				# @todo 	this won't be any good until there is a standardized field name for the filename.  (as in, this arbitrary, "submittedurl, or  submittedfile" thing probably won't work good.
 				# @todo		put variables like, filePath, and urls, into the options part of this array.
+                $this->data['Media']['type'] = 'video';
 				$this->Behaviors->attach('Encoders.Encodable', array('type' => 'Zencoder'));
 			elseif (in_array($this->fileExtension, $this->supportedAudioExtensions)) :
 				# this means its a audio file (we don't need to specify a type on the input form)
 				# @todo 	this won't be any good until there is a standardized field name for the filename.  (as in, this arbitrary, "submittedurl, or  submittedfile" thing probably won't work good.
 				# @todo		put variables like, filePath, and urls, into the options part of this array.
+              $this->data['Media']['type'] = 'audio';
 				$this->Behaviors->attach('Encoders.Encodable', array('type' => 'Zencoder'));
 			else :
 				# it must an invalid file type
