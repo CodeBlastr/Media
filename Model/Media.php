@@ -49,6 +49,36 @@ class Media extends MediaAppModel {
 
 
 	public function beforeSave() {
+		debug($this->data);
+		break;
+		if ($this->data['Media.type'] == 'record') {
+            $this->data['Media']['user_id'] = CakeSession::read('Auth.User.id');
+			$fileName = $this->data['Media']['uuid'];
+			$url = '/theme/default/media/recordings/'.$fileName.'.flv';
+			if (file_exists('/home/razorit/source/red5-read-only/dist/webapps/oflaDemo/streams/'.$fileName.'.flv')) {
+				if(rename('/home/razorit/source/red5-read-only/dist/webapps/oflaDemo/streams/'.$fileName.'.flv', ROOT.DS.SITE_DIR.DS.'View'.DS.'Themed'.DS.'Default'.DS.WEBROOT_DIR . DS . 'media' . DS . 'uploads' . DS . $fileName.'.flv')) {
+					echo $url = '/theme/default/media/uploads/'.$fileName.'.flv';
+				} else {
+					echo 'File could not be moved';
+					return false;
+				}
+			} else {
+				echo 'File does not exist.';
+				return false;
+			}
+
+			#echo '<a href="http://'.$_SERVER['HTTP_HOST'].$url.'">right click this one</a>';
+			$this->data['Media']['filename']['name'] = $fileName.'.flv';
+			$this->data['Media']['filename']['type'] = 'video/x-flv';
+			$this->data['Media']['filename']['tmp_name'] = '/home/razorit/source/red5-read-only/dist/webapps/oflaDemo/streams/'.$fileName.'.flv';
+			$this->data['Media']['filename']['error'] = 0;
+			$this->data['Media']['filename']['size'] = 99999;
+		}
+		
+		
+		
+		
+		
 		if (!empty($this->data['Media']['filename']['size'])) :
 			$this->fileExtension = $this->getFileExtension($this->data['Media']['filename']['name']);
 			if(in_array($this->fileExtension, $this->supportedFileExtensions)) :

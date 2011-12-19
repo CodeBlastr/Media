@@ -5,7 +5,7 @@ class MediaController extends MediaAppController {
 	public $uses = 'Media.Media';
 	#var $uid;
 	#var $uses = array('');
-	public $allowedActions = array('index', 'view', 'notification', 'stream', 'my', 'add', 'edit', 'sorted');
+	public $allowedActions = array('index', 'view', 'notification', 'stream', 'my', 'add', 'edit', 'sorted', 'record');
     #public $helpers = array('Ratings.Rating'); # will be loaded regardless
 	public $components = array('Ratings.Ratings');
 
@@ -297,25 +297,25 @@ class MediaController extends MediaAppController {
 		$this->set('foreignKey', $foreignKey);
 
 		if(!empty($this->request->data)) :
-            $this->request->data['User']['id'] = $this->Auth->user('id');
+            /*$this->request->data['User']['id'] = $this->Auth->user('id');
 			$fileName = $this->request->data['Media']['uuid'];
 			$url = '/theme/default/media/recordings/'.$fileName.'.flv';
-			#if (file_exists('/home/razorit/source/red5-read-only/dist/webapps/oflaDemo/streams/'.$fileName.'.flv')) {
-			#	if(rename('/home/razorit/source/red5-read-only/dist/webapps/oflaDemo/streams/'.$fileName.'.flv', ROOT.DS.SITE_DIR.DS.'View'.DS.'Themed'.DS.'Default'.DS.WEBROOT_DIR . DS . 'media' . DS . 'uploads' . DS . $fileName.'.flv')) {
-			#		echo $url = '/theme/default/media/uploads/'.$fileName.'.flv';
-			#	} else {
-			#		echo 'File could not be moved';
-			#	}
-			#} else {
-			#	echo 'File does not exist.';
-			#}
+			if (file_exists('/home/razorit/source/red5-read-only/dist/webapps/oflaDemo/streams/'.$fileName.'.flv')) {
+				if(rename('/home/razorit/source/red5-read-only/dist/webapps/oflaDemo/streams/'.$fileName.'.flv', ROOT.DS.SITE_DIR.DS.'View'.DS.'Themed'.DS.'Default'.DS.WEBROOT_DIR . DS . 'media' . DS . 'uploads' . DS . $fileName.'.flv')) {
+					echo $url = '/theme/default/media/uploads/'.$fileName.'.flv';
+				} else {
+					echo 'File could not be moved';
+				}
+			} else {
+				echo 'File does not exist.';
+			}
 
 			#echo '<a href="http://'.$_SERVER['HTTP_HOST'].$url.'">right click this one</a>';
 			$this->request->data['Media']['submittedfile']['name'] = $fileName.'.flv';
 			$this->request->data['Media']['submittedfile']['type'] = 'video/x-flv';
 			$this->request->data['Media']['submittedfile']['tmp_name'] = '/home/razorit/source/red5-read-only/dist/webapps/oflaDemo/streams/'.$fileName.'.flv';
 			$this->request->data['Media']['submittedfile']['error'] = 0;
-			$this->request->data['Media']['submittedfile']['size'] = 99999;
+			$this->request->data['Media']['submittedfile']['size'] = 99999;*/
 
 			if ($this->Media->save($this->request->data)) {
 				$this->Session->setFlash('Media saved and being encoded.');
