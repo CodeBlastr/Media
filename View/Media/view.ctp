@@ -19,10 +19,12 @@ if($theMedia['Media']['type'] == 'audio') {
 foreach ($outputs['outputs'] as $output) {
     $outputArray[] = 'http://' . $_SERVER['HTTP_HOST'] . '/media/media/stream/' . $theMedia['Media']['id'] . '/' . $output['label'];
 }
-#debug($outputArray);
+debug('Fix this outputArray -- Move all of this output to the afterFind() in the Media model.');
+debug($outputArray);
+break;
 
 //default image
-$thumbnailImage = !empty($medium['Media']['thumbnail']) ? '/theme/default/media/thumbs/'.$medium['Media']['id'].'_000'.$medium['Media']['thumbnail'].'.jpg' : '/img/noImage.jpg';
+$thumbnailImage = !empty($medium['Media']['thumbnail']) ? '/theme/default/media/'.strtolower(pluginize($medium['Media']['model'])).'/images/thumbs/'.$medium['Media']['id'].'_000'.$medium['Media']['thumbnail'].'.jpg' : '/img/noImage.jpg';
 
 
 // load the star ratings files
@@ -36,11 +38,10 @@ echo $this->Html->css('/ratings/css/jquery.ui.stars.min');
     if($theMedia['Media']['type'] == 'audio') {
         echo $this->Html->video($outputArray, array('width'=>'709', 'height'=>'404', 'title'=>$theMedia['Media']['title']));
     }
-    elseif($theMedia['Media']['type'] == 'video') {
+    elseif($theMedia['Media']['type'] == 'videos') {
         echo $this->Html->video($outputArray, array('width'=>'709', 'height'=>'404', 'poster'=>$thumbnailImage, 'title'=>$theMedia['Media']['title']));
     }
     ?>
-
     <div id="mediaView_titleBox">
         <div id="mediaView_titleInfo">
             <?php

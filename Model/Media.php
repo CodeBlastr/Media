@@ -167,7 +167,8 @@ class Media extends MediaAppModel {
 				mkdir($this->themeDirectory . $this->plugin . DS . 'videos') && 
 				mkdir($this->themeDirectory . $this->plugin . DS . 'docs') &&
 				mkdir($this->themeDirectory . $this->plugin . DS . 'audio') &&
-				mkdir($this->themeDirectory . $this->plugin . DS . 'images')
+				mkdir($this->themeDirectory . $this->plugin . DS . 'images') &&
+				mkdir($this->themeDirectory . $this->plugin . DS . 'images' . DS . 'thumbs')
 				) {
 				return true;
 			} else {
