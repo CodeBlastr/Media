@@ -26,7 +26,8 @@ class Media extends MediaAppModel {
 			'saveToField' => true,
 			//'field' => 'rating'
 			//'modelClass' => 'Media.Media'
-			)
+			),
+		'Encoders.Encodable',
 		);
 
 	public $belongsTo = array(
@@ -39,82 +40,44 @@ class Media extends MediaAppModel {
 
 	public function __construct($id = false, $table = null, $ds = null) {
 		parent::__construct($id, $table, $ds);
-		$themeDirectory = ROOT.DS.SITE_DIR.DS.'View'.DS.'Themed'.DS.'Default'.DS.WEBROOT_DIR . DS . 'media' . DS;
-		$this->uploadFileDirectory = $themeDirectory . 'uploads' . DS . 'files';
-		$this->uploadVideoDirectory =  $themeDirectory . 'uploads';
-		$this->uploadAudioDirectory = $themeDirectory . 'uploads';
+		$this->themeDirectory = ROOT.DS.SITE_DIR.DS.'View'.DS.'Themed'.DS.'Default'.DS.WEBROOT_DIR.DS.'media'.DS;
+		$this->uploadFileDirectory = 'docs';
+		$this->uploadVideoDirectory =  'videos';
+		$this->uploadAudioDirectory = 'audio';
+		$this->uploadImageDirectory = 'images';
 		$this->order = array("{$this->alias}.created");
 	}
 
 
 
-	public function beforeSave() {
-		debug($this->data);
-		break;
-		if ($this->data['Media.type'] == 'record') {
-            $this->data['Media']['user_id'] = CakeSession::read('Auth.User.id');
-			$fileName = $this->data['Media']['uuid'];
-			$url = '/theme/default/media/recordings/'.$fileName.'.flv';
-			if (file_exists('/home/razorit/source/red5-read-only/dist/webapps/oflaDemo/streams/'.$fileName.'.flv')) {
-				if(rename('/home/razorit/source/red5-read-only/dist/webapps/oflaDemo/streams/'.$fileName.'.flv', ROOT.DS.SITE_DIR.DS.'View'.DS.'Themed'.DS.'Default'.DS.WEBROOT_DIR . DS . 'media' . DS . 'uploads' . DS . $fileName.'.flv')) {
-					echo $url = '/theme/default/media/uploads/'.$fileName.'.flv';
-				} else {
-					echo 'File could not be moved';
-					return false;
-				}
-			} else {
-				echo 'File does not exist.';
-				return false;
-			}
-
-			#echo '<a href="http://'.$_SERVER['HTTP_HOST'].$url.'">right click this one</a>';
-			$this->data['Media']['filename']['name'] = $fileName.'.flv';
-			$this->data['Media']['filename']['type'] = 'video/x-flv';
-			$this->data['Media']['filename']['tmp_name'] = '/home/razorit/source/red5-read-only/dist/webapps/oflaDemo/streams/'.$fileName.'.flv';
-			$this->data['Media']['filename']['error'] = 0;
-			$this->data['Media']['filename']['size'] = 99999;
+	public function beforeSave($options) {
+		$this->data['Media']['model'] = !empty($this->data['Media']['model']) ? $this->data['Media']['model'] : 'Media';
+		$this->plugin = strtolower(pluginize($this->data['Media']['model']));
+		$this->_createDirectories();
+		$this->data = $this->_handleRecordings($this->data);
+		$this->fileExtension = $this->getFileExtension($this->data['Media']['filename']['name']);
+		
+		
+		if(in_array($this->fileExtension, $this->supportedFileExtensions)) { 
+			$this->data['Media']['type'] = 'docs';
+			$this->data = $this->uploadFile($data);
+		} elseif (in_array($this->fileExtension, $this->supportedVideoExtensions)) {
+			 $this->data['Media']['type'] = 'videos';
+			 $this->data = $this->encode($this);
+		} elseif (in_array($this->fileExtension, $this->supportedAudioExtensions)) {
+			 $this->data['Media']['type'] = 'audio';
+			 $this->data = $this->encode($this);
+		} else {
+			# an unsupported file type
+			return false;
 		}
-		
-		
-		
-		
-		
-		if (!empty($this->data['Media']['filename']['size'])) :
-			$this->fileExtension = $this->getFileExtension($this->data['Media']['filename']['name']);
-			if(in_array($this->fileExtension, $this->supportedFileExtensions)) :
-				# this means its a file (we don't need to specify a type on the input form)
-				$this->Behaviors->detach('Encoders.Encodable');
-				$this->data = $this->uploadFile($this->data);
-			elseif (in_array($this->fileExtension, $this->supportedVideoExtensions)) :
-				# this means its a video file (we don't need to specify a type on the input form)
-				# @todo 	this won't be any good until there is a standardized field name for the filename.  (as in, this arbitrary, "submittedurl, or  submittedfile" thing probably won't work good.
-				# @todo		put variables like, filePath, and urls, into the options part of this array.
-                $this->data['Media']['type'] = 'video';
-				$this->Behaviors->attach('Encoders.Encodable', array('type' => 'Zencoder'));
-			elseif (in_array($this->fileExtension, $this->supportedAudioExtensions)) :
-				# this means its a audio file (we don't need to specify a type on the input form)
-				# @todo 	this won't be any good until there is a standardized field name for the filename.  (as in, this arbitrary, "submittedurl, or  submittedfile" thing probably won't work good.
-				# @todo		put variables like, filePath, and urls, into the options part of this array.
-              $this->data['Media']['type'] = 'audio';
-				$this->Behaviors->attach('Encoders.Encodable', array('type' => 'Zencoder'));
-			else :
-				# it must an invalid file type
-				# @todo throw an exception here
-				return false;
-			endif;
-		else :
-			# attach the econdable behavior by default
-			# @todo		put variables like, filePath, and urls, into the options part of this array.
-			$this->Behaviors->attach('Encoders.Encodable', array('type' => 'Zencoder'));
-		endif;
-
 		return true;
 	}
-
+  
 
 	public function afterRate($data) {
 		#debug($data);
-	}//afterRate()
+	}
 
 
 
@@ -155,11 +118,63 @@ class Media extends MediaAppModel {
 			$data['Media']['id'] = $uuid; // change the filename to just the filename
 			$data['Media']['filename'] = $uuid; // change the filename to just the filename
 			$data['Media']['extension'] = $this->fileExtension; // change the extension to just the extension
-			$data['Media']['type'] = 'file';
+			$data['Media']['type'] = 'docs';
 			return $data;
 		else :
 			throw new Exception(__d('media', 'File Upload of ' . $data['Media']['filename']['name'] . ' to ' . $newFile . '  Failed'));
 		endif;
+	}
+	
+
+/**
+ * Recordings were saved to the recording server, and now we need to move them to the local server. 
+ * 
+ */
+	private function _handleRecordings($data) {
+		if ($data['Media']['type'] == 'record') {
+			$fileName = $data['Media']['uuid'];
+			$serverFile = '/home/razorit/source/red5-read-only/dist/webapps/oflaDemo/streams/'.$fileName.'.flv';
+			$localFile = $this->themeDirectory . $this->plugin . DS . 'videos' . DS . $fileName.'.flv';
+			#$url = '/theme/default/media/'.$this->pluginFolder.'/videos/'.$fileName.'.flv';
+						
+			if (file_exists($serverFile)) {
+				if(rename($serverFile, $localFile)) {
+					#echo $url = '/theme/default/media/'.$this->pluginFolder.'/videos/'.$fileName.'.flv';
+				} else {
+					return false;
+				}
+			} else {
+				return false;
+			}
+
+			$data['Media']['filename']['name'] = $fileName.'.flv';
+			$data['Media']['filename']['type'] = 'video/x-flv';
+			$data['Media']['filename']['tmp_name'] = $localFile;
+			$data['Media']['filename']['error'] = 0;
+			$data['Media']['filename']['size'] = 99999; // 
+		}
+		return $data;
+	}
+	
+	
+/**
+ * Create the directories for this plugin if they aren't there already.
+ */
+	private function _createDirectories() {
+		if (!file_exists($this->themeDirectory . $this->plugin)) {
+			if (
+				mkdir($this->themeDirectory . $this->plugin) && 
+				mkdir($this->themeDirectory . $this->plugin . DS . 'videos') && 
+				mkdir($this->themeDirectory . $this->plugin . DS . 'docs') &&
+				mkdir($this->themeDirectory . $this->plugin . DS . 'audio') &&
+				mkdir($this->themeDirectory . $this->plugin . DS . 'images')
+				) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {return true;
+		}
 	}
 
 

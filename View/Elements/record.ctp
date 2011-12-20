@@ -81,6 +81,17 @@ if ( hasProductInstall && !hasRequestedVersion ) {
 </noscript>
 
 <?php 
+if ($hasMany === true) {
+  if ($form !== false) { echo $this->Form->create('Media', array('type' => 'file')); }
+    echo $this->Form->hidden('Media.0.title', array('value' => ''));
+    echo $this->Form->hidden('Media.0.description', array('value' => ''));
+    echo $this->Form->hidden('Media.0.uuid', array('value' => $uuid));
+    echo $this->Form->hidden('Media.0.user_id', array('value'=> $this->Session->read('Auth.User.id')));
+    echo $this->Form->hidden('Media.0.type', array('value' => 'record'));
+    echo $this->Form->hidden('Media.0.model', array('value' => $model));
+    #echo $this->Form->hidden('Media.foreign_key', array('value' => $foreignKey));
+  if ($form !== false) { echo $this->Form->end('Submit Recording'); }
+} else {
    if ($form !== false) { echo $this->Form->create('Media', array('type' => 'file')); }
     echo $this->Form->hidden('Media.title', array('value' => ''));
     echo $this->Form->hidden('Media.description', array('value' => ''));
@@ -88,6 +99,7 @@ if ( hasProductInstall && !hasRequestedVersion ) {
     echo $this->Form->hidden('Media.user_id', array('value'=> $this->Session->read('Auth.User.id')));
     echo $this->Form->hidden('Media.type', array('value' => 'record'));
     echo $this->Form->hidden('Media.model', array('value' => $model));
-    echo $this->Form->hidden('Media.foreign_key', array('value' => $foreignKey));
+    #echo $this->Form->hidden('Media.foreign_key', array('value' => $foreignKey));
   if ($form !== false) { echo $this->Form->end('Submit Recording'); }
+}
 ?>
