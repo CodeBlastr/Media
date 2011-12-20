@@ -60,7 +60,7 @@ class Media extends MediaAppModel {
 		
 		if(in_array($this->fileExtension, $this->supportedFileExtensions)) { 
 			$this->data['Media']['type'] = 'docs';
-			$this->data = $this->uploadFile($data);
+			$this->data = $this->uploadFile($this->data);
 		} elseif (in_array($this->fileExtension, $this->supportedVideoExtensions)) {
 			 $this->data['Media']['type'] = 'videos';
 			 $this->data = $this->encode($this);
@@ -113,7 +113,7 @@ class Media extends MediaAppModel {
  */
 	public function uploadFile($data) {
 		$uuid = $this->_generateUUID();
-		$newFile =  $this->uploadFileDirectory . DS . $uuid .'.'. $this->fileExtension;
+		$newFile =  $this->themeDirectory . strtolower(pluginize($data['Media']['model'])) . DS . $this->uploadFileDirectory . DS . $uuid .'.'. $this->fileExtension;
 		if (rename($data['Media']['filename']['tmp_name'], $newFile)) :
 			$data['Media']['id'] = $uuid; // change the filename to just the filename
 			$data['Media']['filename'] = $uuid; // change the filename to just the filename
