@@ -174,24 +174,12 @@ class MediaController extends MediaAppController {
 	function stream($mediaID = null, $requestedFormat = FALSE) {
 		#debug($this->request->params);break;
 		if($mediaID && $requestedFormat) {
+
 			// find the filetype
 			$theMedia = $this->Media->findById($mediaID);
 
-			// what formats did we receive from the encoder?
-			$outputs = json_decode($theMedia['Media']['filename'], true);
-			#debug($outputs);
-
-			// audio files have 1 output currently.. arrays are not the same.. make them so.
-			/** @todo this is kinda hacky.. also exists in media/view **/
-			if($theMedia['Media']['type'] == 'audio') {
-				$temp['outputs'] = $outputs['outputs'];
-				$outputs = null;
-				$outputs['outputs'][0] = $temp['outputs'];
-			}
-
-			foreach($outputs['outputs'] as $output) {
-				#debug($output);
-				if($output['label'] == $requestedFormat) $outputTypeFound = true;
+			foreach($theMedia['Media']['ext'] as $outputExtension) {
+				if($outputExtension == $requestedFormat) $outputTypeFound = true;
 			}
 
 			if($outputTypeFound) {
@@ -318,7 +306,7 @@ class MediaController extends MediaAppController {
 		endif;
 
 	}
-	
+
 	function images() {
 	}
 	function files() {

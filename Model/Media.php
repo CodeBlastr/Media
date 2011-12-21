@@ -56,9 +56,9 @@ class Media extends MediaAppModel {
 		$this->_createDirectories();
 		$this->data = $this->_handleRecordings($this->data);
 		$this->fileExtension = $this->getFileExtension($this->data['Media']['filename']['name']);
-		
-		
-		if(in_array($this->fileExtension, $this->supportedFileExtensions)) { 
+
+
+		if(in_array($this->fileExtension, $this->supportedFileExtensions)) {
 			$this->data['Media']['type'] = 'docs';
 			$this->data = $this->uploadFile($this->data);
 		} elseif (in_array($this->fileExtension, $this->supportedVideoExtensions)) {
@@ -72,9 +72,56 @@ class Media extends MediaAppModel {
 			return false;
 		}
 		return true;
-	}
-  
+	}//beforeSave()
 
+
+    /**
+     *
+     * @param type $results
+     * @param type $primary
+     * @return array 
+     */
+    public function afterFind($results, $primary = false) {
+
+      foreach($results as $key => $val) {
+        if(isset($val['Media']['filename'])) {
+
+          // what formats did we receive from the encoder?
+          $outputs = json_decode($val['Media']['filename'], true);
+
+          // audio files have 1 output currently.. arrays are not the same.. make them so.
+          /** @todo this part is kinda hacky.. **/
+          if($val['Media']['type'] == 'audio') {
+              $temp['outputs'] = $outputs['outputs'];
+              $outputs = null;
+              $outputs['outputs'][0] = $temp['outputs'];
+          }
+
+          $outputArray = $extensionArray = null;
+          foreach ($outputs['outputs'] as $output) {
+              $outputArray[] = 'http://' . $_SERVER['HTTP_HOST'] . '/media/media/stream/' . $val['Media']['id'] . '/' . $output['label'];
+              $extensionArray[] = $output['label'];
+          }
+
+          // set the modified ['filename']
+          $results[$key]['Media']['filename'] = $outputArray;
+          $results[$key]['Media']['ext'] = $extensionArray;
+        }
+
+      }
+
+      #debug($results);
+
+      return $results;
+
+    }//afterFind()
+
+
+    /**
+     * This is a valid callback that comes with the Rateable plugin
+     * It is being kept here for future reference/use
+     * @param array $data
+     */
 	public function afterRate($data) {
 		#debug($data);
 	}
@@ -124,11 +171,11 @@ class Media extends MediaAppModel {
 			throw new Exception(__d('media', 'File Upload of ' . $data['Media']['filename']['name'] . ' to ' . $newFile . '  Failed'));
 		endif;
 	}
-	
+
 
 /**
- * Recordings were saved to the recording server, and now we need to move them to the local server. 
- * 
+ * Recordings were saved to the recording server, and now we need to move them to the local server.
+ *
  */
 	private function _handleRecordings($data) {
 		if ($data['Media']['type'] == 'record') {
@@ -136,7 +183,7 @@ class Media extends MediaAppModel {
 			$serverFile = '/home/razorit/source/red5-read-only/dist/webapps/oflaDemo/streams/'.$fileName.'.flv';
 			$localFile = $this->themeDirectory . $this->plugin . DS . 'videos' . DS . $fileName.'.flv';
 			#$url = '/theme/default/media/'.$this->pluginFolder.'/videos/'.$fileName.'.flv';
-						
+
 			if (file_exists($serverFile)) {
 				if(rename($serverFile, $localFile)) {
 					#echo $url = '/theme/default/media/'.$this->pluginFolder.'/videos/'.$fileName.'.flv';
@@ -151,20 +198,20 @@ class Media extends MediaAppModel {
 			$data['Media']['filename']['type'] = 'video/x-flv';
 			$data['Media']['filename']['tmp_name'] = $localFile;
 			$data['Media']['filename']['error'] = 0;
-			$data['Media']['filename']['size'] = 99999; // 
+			$data['Media']['filename']['size'] = 99999; //
 		}
 		return $data;
 	}
-	
-	
+
+
 /**
  * Create the directories for this plugin if they aren't there already.
  */
 	private function _createDirectories() {
 		if (!file_exists($this->themeDirectory . $this->plugin)) {
 			if (
-				mkdir($this->themeDirectory . $this->plugin) && 
-				mkdir($this->themeDirectory . $this->plugin . DS . 'videos') && 
+				mkdir($this->themeDirectory . $this->plugin) &&
+				mkdir($this->themeDirectory . $this->plugin . DS . 'videos') &&
 				mkdir($this->themeDirectory . $this->plugin . DS . 'docs') &&
 				mkdir($this->themeDirectory . $this->plugin . DS . 'audio') &&
 				mkdir($this->themeDirectory . $this->plugin . DS . 'images') &&
