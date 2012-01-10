@@ -6,7 +6,7 @@
 
 
 //default image
-$thumbnailImage = !empty($theMedia['Media']['thumbnail']) ? '/theme/default/media/'.strtolower(pluginize($theMedia['Media']['model'])).'/images/thumbs/'.$theMedia['Media']['id'].'_000'.$theMedia['Media']['thumbnail'].'.jpg' : '/img/noImage.jpg';
+$thumbnailImage = !empty($theMedia['Media']['thumbnail']) ? '/theme/default/media/'.strtolower(ZuhaInflector::pluginize($theMedia['Media']['model'])).'/images/thumbs/'.$theMedia['Media']['id'].'_000'.$theMedia['Media']['thumbnail'].'.jpg' : '/img/noImage.jpg';
 
 
 // load the star ratings files

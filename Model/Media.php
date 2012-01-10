@@ -52,7 +52,7 @@ class Media extends MediaAppModel {
 
 	public function beforeSave($options) {
 		$this->data['Media']['model'] = !empty($this->data['Media']['model']) ? $this->data['Media']['model'] : 'Media';
-		$this->plugin = strtolower(pluginize($this->data['Media']['model']));
+		$this->plugin = strtolower(ZuhaInflector::pluginize($this->data['Media']['model']));
 		$this->_createDirectories();
 		$this->data = $this->_handleRecordings($this->data);
 		$this->fileExtension = $this->getFileExtension($this->data['Media']['filename']['name']);
@@ -160,7 +160,7 @@ class Media extends MediaAppModel {
  */
 	public function uploadFile($data) {
 		$uuid = $this->_generateUUID();
-		$newFile =  $this->themeDirectory . strtolower(pluginize($data['Media']['model'])) . DS . $this->uploadFileDirectory . DS . $uuid .'.'. $this->fileExtension;
+		$newFile =  $this->themeDirectory . strtolower(ZuhaInflector::pluginize($data['Media']['model'])) . DS . $this->uploadFileDirectory . DS . $uuid .'.'. $this->fileExtension;
 		if (rename($data['Media']['filename']['tmp_name'], $newFile)) :
 			$data['Media']['id'] = $uuid; // change the filename to just the filename
 			$data['Media']['filename'] = $uuid; // change the filename to just the filename
