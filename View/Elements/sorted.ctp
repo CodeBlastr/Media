@@ -41,7 +41,7 @@ $media = $this->requestAction('/media/media/sorted/'.$mediaType.'/'.$field.'/'.$
 $output = '';
 foreach ($media as $medium) {
 
-    $output .= <<<HTML
+   $output .= <<<HTML
    <li>
        <div class="media_sorted">
 	    <div>
