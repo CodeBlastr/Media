@@ -2,7 +2,8 @@
 # default settings
 $width = !empty($width) ? $width : 320;
 $height = !empty($height) ? $height : 240;
-$quality = !empty($quality) ? $quality : 'high'; ?>
+$quality = !empty($quality) ? $quality : 'high';
+$showVolume = !empty($showVolume) ? $showVolume : 1; ?>
 
 <?php echo $this->Html->script('/media/record/AC_OETags'); ?>
 <!--  BEGIN Browser History required section -->
@@ -37,15 +38,15 @@ if ( hasProductInstall && !hasRequestedVersion ) {
     document.title = document.title.slice(0, 47) + " - Flash Player Installation";
     var MMdoctitle = document.title;
 
-	AC_FL_RunContent( 'id','red5recorder','width','<?php echo $width; ?>','height','<?php echo $height; ?>','codebase','http://fpdownload.macromedia.com/get/flashplayer/current/swflash.cab','movie','red5recorder','quality','<?php echo $quality; ?>','bgcolor','#869ca7','allowscriptaccess','sameDomain' ); //end AC code
+	AC_FL_RunContent( 'id','red5recorder','width', <?php echo $width; ?>,'height', <?php echo $height; ?>,'codebase','http://fpdownload.macromedia.com/get/flashplayer/current/swflash.cab','movie','red5recorder','quality','<?php echo $quality; ?>','bgcolor','#869ca7','allowscriptaccess','sameDomain' ); //end AC code
 } else if (hasRequestedVersion) {
 	// if we've detected an acceptable version
 	// embed the Flash Content SWF when all tests are passed
 	AC_FL_RunContent(
 			"src", "/media/record/red5recorder",
-			"FlashVars", "server=rtmp://razorit.com:1935/oflaDemo/&fps=15&quality=90&fileName=<?php echo $uuid; ?>&keyFrame=6&MMredirectURL="+MMredirectURL+'&MMplayerType='+MMPlayerType+'&MMdoctitle='+MMdoctitle+"",			
-			"width", "<?php echo $width; ?>",
-			"height", "<?php echo $height; ?>",
+			"FlashVars", "server=rtmp://razorit.com:1935/oflaDemo/&fps=15&quality=90&fileName=<?php echo $uuid; ?>&keyFrame=6&MMredirectURL="+MMredirectURL+'&MMplayerType='+MMPlayerType+'&MMdoctitle='+MMdoctitle+"&width=<?php echo $width; ?>&height=<?php echo $height; ?>&showVolume=<?php echo $showVolume; ?>",			
+			"width", <?php echo $width; ?>,
+			"height", <?php echo $height; ?>,
 			"align", "middle",
 			"id", "red5recorder",
 			"quality", "<?php echo $quality; ?>",
@@ -61,8 +62,13 @@ if ( hasProductInstall && !hasRequestedVersion ) {
    	+ '<a href=http://www.adobe.com/go/getflash/>Get Flash</a>';
     document.write(alternateContent);  // insert non-flash content
   }
-  
 // -->
+
+function startRecording() {
+ 	document.getElementById("startRecording").startRecording(); 
+	// start the recording of the video 
+	return false;
+}
   </script>
 
 <noscript>
@@ -108,4 +114,3 @@ if ($hasMany === true) {
     #echo $this->Form->hidden('Media.foreign_key', array('value' => $foreignKey));
   if ($form !== false) { echo $this->Form->end('Submit Recording'); }
 }
-?>
