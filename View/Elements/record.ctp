@@ -1,3 +1,9 @@
+<?php
+# default settings
+$width = !empty($width) ? $width : 320;
+$height = !empty($height) ? $height : 240;
+$quality = !empty($quality) ? $quality : 'high'; ?>
+
 <?php echo $this->Html->script('/media/record/AC_OETags'); ?>
 <!--  BEGIN Browser History required section -->
 <?php echo $this->Html->script('/media/record/history/history'); ?>
@@ -31,18 +37,18 @@ if ( hasProductInstall && !hasRequestedVersion ) {
     document.title = document.title.slice(0, 47) + " - Flash Player Installation";
     var MMdoctitle = document.title;
 
-	AC_FL_RunContent( 'id','red5recorder','width','320','height','240','codebase','http://fpdownload.macromedia.com/get/flashplayer/current/swflash.cab','movie','red5recorder','quality','high','bgcolor','#869ca7','allowscriptaccess','sameDomain' ); //end AC code
+	AC_FL_RunContent( 'id','red5recorder','width','<?php echo $width; ?>','height','<?php echo $height; ?>','codebase','http://fpdownload.macromedia.com/get/flashplayer/current/swflash.cab','movie','red5recorder','quality','<?php echo $quality; ?>','bgcolor','#869ca7','allowscriptaccess','sameDomain' ); //end AC code
 } else if (hasRequestedVersion) {
 	// if we've detected an acceptable version
 	// embed the Flash Content SWF when all tests are passed
 	AC_FL_RunContent(
 			"src", "/media/record/red5recorder",
 			"FlashVars", "server=rtmp://razorit.com:1935/oflaDemo/&fps=15&quality=90&fileName=<?php echo $uuid; ?>&keyFrame=6&MMredirectURL="+MMredirectURL+'&MMplayerType='+MMPlayerType+'&MMdoctitle='+MMdoctitle+"",			
-			"width", "320",
-			"height", "240",
+			"width", "<?php echo $width; ?>",
+			"height", "<?php echo $height; ?>",
 			"align", "middle",
 			"id", "red5recorder",
-			"quality", "high",
+			"quality", "<?php echo $quality; ?>",
 			"bgcolor", "#869ca7",
 			"name", "red5recorder",
 			"allowScriptAccess","sameDomain",
@@ -62,17 +68,17 @@ if ( hasProductInstall && !hasRequestedVersion ) {
 <noscript>
 <object 
 	classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"
-	id="red5recorder" width="320" height="240"
+	id="red5recorder" width="<?php echo $width; ?>" height="<?php echo $height; ?>"
 	codebase="http://fpdownload.macromedia.com/get/flashplayer/current/swflash.cab">
 	  <param name="movie" value="/media/record/red5recorder.swf" />
-	  <param name="quality" value="high" />
+	  <param name="quality" value="<?php echo $quality; ?>" />
 	  <param name="bgcolor" value="#869ca7" />
 	  <param name="allowScriptAccess" value="sameDomain" />
 	  <embed src="/media/record/red5recorder.swf" quality="high" bgcolor="#869ca7"
-			width="320" height="240" name="red5recorder" align="middle"
+			width="<?php echo $width; ?>" height="<?php echo $height; ?>" name="red5recorder" align="middle"
 			play="true"
 			loop="false"
-			quality="high"
+			quality="<?php echo $quality; ?>"
 			allowScriptAccess="sameDomain"
 			type="application/x-shockwave-flash"
 			pluginspage="http://www.adobe.com/go/getflashplayer">

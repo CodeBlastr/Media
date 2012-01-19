@@ -52,7 +52,7 @@ class Media extends MediaAppModel {
 
 	public function beforeSave($options) {
 		$this->data['Media']['model'] = !empty($this->data['Media']['model']) ? $this->data['Media']['model'] : 'Media';
-		$this->plugin = strtolower(pluginize($this->data['Media']['model']));
+		$this->plugin = strtolower(ZuhaInflector::pluginize($this->data['Media']['model']));
 		$this->_createDirectories();
 		$this->data = $this->_handleRecordings($this->data);
 		$this->fileExtension = $this->getFileExtension($this->data['Media']['filename']['name']);
@@ -83,38 +83,36 @@ class Media extends MediaAppModel {
      */
     public function afterFind($results, $primary = false) {
 
-      foreach($results as $key => $val) {
-        if(isset($val['Media']['filename'])) {
+		foreach($results as $key => $val) {
+			if(isset($val['Media']['filename'])) {
 
-          // what formats did we receive from the encoder?
-          $outputs = json_decode($val['Media']['filename'], true);
-
-          // audio files have 1 output currently.. arrays are not the same.. make them so.
-          /** @todo this part is kinda hacky.. **/
-          if($val['Media']['type'] == 'audio') {
-              $temp['outputs'] = $outputs['outputs'];
-              $outputs = null;
-              $outputs['outputs'][0] = $temp['outputs'];
-          }
-
-          $outputArray = $extensionArray = null;
-          foreach ($outputs['outputs'] as $output) {
-              $outputArray[] = 'http://' . $_SERVER['HTTP_HOST'] . '/media/media/stream/' . $val['Media']['id'] . '/' . $output['label'];
-              $extensionArray[] = $output['label'];
-          }
-
-          // set the modified ['filename']
-          $results[$key]['Media']['filename'] = $outputArray;
-          $results[$key]['Media']['ext'] = $extensionArray;
-        }
-
-      }
-
-      #debug($results);
-
-      return $results;
-
-    }//afterFind()
+				# what formats did we receive from the encoder?
+				$outputs = json_decode($val['Media']['filename'], true);
+				
+				# audio files have 1 output currently.. arrays are not the same.. make them so.
+				/** @todo this part is kinda hacky.. **/
+				if($val['Media']['type'] == 'audio') {
+					$temp['outputs'] = $outputs['outputs'];
+					$outputs = null;
+					$outputs['outputs'][0] = $temp['outputs'];
+				}
+			
+				if($val['Media']['type'] == 'videos') {
+					$outputArray = $extensionArray = null;
+					if (!empty($outputs)) {
+						foreach ($outputs['outputs'] as $output) {
+							$outputArray[] = 'http://' . $_SERVER['HTTP_HOST'] . '/media/media/stream/' . $val['Media']['id'] . '/' . $output['label'];
+							$extensionArray[] = $output['label'];
+						}
+					}
+					# set the modified ['filename']
+					$results[$key]['Media']['filename'] = $outputArray;
+					$results[$key]['Media']['ext'] = $extensionArray;
+				}
+			}
+		}
+		return $results;
+    }
 
 
     /**
@@ -160,7 +158,7 @@ class Media extends MediaAppModel {
  */
 	public function uploadFile($data) {
 		$uuid = $this->_generateUUID();
-		$newFile =  $this->themeDirectory . strtolower(pluginize($data['Media']['model'])) . DS . $this->uploadFileDirectory . DS . $uuid .'.'. $this->fileExtension;
+		$newFile =  $this->themeDirectory . strtolower(ZuhaInflector::pluginize($data['Media']['model'])) . DS . $this->uploadFileDirectory . DS . $uuid .'.'. $this->fileExtension;
 		if (rename($data['Media']['filename']['tmp_name'], $newFile)) :
 			$data['Media']['id'] = $uuid; // change the filename to just the filename
 			$data['Media']['filename'] = $uuid; // change the filename to just the filename
