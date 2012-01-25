@@ -308,8 +308,10 @@ class MediaController extends MediaAppController {
 	}
 
 	function images() {
+		$this->set('page_title_for_layout', __('Media Images'));
 	}
 	function files() {
+		$this->set('page_title_for_layout', __('Media Files'));
 	}
 
 }//class{}
