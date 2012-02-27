@@ -3,7 +3,8 @@
 $width = !empty($width) ? $width : 320;
 $height = !empty($height) ? $height : 240;
 $quality = !empty($quality) ? $quality : 'high';
-$showVolume = !empty($showVolume) ? $showVolume : 1; ?>
+$showVolume = !empty($showVolume) ? $showVolume : 1;
+$uuid = !empty($uuid) ? $uuid : substr(str_shuffle(str_repeat('abcdefghijklmnopqrstuvwxyz0123456789',20)),0,40);$offset = !empty($offset) ? $offset : 0; ?>
 
 <?php echo $this->Html->script('/media/record/AC_OETags'); ?>
 <!--  BEGIN Browser History required section -->
@@ -44,7 +45,7 @@ if ( hasProductInstall && !hasRequestedVersion ) {
 	// embed the Flash Content SWF when all tests are passed
 	AC_FL_RunContent(
 			"src", "/media/record/red5recorder",
-			"FlashVars", "server=rtmp://razorit.com:1935/oflaDemo/&fps=15&quality=90&fileName=<?php echo $uuid; ?>&keyFrame=6&MMredirectURL="+MMredirectURL+'&MMplayerType='+MMPlayerType+'&MMdoctitle='+MMdoctitle+"&width=<?php echo $width; ?>&height=<?php echo $height; ?>&showVolume=<?php echo $showVolume; ?>",			
+			"FlashVars", "server=rtmp://razorit.com:1935/oflaDemo/&fps=15&quality=70&fileName=<?php echo $uuid; ?>&keyFrame=6&MMredirectURL="+MMredirectURL+'&MMplayerType='+MMPlayerType+'&MMdoctitle='+MMdoctitle+"&width=<?php echo $width; ?>&height=<?php echo $height; ?>&showVolume=<?php echo $showVolume; ?>",			
 			"width", <?php echo $width; ?>,
 			"height", <?php echo $height; ?>,
 			"align", "middle",
@@ -80,7 +81,7 @@ function startRecording() {
 	  <param name="quality" value="<?php echo $quality; ?>" />
 	  <param name="bgcolor" value="#869ca7" />
 	  <param name="allowScriptAccess" value="sameDomain" />
-	  <embed src="/media/record/red5recorder.swf" quality="high" bgcolor="#869ca7"
+	  <embed src="/media/record/red5recorder.swf" quality="<?php echo $quality; ?>" bgcolor="#869ca7"
 			width="<?php echo $width; ?>" height="<?php echo $height; ?>" name="red5recorder" align="middle"
 			play="true"
 			loop="false"
@@ -95,12 +96,12 @@ function startRecording() {
 <?php 
 if ($hasMany === true) {
   if ($form !== false) { echo $this->Form->create('Media', array('type' => 'file')); }
-    echo $this->Form->hidden('Media.0.title', array('value' => ''));
-    echo $this->Form->hidden('Media.0.description', array('value' => ''));
-    echo $this->Form->hidden('Media.0.uuid', array('value' => $uuid));
-    echo $this->Form->hidden('Media.0.user_id', array('value'=> $this->Session->read('Auth.User.id')));
-    echo $this->Form->hidden('Media.0.type', array('value' => 'record'));
-    echo $this->Form->hidden('Media.0.model', array('value' => $model));
+    echo $this->Form->hidden('Media.'.$offset.'.title', array('value' => ''));
+    echo $this->Form->hidden('Media.'.$offset.'.description', array('value' => ''));
+    echo $this->Form->hidden('Media.'.$offset.'.uuid', array('value' => $uuid));
+    echo $this->Form->hidden('Media.'.$offset.'.user_id', array('value'=> $this->Session->read('Auth.User.id')));
+    echo $this->Form->hidden('Media.'.$offset.'.type', array('value' => 'record'));
+    echo $this->Form->hidden('Media.'.$offset.'.model', array('value' => $model));
     #echo $this->Form->hidden('Media.foreign_key', array('value' => $foreignKey));
   if ($form !== false) { echo $this->Form->end('Submit Recording'); }
 } else {

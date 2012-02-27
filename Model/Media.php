@@ -4,7 +4,7 @@ class Media extends MediaAppModel {
 /**
  * An array of file types we accept to the media plugin.
  */
-	public $supportedFileExtensions = array('pdf', 'doc', 'docx', 'ods');
+	public $supportedFileExtensions = array('pdf', 'doc', 'docx', 'ods', 'odt');
 
 /**
  * An array of video types we accept to the media plugin.
@@ -101,7 +101,7 @@ class Media extends MediaAppModel {
 					$outputArray = $extensionArray = null;
 					if (!empty($outputs)) {
 						foreach ($outputs['outputs'] as $output) {
-							$outputArray[] = 'http://' . $_SERVER['HTTP_HOST'] . '/media/media/stream/' . $val['Media']['id'] . '/' . $output['label'];
+							$outputArray[] = 'http://' . $_SERVER['HTTP_HOST'] . '/media/media/stream/' . $val['Media']['filename'] . '/' . $output['label'];
 							$extensionArray[] = $output['label'];
 						}
 					}
@@ -115,11 +115,11 @@ class Media extends MediaAppModel {
     }
 
 
-    /**
-     * This is a valid callback that comes with the Rateable plugin
-     * It is being kept here for future reference/use
-     * @param array $data
-     */
+/**
+ * This is a valid callback that comes with the Rateable plugin
+ * It is being kept here for future reference/use
+ * @param array $data
+ */
 	public function afterRate($data) {
 		#debug($data);
 	}
@@ -160,7 +160,6 @@ class Media extends MediaAppModel {
 		$uuid = $this->_generateUUID();
 		$newFile =  $this->themeDirectory . strtolower(ZuhaInflector::pluginize($data['Media']['model'])) . DS . $this->uploadFileDirectory . DS . $uuid .'.'. $this->fileExtension;
 		if (rename($data['Media']['filename']['tmp_name'], $newFile)) :
-			$data['Media']['id'] = $uuid; // change the filename to just the filename
 			$data['Media']['filename'] = $uuid; // change the filename to just the filename
 			$data['Media']['extension'] = $this->fileExtension; // change the extension to just the extension
 			$data['Media']['type'] = 'docs';
@@ -176,7 +175,7 @@ class Media extends MediaAppModel {
  *
  */
 	private function _handleRecordings($data) {
-		if ($data['Media']['type'] == 'record') {
+		if (!empty($data['Media']['type']) && $data['Media']['type'] == 'record') {
 			$fileName = $data['Media']['uuid'];
 			$serverFile = '/home/razorit/source/red5-read-only/dist/webapps/oflaDemo/streams/'.$fileName.'.flv';
 			$localFile = $this->themeDirectory . $this->plugin . DS . 'videos' . DS . $fileName.'.flv';
