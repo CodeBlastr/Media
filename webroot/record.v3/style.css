@@ -1,0 +1,75 @@
+/* CSS file */
+@namespace mx "library://ns.adobe.com/flex/mx";
+mx|Application {
+	fontFamily: Verdana;
+	color: #A8A8A8;
+	backgroundAlpha:0;
+	
+}
+@font-face
+{
+	fontFamily: Arial;
+	fontWeight: normal;
+	fontStyle: normal;
+	src: local("Arial");
+}
+@font-face
+{
+	fontFamily: Verdana;
+	fontWeight: normal;
+	fontStyle: normal;
+	src: local("Verdana");
+}
+
+mx|Button.playButton { 
+	down-icon: Embed(source="assets/pause.png"); 
+	over-icon: Embed(source="assets/pause.png"); 
+	up-icon: Embed(source="assets/pause.png"); 
+
+	selected-disabled-icon: Embed(source="assets/play.png"); 
+	selected-over-icon: Embed(source="assets/play.png");
+	selected-up-icon: Embed(source="assets/play.png");
+	}
+.scrollBar {
+		thumb-icon: Embed(source="assets/circle.png"); 
+		thumb-up-skin: Embed(source="assets/circle.png"); 
+		thumb-down-skin: Embed(source="assets/circle.png"); 
+		thumb-over-skin: Embed(source="assets/circle.png");
+	showTrackHighlight: false;
+	tickColor: #B7B7B7;
+	tickThickness: 1;
+	thumbSkin: Embed(source="assets/circle.png"); 
+	}		
+mx|ToolTip {
+            backgroundAlpha: 1.0;
+            backgroundColor: haloBlue;
+            color: white;
+            font-family: Arial;
+        }
+
+mx|HSlider {
+ 
+            dataTipPlacement: right;
+            dataTipOffset: 0;
+        }
+mx|Canvas.bottomPanel
+{
+	backgroundColor: #F6F6F6;
+	borderColor: #E9E9E9;
+	borderStyle: solid;
+	cornerRadius: 6;
+}
+mx|Button {
+	fontWeight: normal;
+	cornerRadius: 0;
+	paddingLeft: 0;
+	paddingRight: 0;
+	themeColor: #D2D2D2;
+	fillAlphas: 0.75, 0.75, 0.75, 0.75;
+	fillColors: #FFFFFF, #FFFFFF;
+	borderColor: #FFFFFF;
+	paddingTop: 0;
+	paddingBottom: 0;
+	horizontalGap: 0;
+}
+         

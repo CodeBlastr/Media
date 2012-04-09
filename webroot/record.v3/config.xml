@@ -1,0 +1,60 @@
+<resources locale="en">
+
+<!-- player settings  -->
+
+<server>rtmp://razorit.com:1935/red5recorderNew/</server>
+<maxLength>120</maxLength><!-- length in seconds of maxium recording-->
+<mode>record</mode><!-- set 'record' or 'play''-->
+<backToRecorder>true</backToRecorder><!-- 'true' or 'false' if player has back to recorder button-->
+<noVideo>false</noVideo><!-- 'true' or 'false' if no video recording(sound only)-->
+<urlForward></urlForward><!-- set to http:// if you want the recorder to redirect once recorded-->
+<logo></logo><!-- set to http:// if you want a watemark-->
+<fullScreen>false</fullScreen><!-- 'true' or 'false' if you want full screen display-->
+<showPlayButton>true</showPlayButton><!-- 'true' or 'false' to display play button-->
+<showBar>true</showBar><!-- 'true' or 'false' to display bar status-->
+<w>100%</w><!-- width of displaying-->
+<h>100%</h><!-- height of displaying-->
+
+<!-- video quality  -->
+
+<width>320</width><!-- width of recording-->
+<height>240</height><!-- height of recording-->
+<fps>15</fps><!-- frames per second -->
+<quality>75</quality><!-- quality of video, similar to JPEG -->
+<bandWidth>45000</bandWidth><!-- bandwidth in kbytes/second -->
+<keyFrame>20</keyFrame><!-- bandwidth in kbytes/second -->
+<microRate>22</microRate>
+
+
+<!-- texts/labels  -->
+<toolTipRecord>Click here to START/STOP recording</toolTipRecord>
+<toolTipPlay>Play back video</toolTipPlay>
+<recordingText>Recording...</recordingText>
+<timeLeftText>Time Left:</timeLeftText>
+<backText>Back</backText>
+
+
+<!-- javascript calls : you can use these javascript function to control your recorder  -->
+
+<jsStartRecording>startRecording</jsStartRecording><!-- tostart recording-->
+<jsStopRecording>stopRecording</jsStopRecording><!-- to stop recording-->
+<jsPlayRecording>replay</jsPlayRecording><!-- to replay-->
+<jsPlayVideo>playVideo</jsPlayVideo><!-- to play video -->
+<jsStopVideo>stopVideo</jsStopVideo><!-- to  stop video -->
+<jsPlayPause>pause</jsPlayPause><!-- to  pause video -->
+<jsSetVolume>setVolume</jsSetVolume><!-- to  set volume video -->
+
+<!-- javascript callback calls: these javascripts are called from recorder to javascript  -->
+
+<jsRecordStopped>recordStopped</jsRecordStopped><!-- javascript  'recordStopped' called when record is stopped -->
+<jsPlayEnded>playEnded</jsPlayEnded><!-- javascript  'playEnded' called when record is ended -->
+<jsPaused>paused</jsPaused><!-- javascript  'paused' called when record is paused -->
+<jsPlayStarted>playStarted</jsPlayStarted><!-- 'playStarted'   called when play is started -->
+<jsOnConnect>onConnect</jsOnConnect><!-- 'onConnect(true or false) called when connection to red5 is done, return false(failure) or true (success)-->
+<jsRecordStarted>recordStarted</jsRecordStarted><!-- 'recordStarted'   called when record is started -->
+<jsRecordEnded>recordEnded</jsRecordEnded><!-- 'recordEnded'   called when record ended -->
+<jsRecorderReady>recorderReady</jsRecorderReady><!-- 'recorderReady'   called when recorder is ready to record -->
+<jsUnable_to_detect_camera>unable_to_detect_camera</jsUnable_to_detect_camera><!-- 'unable_to_detect_camera'   called when recorder is unable to detect webcam -->
+<jsUnable_to_detect_camera_and_sound>unable_to_detect_camera_and_sound</jsUnable_to_detect_camera_and_sound><!-- 'unable_to_detect_camera'   called when recorder is unable to detect webcam and micro -->
+<jsRecorderNotReady>recorderNotReady</jsRecorderNotReady><!-- 'recorderReady'   called when recorder is not ready -->
+</resources>
