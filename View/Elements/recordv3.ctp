@@ -17,16 +17,16 @@ $uuid = !empty($uuid) ? $uuid : substr(str_shuffle(str_repeat('abcdefghijklmnopq
         
         <!-- Enable Browser History by replacing useBrowserHistory tokens with two hyphens -->
 		<!--  BEGIN Browser History required section -->
-		<?php echo $this->Html->css('/media/record/history/history'); ?>
-		<?php echo $this->Html->script('/media/record/history/history'); ?>
+		<?php echo $this->Html->css('/media/record.v3/history/history'); ?>
+		<?php echo $this->Html->script('/media/record.v3/history/history'); ?>
         <!-- END Browser History required section -->  
             
-		<?php echo $this->Html->script('/media/record/swfobject'); ?>
+		<?php echo $this->Html->script('/media/record.v3/swfobject'); ?>
         <script type="text/javascript">
             // For version detection, set to min. required Flash Player version, or 0 (or 0.0.0), for no version detection. 
             var swfVersionStr = "10.2.0";
             // To use express install, set to playerProductInstall.swf, otherwise the empty string. 
-            var xiSwfUrlStr = "/media/record/playerProductInstall.swf";
+            var xiSwfUrlStr = "/media/record.v3/playerProductInstall.swf";
             var flashvars = {};
             var params = {};
             params.quality = "high";
@@ -38,7 +38,7 @@ $uuid = !empty($uuid) ? $uuid : substr(str_shuffle(str_repeat('abcdefghijklmnopq
             attributes.name = "red5recorder";
             attributes.align = "middle";
             swfobject.embedSWF(
-                "/media/record/red5recorder.swf", "flashContent", 
+                "/media/record.v3/red5recorder.swf", "flashContent", 
                 "100%", "100%", 
                 swfVersionStr, xiSwfUrlStr, 
                 flashvars, params, attributes);
@@ -65,13 +65,13 @@ $uuid = !empty($uuid) ? $uuid : substr(str_shuffle(str_repeat('abcdefghijklmnopq
         
         <noscript>
             <object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="100%" height="100%" id="red5recorder">
-                <param name="movie" value="/media/record/red5recorder.swf" />
+                <param name="movie" value="/media/record.v3/red5recorder.swf" />
                 <param name="quality" value="high" />
                 <param name="bgcolor" value="#869ca7" />
                 <param name="allowScriptAccess" value="sameDomain" />
                 <param name="allowFullScreen" value="true" />
                 <!--[if !IE]>-->
-                <object type="application/x-shockwave-flash" data="/media/record/red5recorder.swf" width="100%" height="100%">
+                <object type="application/x-shockwave-flash" data="/media/record.v3/red5recorder.swf" width="100%" height="100%">
                     <param name="quality" value="high" />
                     <param name="bgcolor" value="#869ca7" />
                     <param name="allowScriptAccess" value="sameDomain" />
