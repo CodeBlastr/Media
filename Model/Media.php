@@ -22,11 +22,6 @@ class Media extends MediaAppModel {
 	public $name = 'Media';
 
 	public $actsAs = array(
-		'Ratings.Ratable' => array(
-			'saveToField' => true,
-			//'field' => 'rating'
-			//'modelClass' => 'Media.Media'
-			),
 		'Encoders.Encodable',
 		);
 
