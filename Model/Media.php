@@ -8,22 +8,16 @@ class Media extends MediaAppModel {
 
 /**
  * An array of video types we accept to the media plugin.
- * @todo These appear in the encodable behavior too.  They should only appear here.
  */
 	public $supportedVideoExtensions = array('mpg', 'mov', 'wmv', 'rm', '3g2', '3gp', '3gp2', '3gpp', '3gpp2', 'avi', 'divx', 'dv', 'dv-avi', 'dvx', 'f4v', 'flv', 'h264', 'hdmov', 'm4v', 'mkv', 'mp4', 'mp4v', 'mpe', 'mpeg', 'mpeg4', 'mpg', 'nsv', 'qt', 'swf', 'xvid');
 
 
 /**
  * An array of audio types we accept to the media plugin.
- * @todo These appear in the encodable behavior too.  They should only appear here.
  */
 	public $supportedAudioExtensions = array('aif', 'mid', 'midi', 'mka', 'mp1', 'mp2', 'mp3', 'mpa', 'wav', 'aac', 'flac', 'ogg', 'ra', 'raw', 'wma');
 
 	public $name = 'Media';
-
-	public $actsAs = array(
-		'Encoders.Encodable',
-		);
 
 	public $belongsTo = array(
 	    'User' => array(
@@ -58,10 +52,14 @@ class Media extends MediaAppModel {
 			$this->data = $this->uploadFile($this->data);
 		} elseif (in_array($this->fileExtension, $this->supportedVideoExtensions)) {
 			 $this->data['Media']['type'] = 'videos';
-			 $this->data = $this->encode($this);
+			// $this->data = $this->encode($this);
+			echo "Encoding support was removed, needs work here."
+			break;
 		} elseif (in_array($this->fileExtension, $this->supportedAudioExtensions)) {
 			 $this->data['Media']['type'] = 'audio';
-			 $this->data = $this->encode($this);
+			 // $this->data = $this->encode($this);
+			 echo "Encoding support was removed, needs work here."
+			 break;
 		} else {
 			# an unsupported file type
 			return false;
@@ -125,7 +123,6 @@ class Media extends MediaAppModel {
  * Get the extension of a given file path
  *
  * @param {string} 		A file name/path string
- * @todo				This appears in both the encodable behavior and here.  Both could and should make use of this function, there should be a single place that both could access it (AppModel maybe), but where?
  */
     function getFileExtension($filepath) {
         preg_match('/[^?]*/', $filepath, $matches);
@@ -134,13 +131,11 @@ class Media extends MediaAppModel {
         $pattern = preg_split('/\./', $string, -1, PREG_SPLIT_OFFSET_CAPTURE);
 
         # check if there is any extension
-        if(count($pattern) == 1)
-        {
+        if(count($pattern) == 1) {
             return FALSE;
         }
 
-        if(count($pattern) > 1)
-        {
+        if(count($pattern) > 1) {
             $filenamepart = $pattern[count($pattern)-1][0];
             preg_match('/[^?]*/', $filenamepart, $matches);
             return strtolower($matches[0]);

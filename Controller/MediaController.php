@@ -39,7 +39,7 @@ class MediaController extends MediaAppController {
             $this->request->data['User']['id'] = $this->Auth->user('id');
 			#debug($this->request->data);break;
 			if ($this->Media->save($this->request->data)) {
-				$this->Session->setFlash('Media saved and being encoded.');
+				$this->Session->setFlash('Media saved.');
 				#$this->redirect('/media/media/edit/'.$this->Media->id);
 				$this->redirect(array('action' => 'my'));
 			} else {
@@ -59,8 +59,6 @@ class MediaController extends MediaAppController {
 		if (empty($this->request->data)) {
 			$this->request->data = $this->Media->findById($uid);
 		} else {
-            // disable Encodeable so we don't process the media
-            $this->Media->Behaviors->disable('Encodable');
             // save the new media metadata
             if ($this->Media->save($this->request->data)) {
                 $this->Session->setFlash('Your media has been updated.');
@@ -76,11 +74,8 @@ class MediaController extends MediaAppController {
  * @param char $mediaID The UUID of the media in question.
  */
 	public function view($mediaID = null) {
-
 		if($mediaID) {
-
             // Increase the Views by 1
-            $this->Media->Behaviors->detach('Encodable');
             $this->Media->updateAll(array('Media.views'=>'Media.views+1'), array('Media.id'=>$mediaID));
 
 			# Use this to save the Overall Rating to Media.rating
@@ -93,7 +88,6 @@ class MediaController extends MediaAppController {
 				'contain' => 'User'
 				));
             #debug($this->Media->actsAs);
-
 
 			# Use these two lines to get the Overall Rating on the fly
 			# $theMediaRating = $this->Media->calculateRating($mediaID);
@@ -119,46 +113,6 @@ class MediaController extends MediaAppController {
 			$this->redirect('/');
 		}
 	}//my()
-
-
-/**
- * receives a notification from the encoder and if successful, upgrades the is_visible from 0 to 1
- * This is currently Zencoder specific
- */
-	public function notification() {
-		$data = $this->request->input('json_decode');
-		#debug($data);break;
-		if($data) {
-			# $this->Media->notify($data);
-			# zencoder is notifying us that a Job is complete
-			if($data->output->state == 'finished') {
-				// If you're encoding to multiple outputs and only care when all of the outputs are finished
-				// you can check if the entire job is finished.
-				if($data->job->state == 'finished') {
-					echo "Dubble w00t!\n";
-
-					// find this zencoder_job_id
-					$encoder_job = $this->Media->find('first', array('conditions' => array('Media.zen_job_id' => $data->job->id)));
-                    $this->Media->id = $encoder_job['Media']['id'];
-                    $this->Media->Behaviors->disable('Encodable');
-					if($this->Media->saveField('is_visible', '1')) {
-                      echo 'hooray!';
-                    } else {
-                      echo 'wtf?';
-                    }
-				}
-
-			} elseif($data['output']['state'] == 'cancelled') {
-				echo "Cancelled!\n";
-			} else {
-				echo "Fail!\n";
-				debug($data);
-				echo $data['output']['error_message']."\n";
-				echo $data['output']['error_link'];
-			}
-		}//if($outputID)
-		$this->render(false);
-	}//notification()
 
 
 /**
@@ -293,7 +247,7 @@ class MediaController extends MediaAppController {
 			$this->request->data['Media']['submittedfile']['size'] = 99999;*/
 
 			if ($this->Media->save($this->request->data)) {
-				$this->Session->setFlash('Media saved and being encoded.');
+				$this->Session->setFlash('Media saved.');
 				#$this->redirect('/media/media/edit/'.$this->Media->id);
 				$this->redirect(array('action' => 'my'));
 			} else {
