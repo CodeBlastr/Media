@@ -1,5 +1,4 @@
 <div class="media files index">
-	<h2><?php echo $page_title_for_layout; ?></h2>
 	<iframe src="http://<?php echo $_SERVER['HTTP_HOST']; ?>/js/kcfinder/browse.php?type=files&amp;kcfinderuploadDir=<?php echo str_replace('sites'.DS, '', SITE_DIR); ?>&amp;CKEditor=WebpageContent&amp;&amp;langCode=en" width="100%" height="500px"></iframe>
 </div>
 
