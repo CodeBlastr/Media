@@ -53,15 +53,15 @@ class Media extends MediaAppModel {
 		} elseif (in_array($this->fileExtension, $this->supportedVideoExtensions)) {
 			 $this->data['Media']['type'] = 'videos';
 			// $this->data = $this->encode($this);
-			echo "Encoding support was removed, needs work here."
+			echo "Encoding support was removed, needs work here.";
 			break;
 		} elseif (in_array($this->fileExtension, $this->supportedAudioExtensions)) {
 			 $this->data['Media']['type'] = 'audio';
 			 // $this->data = $this->encode($this);
-			 echo "Encoding support was removed, needs work here."
+			 echo "Encoding support was removed, needs work here.";
 			 break;
 		} else {
-			# an unsupported file type
+			// an unsupported file type
 			return false;
 		}
 		return true;
