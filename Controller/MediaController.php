@@ -7,7 +7,7 @@ class MediaController extends MediaAppController {
 
 	public function beforeFilter() {
 		parent::beforeFilter();
-		$themeDirectory = ROOT.DS.SITE_DIR.DS.'View'.DS.'Themed'.DS.'Default'.DS.WEBROOT_DIR . DS;
+		$themeDirectory = ROOT.DS.SITE_DIR.DS.'Locale'.DS.'View'.DS.WEBROOT_DIR . DS;
 		if (!file_exists($themeDirectory . 'media')) {
 			mkdir($themeDirectory . 'media');
 		}
@@ -78,7 +78,7 @@ class MediaController extends MediaAppController {
             // Increase the Views by 1
             $this->Media->updateAll(array('Media.views'=>'Media.views+1'), array('Media.id'=>$mediaID));
 
-			# Use this to save the Overall Rating to Media.rating
+			// Use this to save the Overall Rating to Media.rating
 			$this->Media->calculateRating($mediaID, 'rating');
 
 			$theMedia = $this->Media->find('first', array(
@@ -87,11 +87,6 @@ class MediaController extends MediaAppController {
                     ),
 				'contain' => 'User'
 				));
-            #debug($this->Media->actsAs);
-
-			# Use these two lines to get the Overall Rating on the fly
-			# $theMediaRating = $this->Media->calculateRating($mediaID);
-			# $theMedia = array_merge($theMediaRating, $theMedia);
 
 			$this->pageTitle = $theMedia['Media']['title'];
 			$this->set('theMedia', $theMedia);
@@ -170,7 +165,7 @@ class MediaController extends MediaAppController {
 							'download' => false, // if true, then a download box pops up
 							'extension' => $filetype['extension'],
 							'mimeType' => $filetype['mimeType'],
-							'path' => ROOT.DS.SITE_DIR.DS.'View'.DS.'Themed'.DS.'Default'.DS.WEBROOT_DIR . DS . 'media' . DS . 'streams' . DS . $theMedia['Media']['type'] . DS
+							'path' => ROOT.DS.SITE_DIR.DS.'Locale'.DS.'View'.DS.WEBROOT_DIR . DS . 'media' . DS . 'streams' . DS . $theMedia['Media']['type'] . DS
                            );
 
 						$this->set($params);
@@ -225,27 +220,7 @@ class MediaController extends MediaAppController {
 		$this->set('model', $model);
 		$this->set('foreignKey', $foreignKey);
 
-		if(!empty($this->request->data)) :
-            /*$this->request->data['User']['id'] = $this->Auth->user('id');
-			$fileName = $this->request->data['Media']['uuid'];
-			$url = '/theme/default/media/recordings/'.$fileName.'.flv';
-			if (file_exists('/home/razorit/source/red5-read-only/dist/webapps/oflaDemo/streams/'.$fileName.'.flv')) {
-				if(rename('/home/razorit/source/red5-read-only/dist/webapps/oflaDemo/streams/'.$fileName.'.flv', ROOT.DS.SITE_DIR.DS.'View'.DS.'Themed'.DS.'Default'.DS.WEBROOT_DIR . DS . 'media' . DS . 'uploads' . DS . $fileName.'.flv')) {
-					echo $url = '/theme/default/media/uploads/'.$fileName.'.flv';
-				} else {
-					echo 'File could not be moved';
-				}
-			} else {
-				echo 'File does not exist.';
-			}
-
-			#echo '<a href="http://'.$_SERVER['HTTP_HOST'].$url.'">right click this one</a>';
-			$this->request->data['Media']['submittedfile']['name'] = $fileName.'.flv';
-			$this->request->data['Media']['submittedfile']['type'] = 'video/x-flv';
-			$this->request->data['Media']['submittedfile']['tmp_name'] = '/home/razorit/source/red5-read-only/dist/webapps/oflaDemo/streams/'.$fileName.'.flv';
-			$this->request->data['Media']['submittedfile']['error'] = 0;
-			$this->request->data['Media']['submittedfile']['size'] = 99999;*/
-
+		if(!empty($this->request->data)) {
 			if ($this->Media->save($this->request->data)) {
 				$this->Session->setFlash('Media saved.');
 				#$this->redirect('/media/media/edit/'.$this->Media->id);
@@ -253,7 +228,7 @@ class MediaController extends MediaAppController {
 			} else {
 				$this->Session->setFlash('Invalid Upload.');
 			}
-		endif;
+        }
 
 	}
 

@@ -29,7 +29,7 @@ class Media extends MediaAppModel {
 
 	public function __construct($id = false, $table = null, $ds = null) {
 		parent::__construct($id, $table, $ds);
-		$this->themeDirectory = ROOT.DS.SITE_DIR.DS.'View'.DS.'Themed'.DS.'Default'.DS.WEBROOT_DIR.DS.'media'.DS;
+		$this->themeDirectory = ROOT.DS.SITE_DIR.DS.'Locale'.DS.'View'.DS.WEBROOT_DIR.DS.'media'.DS;
 		$this->uploadFileDirectory = 'docs';
 		$this->uploadVideoDirectory =  'videos';
 		$this->uploadAudioDirectory = 'audio';
