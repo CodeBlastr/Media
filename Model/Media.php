@@ -38,17 +38,24 @@ class Media extends MediaAppModel {
 	}
 
 
-
 	public function beforeSave($options) {
 		$this->data['Media']['model'] = !empty($this->data['Media']['model']) ? $this->data['Media']['model'] : 'Media';
 		$this->plugin = strtolower(ZuhaInflector::pluginize($this->data['Media']['model']));
 		$this->_createDirectories();
 		$this->data = $this->_handleRecordings($this->data);
+		$this->data = $this->_handleCanvasImages($this->data);
 		$this->fileExtension = $this->getFileExtension($this->data['Media']['filename']['name']);
+		
+		return $this->processFile();
+	}//beforeSave()
 
-
+	
+	public function processFile() {
 		if(in_array($this->fileExtension, $this->supportedFileExtensions)) {
 			$this->data['Media']['type'] = 'docs';
+			$this->data = $this->uploadFile($this->data);
+		} elseif(in_array($this->fileExtension, $this->supportedImageExtensions)) {
+			$this->data['Media']['type'] = 'images';
 			$this->data = $this->uploadFile($this->data);
 		} elseif (in_array($this->fileExtension, $this->supportedVideoExtensions)) {
 			 $this->data['Media']['type'] = 'videos';
@@ -65,8 +72,7 @@ class Media extends MediaAppModel {
 			return false;
 		}
 		return true;
-	}//beforeSave()
-
+	}
 
     /**
      *
@@ -190,6 +196,26 @@ class Media extends MediaAppModel {
 		return $data;
 	}
 
+	private function _handleCanvasImages($data) {
+		if ( !empty($data['Media']['canvasImageData']) ) {
+			
+			$canvasImageData = str_replace('data:image/png;base64,', '', $data['Media']['canvasImageData']);
+			$decodedImage = base64_decode($canvasImageData);
+			
+			$filename = preg_replace("/[^\w\s\d\-_~,;:\[\]\(\]]|[\.]{2,}/", '', $data['Media']['title'].'_'.uniqid());
+			$saveName = $this->themeDirectory . $this->plugin . DS . 'images' . DS . $filename.'.png';
+			
+			$fopen = fopen($saveName, 'wb');
+			fwrite($fopen, $decodedImage);
+			fclose($fopen);
+			
+			$data['Media']['filename']['name'] = $filename.'.png';
+			$data['Media']['filename']['type'] = 'image/png';
+			$data['Media']['filename']['tmp_name'] = $saveName;
+			$data['Media']['filename']['error'] = 0;
+		}
+		return $data;
+	}
 
 /**
  * Create the directories for this plugin if they aren't there already.
