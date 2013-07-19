@@ -17,6 +17,8 @@ class Media extends MediaAppModel {
  */
 	public $supportedAudioExtensions = array('aif', 'mid', 'midi', 'mka', 'mp1', 'mp2', 'mp3', 'mpa', 'wav', 'aac', 'flac', 'ogg', 'ra', 'raw', 'wma');
 
+	public $supportedImageExtensions = array('jpg', 'png', 'gif', 'bmp', 'jpeg');
+	
 	public $name = 'Media';
 
 	public $belongsTo = array(

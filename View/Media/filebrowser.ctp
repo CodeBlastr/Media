@@ -31,6 +31,27 @@
 			<?php $this->Media->display($item); ?>
 		<?php endforeach; ?>
 	</div>
+	
+	<div class="media-upload">
+		<?php
+   			 echo $this->Form->create('Media', array('plugin' => 'media', 'controller' => 'media', 'action' => 'add'), array('type' => 'file'));
+			//
+			//    $options = array('audio'=>'Audio','video'=>'Video');
+			//    $attributes = array('legend'=>'Type of Media');
+			//    echo $this->Form->radio('Media.type', $options, $attributes);
+			
+			
+			    echo $this->Form->input('Media.filename', array('type'=>'file', 'label' => 'Upload a file from your computer:')); // , 'accept' => 'audio/* video/*'
+			
+			    echo $this->Form->input('Media.submittedurl', array('type'=>'text', 'label' => 'Alternatively enter the URL of a file that is already online:'));
+			
+			    echo $this->Form->input('Media.title', array('type'=>'text', 'label' => 'Title:'));
+			
+			    echo $this->Form->input('Media.description', array('type'=>'textarea', 'label' => 'Description:'));
+
+    echo $this->Form->end('Submit');
+    ?>
+	</div>
 
 </div>
 
