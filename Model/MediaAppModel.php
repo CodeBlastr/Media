@@ -2,4 +2,3 @@
 class MediaAppModel extends AppModel {
 
 }
-?>
