@@ -110,7 +110,7 @@ class MediaAttachableBehavior extends ModelBehavior {
 	 * @return void
 	 */
 	public function afterDelete(Model $Model) {
-		
+		$MediaAttachment = new MediaAttachment;// This was added to support UserGroup delete
 		//Deletes all linked Media
 		$MediaAttachment->deleteAll(array(
 							'model' => $Model->alias,
