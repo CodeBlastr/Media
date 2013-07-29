@@ -53,30 +53,32 @@ class MediaAttachableBehavior extends ModelBehavior {
 	 */
 	public function afterSave(Model $Model, $created) {
 		
-		$MediaAttachment = new MediaAttachment;
+		if(isset($this->data['MediaAttachment'])) {
+			$MediaAttachment = new MediaAttachment;
 		
-		//Removes all Attachment Records so they can be resaved
-		if(!$created) {
-			$MediaAttachment->deleteAll(array(
-							'model' => $Model->alias,
-							'foreign_key' => $Model->data[$Model->alias]['id']
-							), false);
-		}
-		
-		if(is_array($this->data['MediaAttachment'])) {
-			foreach($this->data['MediaAttachment'] as $k => $media) {
-				$media['model'] = $Model->alias;
-				$media['foreign_key'] = $Model->data[$Model->alias]['id'];
-				$this->data['MediaAttachment'][$k] = $media;
+			//Removes all Attachment Records so they can be resaved
+			if(!$created) {
+				$MediaAttachment->deleteAll(array(
+								'model' => $Model->alias,
+								'foreign_key' => $Model->data[$Model->alias]['id']
+								), false);
 			}
-		}else {
-			$this->data['MediaAttachment']['model'] = $Model->alias;
-			$this->data['MediaAttachment']['foreign_key'] = $Model->data[$Model->alias]['id'];
-		}
-		
-		$MediaAttachment->saveAll($this->data);
-		
-		return true;
+			
+			if(is_array($this->data['MediaAttachment'])) {
+				foreach($this->data['MediaAttachment'] as $k => $media) {
+					$media['model'] = $Model->alias;
+					$media['foreign_key'] = $Model->data[$Model->alias]['id'];
+					$this->data['MediaAttachment'][$k] = $media;
+				}
+			}else {
+				$this->data['MediaAttachment']['model'] = $Model->alias;
+				$this->data['MediaAttachment']['foreign_key'] = $Model->data[$Model->alias]['id'];
+			}
+			
+			$MediaAttachment->saveAll($this->data);	
+			}
+			
+			return true;
 	}
 	
 	/**
