@@ -16,8 +16,8 @@
       <div class="nav-collapse collapse">
       	
       	<ul class="nav">
-              <li><a href='#select-all'>Select All</a></li>
-              <li><a href='#upload'>Upload</a></li>
+              <li><a href='#mediaBrowser' class="active">File Browser</a></li>
+              <li><a href='#mediaUpload'>Upload</a></li>
         </ul>
       
       </div>
@@ -26,33 +26,44 @@
 	  </div>
 	</div>
 	
-	<div class="content" class="span12">
-		<?php foreach($media as $item): ?>
-			<?php $this->Media->display($item); ?>
-		<?php endforeach; ?>
-	</div>
+	<div class="content-panels">
 	
-	<div class="media-upload">
-		<?php
-   			 echo $this->Form->create('Media', array('plugin' => 'media', 'controller' => 'media', 'action' => 'add'), array('type' => 'file'));
-			//
-			//    $options = array('audio'=>'Audio','video'=>'Video');
-			//    $attributes = array('legend'=>'Type of Media');
-			//    echo $this->Form->radio('Media.type', $options, $attributes);
-			
-			
-			    echo $this->Form->input('Media.filename', array('type'=>'file', 'label' => 'Upload a file from your computer:')); // , 'accept' => 'audio/* video/*'
-			
-			    echo $this->Form->input('Media.submittedurl', array('type'=>'text', 'label' => 'Alternatively enter the URL of a file that is already online:'));
-			
-			    echo $this->Form->input('Media.title', array('type'=>'text', 'label' => 'Title:'));
-			
-			    echo $this->Form->input('Media.description', array('type'=>'textarea', 'label' => 'Description:'));
-
-    echo $this->Form->end('Submit');
-    ?>
+		<div id="mediaBrowser" class="panel">
+			<ul class="thumbnails">
+			<?php foreach($media as $item): ?>
+				
+				<li class="span2 media-item">
+					<a href="#" class="thumbnail">
+						<?php echo $this->Media->display($item, array('width' => 100, 'height' => 100)); ?>
+						<p style="text-align: center;"><?php echo $item['Media']['title']; ?></p>
+					</a>
+				</li>
+				
+				
+			<?php endforeach; ?>	
+			</ul>
+		</div>
+		
+		<div id="mediaUpload" class="media-upload panel">
+			<div class="upload-form">
+			<?php
+	   			 echo $this->Form->create('Media', array('plugin' => 'media', 'controller' => 'media', 'action' => 'add'), array('type' => 'file'));
+				
+				 echo $this->Form->input('Media.filename', array('type'=>'file', 'label' => 'Upload a file from your computer:')); // , 'accept' => 'audio/* video/*'
+				
+				 //echo $this->Form->input('Media.submittedurl', array('type'=>'text', 'label' => 'Alternatively enter the URL of a file that is already online:'));
+				
+				 echo $this->Form->input('Media.title', array('type'=>'text', 'label' => 'Title:'));
+				
+				 echo $this->Form->input('Media.description', array('type'=>'textarea', 'label' => 'Description:'));
+	
+	    		echo $this->Form->end('Submit');
+	    ?>
+	    	</div>
+		</div>
+		
 	</div>
-
+	<div class="loader"></div>
 </div>
 
 <style>
@@ -60,10 +71,16 @@
 		background: #fff;
 		border-radius: 20px;
 		margin-top:30px;
+		position: relative;
 	}
 	
-	#MediaFileBrowser .content {
-		padding:30px;
+	#MediaFileBrowser .content-panels {
+		padding:10px;
+		min-height:500px;
+	}
+	
+	#MediaFileBrowser .content-panels .panel {
+		display: none;
 	}
 	
 	#MediaFileBrowser .navbar .nav > li > a {
@@ -83,4 +100,22 @@
 	    padding: 10px 20px;
 	    text-shadow: 0 1px 0 #FFFFFF;
 	}
+	
+	#MediaFileBrowser #mediaUpload .upload-form {
+		margin: 0 auto;
+		text-align:center;
+	}
+	#MediaFileBrowser .loader {
+		background: url(/Media/ajax-loader.gif) no-repeat;
+		width: 66px;
+		height: 66px;
+		top: 45%;
+		left: 45%;
+		position: absolute;
+	}
+	#MediaFileBrowser .selected {
+		background: #00005F;
+	}
 </style>
+<script type="text/javascript" src="/js/plugins/jquery.form.min.js"></script>
+<script type="text/javascript" src="/Media/filebrowser.js"></script>

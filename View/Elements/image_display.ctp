@@ -1,3 +1,3 @@
-<div class="<?php echo $class; ?>">
+<div id="<?php echo $id; ?>" class="<?php echo $class; ?>">
 	<?php echo $image; ?>
 </div>

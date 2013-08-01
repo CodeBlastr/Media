@@ -31,7 +31,7 @@ class Media extends MediaAppModel {
 
 	public function __construct($id = false, $table = null, $ds = null) {
 		parent::__construct($id, $table, $ds);
-		$this->themeDirectory = ROOT.DS.SITE_DIR.DS.'Locale'.DS.'View'.DS.WEBROOT_DIR.DS.'media'.DS;
+		$this->themeDirectory = ROOT.DS.SITE_DIR.DS.'Locale'.DS.'View'.DS.WEBROOT_DIR.DS.'media';
 		$this->uploadFileDirectory = 'docs';
 		$this->uploadVideoDirectory =  'videos';
 		$this->uploadAudioDirectory = 'audio';
@@ -41,6 +41,7 @@ class Media extends MediaAppModel {
 
 
 	public function beforeSave($options) {
+		parent::__construct($options);
 		$this->data['Media']['model'] = !empty($this->data['Media']['model']) ? $this->data['Media']['model'] : 'Media';
 		$this->plugin = strtolower(ZuhaInflector::pluginize($this->data['Media']['model']));
 		$this->_createDirectories();
@@ -135,9 +136,9 @@ class Media extends MediaAppModel {
     function getFileExtension($filepath) {
         preg_match('/[^?]*/', $filepath, $matches);
         $string = $matches[0];
-
+		
         $pattern = preg_split('/\./', $string, -1, PREG_SPLIT_OFFSET_CAPTURE);
-
+		
         # check if there is any extension
         if(count($pattern) == 1) {
             return FALSE;
@@ -156,11 +157,10 @@ class Media extends MediaAppModel {
  */
 	public function uploadFile($data) {
 		$uuid = $this->_generateUUID();
-		$newFile =  $this->themeDirectory . strtolower(ZuhaInflector::pluginize($data['Media']['model'])) . DS . $this->uploadFileDirectory . DS . $uuid .'.'. $this->fileExtension;
+		$newFile =  $this->themeDirectory . DS . $this->data['Media']['type'] . DS . $uuid . '.' . $this->fileExtension;
 		if (rename($data['Media']['filename']['tmp_name'], $newFile)) :
 			$data['Media']['filename'] = $uuid; // change the filename to just the filename
 			$data['Media']['extension'] = $this->fileExtension; // change the extension to just the extension
-			$data['Media']['type'] = 'docs';
 			return $data;
 		else :
 			throw new Exception(__d('media', 'File Upload of ' . $data['Media']['filename']['name'] . ' to ' . $newFile . '  Failed'));
@@ -223,14 +223,14 @@ class Media extends MediaAppModel {
  * Create the directories for this plugin if they aren't there already.
  */
 	private function _createDirectories() {
-		if (!file_exists($this->themeDirectory . $this->plugin)) {
+		if (!file_exists($this->themeDirectory)) {
 			if (
-				mkdir($this->themeDirectory . $this->plugin) &&
-				mkdir($this->themeDirectory . $this->plugin . DS . 'videos') &&
-				mkdir($this->themeDirectory . $this->plugin . DS . 'docs') &&
-				mkdir($this->themeDirectory . $this->plugin . DS . 'audio') &&
-				mkdir($this->themeDirectory . $this->plugin . DS . 'images') &&
-				mkdir($this->themeDirectory . $this->plugin . DS . 'images' . DS . 'thumbs')
+				mkdir($this->themeDirectory, 0777, true) &&
+				mkdir($this->themeDirectory . DS . 'videos', 0777, true) &&
+				mkdir($this->themeDirectory . DS . 'docs', 0777, true) &&
+				mkdir($this->themeDirectory . DS . 'audio', 0777, true) &&
+				mkdir($this->themeDirectory . DS . 'images', 0777, true) &&
+				mkdir($this->themeDirectory . DS . 'images' . DS . 'thumbs', 0777, true)
 				) {
 				return true;
 			} else {

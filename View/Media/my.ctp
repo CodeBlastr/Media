@@ -3,11 +3,12 @@
     <p>Here is a listing of everything that you've uploaded so far.</p>
 
     <?php
+    debug($media);
     if(!empty($media)) {
             echo '<ul>';
             foreach($media as $medium) {
                 #debug($medium);
-                $thumbnailImage = !empty($medium['Media']['thumbnail']) ? '/theme/default/media/thumbs/'.$medium['Media']['id'].'_000'.$medium['Media']['thumbnail'].'.jpg' : '/img/noImage.jpg';
+                $thumbnailImage = !empty($medium['Media']['filename']) ? '/theme/default/media/images/'.$medium['Media']['filename'].'.'.$medium['Media']['extension'] : '/img/noImage.jpg';
 
 
                 ?>

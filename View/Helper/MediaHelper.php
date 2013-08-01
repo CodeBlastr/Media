@@ -21,6 +21,8 @@ class MediaHelper extends AppHelper {
 		'document' => array('pdf', 'doc', 'docx', 'ods', 'odt'),
 	);
 	
+	public $mediaPath = '/theme/default/media/images/'; 
+	
 	public function display($item, $options = array()) {
 		$this->options = array_merge($this->options, $options);
 		if($this->_getType($item['Media'])) {
@@ -33,26 +35,25 @@ class MediaHelper extends AppHelper {
 	
 
 	public function imageMedia ($item) {
-		$imagepath = ROOT.DS.SITE_DIR.'Locale'.DS.'View'.DS.WEBROOT_DIR.DS.'media'.DS.'images' . DS . $item['filename'].'.'.$item['extension'];
-		debug($imagepath);
+		$imagePath = $this->mediaPath.$item['filename'].'.'.$item['extension'];
 		$thumbImageOptions = array(
 				'width' => $this->options['width'],
 				'height' => $this->options['height'],
 				'alt' => $item['title'],
-				'class' => 'thumbnail media-image-thumb',
-				'id' => $item['id'],
+				'class' => 'media-image-thumb',
 		);
 		$image = $this->Html->image($imagePath, $thumbImageOptions,	array(
     		'conversion' => $this->options['conversion'],
 			'quality' => 75,
 			'alt' => 'thumbnail',
 		));
-		debug($image);
-		return $this->_View->element('image_display', 
+		
+		return $this->_View->Element('Media.image_display', 
 			array(
 				'image' => $image,
 				'class' => $this->options['class'],
-				'url' => $this->options['url']
+				'url' => $this->options['url'],
+				'id' => $item['id'],
 				));
 	}
 	
@@ -62,7 +63,7 @@ class MediaHelper extends AppHelper {
 	
 	protected function _getType($item) {
 		foreach($this->types as $type => $extensions) {
-			if(array_search($item['extension'], $extensions)) {
+			if(!array_search($item['extension'], $extensions)) {
 				$this->type = $type;
 				return true;
 			}

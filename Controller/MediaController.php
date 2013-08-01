@@ -11,16 +11,7 @@ class _MediaController extends MediaAppController {
 	public $name = 'Media';
 	public $uses = 'Media.Media';
 	public $allowedActions = array('index', 'view', 'notification', 'stream', 'my', 'add', 'edit', 'sorted', 'record');
-	
-	
-	public function beforeFilter() {
-		parent::beforeFilter();
-		$themeDirectory = ROOT.DS.SITE_DIR.DS.'Locale'.DS.'View'.DS.WEBROOT_DIR . DS;
-		if (!file_exists($themeDirectory . 'media')) {
-			mkdir($themeDirectory . 'media');
-		}
-	}
-
+	public $helpers = array('Media.Media');
 /**
  * kinda expects URL to be: /media/media/index/(audio|video)
  * shows media of the type passed in the request
@@ -42,16 +33,28 @@ class _MediaController extends MediaAppController {
 
 
 	public function add() {
-		#debug($this->request->data);
 		if(!empty($this->request->data)) {
             $this->request->data['User']['id'] = $this->Auth->user('id');
 			#debug($this->request->data);break;
 			if ($this->Media->save($this->request->data)) {
 				$this->Session->setFlash('Media saved.');
 				#$this->redirect('/media/media/edit/'.$this->Media->id);
-				$this->redirect(array('action' => 'my'));
+				if($this->request->isAjax()) {
+					$this->set('media', $this->Media->findById($this->Media->id));
+					$this->layout = false;
+					$this->view = 'ajax-upload';
+				}else {
+					$this->redirect(array('action' => 'my'));
+				}
+				
 			} else {
-				$this->Session->setFlash('Invalid Upload.');
+				
+				if($this->request->isAjax()) {
+					throw new InternalErrorException('Upload Failed');
+				}else {
+					$this->Session->setFlash('Invalid Upload.');
+				}
+				
 			}
 		}
 
@@ -255,11 +258,12 @@ class _MediaController extends MediaAppController {
 	 * @param $uid - The user to show the images for
 	 * @param $multiple - Allow the user to select more that one Item
 	 */
-	public function filebrowser() {
+	public function filebrowser($uid = null, $multiple = true) {
 		$selected = false;
 		if($uid == null && $this->Session->read('Auth.User.id') != 1) {
 			$uid = $this->Session->read('Auth.User.id');
 		}
+		
 		
 		$media = $this->Media->find('all', array('conditions' => array('creator_id' => $uid)));
 		

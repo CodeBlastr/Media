@@ -7,18 +7,19 @@ class MediaAttachableBehavior extends ModelBehavior {
 	public $settings = array();
 	
 	
-	// public function setup(Model $Model, $config = array()) {
-		// //Add the HasMany Relationship to the $Model
-		// $Model->bindModel(
-	        // array('hasMany' => array(
-	                // 'MediaAttachments' => array(
-						// 'className' => 'Media.MediaAttachment',
-						// 'foreignKey' => 'foreign_key'
-	                	// )
-	             	// )
-	     		// )
-			// );
-	// }
+	public function setup(Model $Model, $config = array()) {
+		//Add the HasMany Relationship to the $Model
+		$Model->bindModel(
+	        array('hasMany' => array(
+	                'MediaAttachments' => array(
+						'className' => 'Media.MediaAttachment',
+						'foreignKey' => 'foreign_key',
+						'conditions' => array('model' => $Model->alias),
+	                	)
+	             	)
+	     		),false
+			);
+	}
 	
 	/**
 	 * beforeSave is called before a model is saved.  Returning false from a beforeSave callback
@@ -75,7 +76,8 @@ class MediaAttachableBehavior extends ModelBehavior {
 				$this->data['MediaAttachment']['foreign_key'] = $Model->data[$Model->alias]['id'];
 			}
 			
-			$MediaAttachment->saveAll($this->data);	
+			$MediaAttachment->create();
+			$MediaAttachment->saveMany($this->data['MediaAttachment']);	
 			}
 			
 			return true;
@@ -132,16 +134,28 @@ class MediaAttachableBehavior extends ModelBehavior {
 	 * @return mixed An array value will replace the value of $results - any other value will be ignored.
 	 */
 	public function afterFind(Model $Model, $results, $primary) {
-		//Only attache media if the $Model->find() is being called directly	
-		if(isset($results['MediaAttachment']) && $primary) {
-			$media__ids = array();
-			foreach($results['MediaAttachment'] as $medaAttachment) {
-				$media__ids = $medaAttachment['media_id'];
+		//Only attach media if the $Model->find() is being called directly	
+		foreach($results as $i => $result){
+			if(isset($result['MediaAttachments']) && $primary) {
+				$media_ids = array();
+				foreach($result['MediaAttachments'] as $medaAttachment) {
+					$media_ids[] = $medaAttachment['media_id'];
+				}
+				
+				$Media = new Media;
+				$results[$i]['Media'] = $Media->find('all', array('conditions' => array('id' => $media_ids)));
+				unset($results[$i]['MediaAttachments']);
 			}
-			$Media = new Media;
-			$results['Media'] = $Media->find('all', array('id' => $media_ids));
 		}
+		return $results;
 	}
+	
+	public function beforeFind(Model $model, $query) {
+		$query['contain'][] = 'MediaAttachments';
+		
+		return $query;
+	}
+	
 		
 	
 }
