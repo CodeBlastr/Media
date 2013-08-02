@@ -6,7 +6,11 @@
 	<a class="btn" href="/media/media/filebrowser">Select Media</a>
 	
 	<div id="MediaSelected" class="clearfix">
-			
+		<?php if (isset($media) && !empty($media)) {
+			foreach($media as $m) {
+				echo $this->Media->display($m, array('width' => 150, 'height' => 150));	
+			}
+		}?>
 	</div>
 
 </div>
@@ -22,14 +26,23 @@
 	$('a[href="/media/media/filebrowser"]').click(function(e) {
 		e.preventDefault();
 		if(loaded) {
+			$('body').append('<div class="modal-backdrop fade in"></div>');
 			$('#MediaBrowserPopUp').show('slow');
 		}else {
+			$('#MediaSelected div.media-item').each(function(index, el) {
+				var obj = $(el).clone();
+				mediaSelected.push(obj);
+			});
+			
 			$.post("/media/media/filebrowser", { <?php echo isset($selected) ? 'selected: '.$selected : '' ?> })
 				.done(function(html) {
 					html = '<div id="MediaBrowserPopUp"><a href="#insert" class="btn">Insert</a><a href="#close" class="btn">Close</a>'+html+'</div>';
 	  				$('body').append(html);
 	  				$('#MediaBrowserPopUp').css('left', ($(window).width()*.5)-($('#MediaBrowserPopUp').width()/2)).css('top', '30px');
 	  				$('body').append('<div class="modal-backdrop fade in"></div>');
+	  				for(var i=0 ; i < mediaSelected.length ; i++ ) {
+	  					$('#mediaBrowser').find('#'+mediaSelected[i].attr('id')).closest('a').addClass('selected');
+	  				}
 	  				$('#MediaBrowserPopUp').show('slow');
 	  				loaded = true;
 				});
@@ -44,7 +57,6 @@
 		mediaSelected = [];
 		
 		$('#mediaBrowser .selected').each(function(index, el) {
-			console.log($(el));
 			var obj = $(el).find('.media-item').clone();
 			mediaSelected.push(obj);
 		});
