@@ -134,7 +134,7 @@ class MediaAttachableBehavior extends ModelBehavior {
 	 * @return mixed An array value will replace the value of $results - any other value will be ignored.
 	 */
 	public function afterFind(Model $Model, $results, $primary) {
-		//Only attach media if the $Model->find() is being called directly	
+		//Only attach media if the $Model->find() is being called directly
 		foreach($results as $i => $result){
 			if(isset($result['MediaAttachments']) && $primary) {
 				$media_ids = array();

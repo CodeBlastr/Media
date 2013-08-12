@@ -59,10 +59,11 @@
 		$('#mediaBrowser').on('click', 'a.thumbnail', function(e){
 			if($(this).hasClass('selected')) {
 				$(this).removeClass('selected');
-				console.log('unselected');
 			}else{
+				if(!multiple) {
+					$('#mediaBrowser a.thumbnail').removeClass('selected');
+				}
 				$(this).addClass('selected');
-				console.log('selected');
 			}
 		})
 		

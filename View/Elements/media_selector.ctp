@@ -1,5 +1,7 @@
 <?php
 	//Setting the $selected variable on element call will control how many items can be selected
+	$multiple = isset($multiple) && is_bool($multiple) ? $multiple : false;
+	debug($multiple);
 ?>
 
 <div id="MediaSelector">
@@ -16,6 +18,8 @@
 </div>
 
 <script type="text/javascript">
+
+var multiple = <?php echo $multiple ? 'true' : 'false'; ?>;
 
 (function($) {
 	
@@ -34,7 +38,7 @@
 				mediaSelected.push(obj);
 			});
 			
-			$.post("/media/media/filebrowser", { <?php echo isset($selected) ? 'selected: '.$selected : '' ?> })
+			$.post("/media/media/filebrowser", { multiple: multiple })
 				.done(function(html) {
 					html = '<div id="MediaBrowserPopUp"><a href="#insert" class="btn">Insert</a><a href="#close" class="btn">Close</a>'+html+'</div>';
 	  				$('body').append(html);
@@ -51,11 +55,9 @@
 		
 	});
 	
-	
 	$(document).on('click', 'a[href="#insert"]', function(e) {
 		e.preventDefault();
 		mediaSelected = [];
-		
 		$('#mediaBrowser .selected').each(function(index, el) {
 			var obj = $(el).find('.media-item').clone();
 			mediaSelected.push(obj);
@@ -67,6 +69,8 @@
 		$('.modal-backdrop').remove();
 	});
 	
+	
+	
 	$(document).on('click', 'a[href="#close"]', function(e) {
 		e.preventDefault();
 		$('#MediaBrowserPopUp').hide('slow');
@@ -75,12 +79,10 @@
 	
 	function renderSelectedItems() {
 		$('#MediaSelected').children().remove();
-		console.log(mediaSelected);
 		if(mediaSelected.length > 0){
 			
 			for(var i=0 ; i < mediaSelected.length ; i++) {
 				mediaSelected[i].append('<input type="hidden" value="'+mediaSelected[i].attr('id')+'" name="data[MediaAttachment]['+i+'][media_id]">');
-				console.log(mediaSelected[i]);
 				mediaSelected[i].appendTo($('#MediaSelected'));
 			}
 		}

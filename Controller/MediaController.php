@@ -258,16 +258,17 @@ class _MediaController extends MediaAppController {
 	 * @param $uid - The user to show the images for
 	 * @param $multiple - Allow the user to select more that one Item
 	 */
-	public function filebrowser($uid = null, $multiple = true) {
-		$selected = false;
+	public function filebrowser($multiple = true, $uid = null) {
+		debug($this->request->data);
 		if($uid == null && $this->Session->read('Auth.User.id') != 1) {
 			$uid = $this->Session->read('Auth.User.id');
 		}
 		
+		$multiple = isset($this->request->data['mulitple']) ? $this->request->data['mulitple'] : true;
 		
 		$media = $this->Media->find('all', array('conditions' => array('creator_id' => $uid)));
 		
-		$this->set(compact('media', 'selected'));
+		$this->set(compact('media', 'multiple'));
 		
 		if($this->request->isAjax()) {
 			$this->layout = null;
