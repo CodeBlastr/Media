@@ -275,9 +275,20 @@ class _MediaController extends MediaAppController {
 		}
 		
 	}
-	
 
-}//class{}
+
+	public function canvas($id = null) {
+		if ( $id ) {
+			$canvas = $this->Media->find('first', array(
+				'conditions' => array(
+					'Media.id' => $id
+				)
+			));
+			$this->set('media', $media);
+		}
+	}
+
+}
 
 if (!isset($refuseInit)) {
 	class MediaController extends _MediaController{}
