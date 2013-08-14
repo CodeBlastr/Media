@@ -1,0 +1,40 @@
+#cv_canvasWrapper {
+  box-shadow: 5px 5px  25px #999;
+  margin-bottom: 100px;
+}
+
+#cb_circleMenu {
+  display: none;
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: #093b62;
+  text-align: center;
+}
+
+/* menu items */
+#cb_circleMenu a {
+  margin-top: 28px;
+  display: inline-block;
+  cursor: pointer;
+}
+a#cb_addText {}
+a#cb_addImage {}
+a#cb_cancel {
+  display: block;
+}
+
+/* input elements */
+.cb_addEditText {
+  display: none;
+  position: relative;
+  width: 100px;
+  height: 50px;
+}
+.cb_addEditImage {
+  display: none;
+  position: relative;
+  width: 100px;
+  height: 50px;
+}
