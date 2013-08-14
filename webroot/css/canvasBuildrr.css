@@ -1,4 +1,4 @@
-#cv_canvasWrapper {
+#cb_canvasWrapper {
   box-shadow: 5px 5px  25px #999;
   margin-bottom: 100px;
 }
@@ -9,8 +9,9 @@
   width: 100px;
   height: 100px;
   border-radius: 50%;
-  background: #093b62;
+  background: #fff;
   text-align: center;
+  box-shadow: 0px 0px 20px #999;
 }
 
 /* menu items */
