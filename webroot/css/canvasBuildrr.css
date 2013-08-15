@@ -30,8 +30,7 @@ a#cb_cancel {
 .cb_addEditText {
   display: none;
   position: relative;
-  width: 100px;
-  height: 50px;
+  background: #efefef;
 }
 .cb_addEditImage {
   display: none;
@@ -39,3 +38,13 @@ a#cb_cancel {
   width: 100px;
   height: 50px;
 }
+
+ul#fontList {
+    height: 30px;
+    width: 150px;
+    border: 1px #000 solid;
+}
+ul#fontList li { padding: 5px 10px; z-index: 2; list-style-type: none; }
+ul#fontList li:not(.init) { float: left; width: 130px; display: none; background: #ddd; }
+ul#fontList li:not(.init):hover, ul li.selected:not(.init) { background: #09f; color: #fff; }
+ul#fontList li.init { cursor: pointer; }

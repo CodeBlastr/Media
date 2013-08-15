@@ -56,9 +56,11 @@
 		initClickHandlers();
 		
 		function initControlElements(element) {
+		  // wrap the canvas
 		  element.wrap('<div id="cb_canvasWrapper" />');
 		  $("#cb_canvasWrapper").css('width', element.attr('width'));
 		  $("#cb_canvasWrapper").append('<div id="cb_circleMenu" />');
+		  // create our main action menu
 		  $("#cb_circleMenu").append('<a id="cb_addText">Abc</a> <a id="cb_addImage">img</a>');
 		  $("#cb_circleMenu").append('<a id="cb_cancel">&times;</a>');
 		}
@@ -66,13 +68,12 @@
 		function initClickHandlers() {
 		  $("#cb_canvasWrapper").click(function (e) {
 			console.log('wrapper clicked');
+			// show the menu
 			$('#cb_circleMenu').css({'top':e.pageY-50,'left':e.pageX-50, 'position':'absolute'});
 			$('#cb_circleMenu').show();
-
 			// save the coords of the initial click
 			click.x = e.pageX - $("#cb_canvasWrapper").offset().left;
 			click.y = e.pageY - $("#cb_canvasWrapper").offset().top;
-
 		  });
 
 		  $("#cb_addText").click(function (e) {
@@ -85,13 +86,36 @@
 			$("#cb_canvasWrapper").append(newAddEditText);
 			newAddEditText.css({'top':e.pageY-50,'left':e.pageX-50, 'position':'absolute'});
 
+			// create the fontList for the textToolbar
+			var fontList = $('<ul id="fontList"><li class="init">- choose font -</li><li id="ABeeZee" style="font-family:\'ABeeZee\';">ABeeZee</li><li id="Abel" style="font-family:\'Abel\';">Abel</li></ul>');
+
+			// make the fontList act like a select box
+			fontList.on("click", ".init", function() {
+				$(this).closest("ul").children('li:not(.init)').toggle();
+			});
+			var allOptions = fontList.children('li:not(.init)');
+			fontList.on("click", "li:not(.init)", function() {
+				allOptions.removeClass('selected');
+				$(this).addClass('selected');
+				fontList.children('.init').html($(this).html());
+				allOptions.toggle();
+			});
+
+			// create the textToolbar
+			var textToolBar = $('<div class="cb_textToolbar" />');
+			textToolBar
+					.append('<button>colors</button>')
+					.append(fontList)
+			;
+			newAddEditText.append(textToolBar);
+
 			// create the text input
 			var newTextInput = $('<input type="text" />');
 			newAddEditText.append(newTextInput);
 			var newElement = new newTextObject({x: click.x, y: click.y});
 
-
-			elements.push( newElement ); // ?
+			// ?
+			elements.push( newElement );
 
 			// bind events to the new text input
 			newTextInput
@@ -106,10 +130,11 @@
 						newAddEditText.hide();
 					  }
 					})
-					.on('blur', function(){
-					  newAddEditText.hide();
-					  return false;
-					});
+//					.on('blur', function(){
+//					  newAddEditText.hide();
+//					  return false;
+//					})
+				;
 			
 			newAddEditText.click(function(){
 			  return false;
@@ -127,6 +152,7 @@
 			return false;
 		  });
 
+		  // hide the menu when close button clicked
 		  $("#cb_cancel").click(function (e) {
 			$('#cb_circleMenu').hide();
 			return false;
