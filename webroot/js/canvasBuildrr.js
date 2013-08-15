@@ -80,29 +80,44 @@
 			// hide the menu
 			$('#cb_circleMenu').hide();
 
-			// display a text element
+			// create a wrapper for a text input
 			var newAddEditText = $('<div class="cb_addEditText" />');
 			$("#cb_canvasWrapper").append(newAddEditText);
 			newAddEditText.css({'top':e.pageY-50,'left':e.pageX-50, 'position':'absolute'});
+
+			// create the text input
 			var newTextInput = $('<input type="text" />');
 			newAddEditText.append(newTextInput);
 			var newElement = new newTextObject({x: click.x, y: click.y});
 
+
 			elements.push( newElement ); // ?
 
-			newTextInput.on('change keyup', function() {
-			  newElement.content = newTextInput.val();
-			  elements.push( newElement );
-			  writeText( newElement );
-			});
-			newTextInput.on('blur', function(){
-			  newAddEditText.hide();
-			  return false;
-			});
+			// bind events to the new text input
+			newTextInput
+					.on('change keyup', function() {
+					  newElement.content = newTextInput.val();
+					  elements.push( newElement );
+					  writeText( newElement );
+					})
+					.on('keydown', function(event){
+					  if ( event.which === 27 ) {
+						// ESC pressed
+						newAddEditText.hide();
+					  }
+					})
+					.on('blur', function(){
+					  newAddEditText.hide();
+					  return false;
+					});
+			
 			newAddEditText.click(function(){
 			  return false;
 			});
+
+			// show the text wrapper & input
 			newAddEditText.show();
+			newTextInput.focus();
 
 			return false;
 		  });
