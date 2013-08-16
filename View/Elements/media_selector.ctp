@@ -1,7 +1,6 @@
 <?php
 	//Setting the $selected variable on element call will control how many items can be selected
 	$multiple = isset($multiple) && is_bool($multiple) ? $multiple : false;
-	debug($multiple);
 ?>
 
 <div id="MediaSelector">

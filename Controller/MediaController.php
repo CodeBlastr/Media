@@ -259,7 +259,6 @@ class _MediaController extends MediaAppController {
 	 * @param $multiple - Allow the user to select more that one Item
 	 */
 	public function filebrowser($multiple = true, $uid = null) {
-		debug($this->request->data);
 		if($uid == null && $this->Session->read('Auth.User.id') != 1) {
 			$uid = $this->Session->read('Auth.User.id');
 		}
