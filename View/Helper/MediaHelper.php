@@ -6,8 +6,8 @@ class MediaHelper extends AppHelper {
 	public $helpers = array ('Html', 'Form', 'Url');
 	
 	public $options = array(
-		'width' => '300',
-		'height' => '300',
+		'width' => 300,
+		'height' => 300,
 		'url' => array(),
 		'class' => 'media-item',
 		'conversion' => 'resizeCrop',
