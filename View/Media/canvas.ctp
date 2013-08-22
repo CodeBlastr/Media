@@ -11,18 +11,33 @@
 	canvas {
 		background:	#fff;
 	}
+	#cb_canvasWrapper {
+		cursor: crosshair;
+	}
 </style>
 
 <link rel="stylesheet" type="text/css" href="/css/google-webfonts.css" />
 
+<script type="text/javascript" src="/js/underscore/underscore-1.5.1.js"></script>
+<script type="text/javascript" src="/js/backbone/backbone-1.0.0.js"></script>
 <script type="text/javascript" src="/media/js/canvasBuildrr.js"></script>
 <link rel="stylesheet" type="text/css" href="/media/css/canvasBuildrr.css" />
 
+<script type="text/html" id="template-textedit">
+<div class="cb_addEditText" style="top: <%= top %>px; left: <%= left %>px; position: absolute; display:block;">
+	<div class="cb_textToolbar">
+		<button>colors</button>
+		<ul id="fontList">
+			<li class="init">- choose font -</li>
+			<li id="ABeeZee" style="font-family:'ABeeZee';">ABeeZee</li>
+			<li id="Abel" style="font-family:'Abel';">Abel</li>
+		</ul>
+	</div>
+	<input type="text" class="asdf" />
+</div>
+</script>
 
 <script type="text/javascript">
-
-
-
 
 	$(document).ready(function() {
 
