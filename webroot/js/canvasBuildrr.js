@@ -3,20 +3,20 @@
  * @description Adds simple image and text manipulation to a canvas element.
  * @author Joel Byrnes <joel@buildrr.com>
  */
-
-(function( $ ) {
-
-	$.fn.canvasBuildrr = function( options ) {
-
-		var settings = $.extend({
-			debug: true
-		}, options);
-
-		$.fn.canvasBuildrr.init(this);
-
-	};
-
-	$.fn.canvasBuildrr.init = function( element ) {
+var element = $("#canvas");
+//(function( $ ) {
+//
+//	$.fn.canvasBuildrr = function( options ) {
+//
+//		var settings = $.extend({
+//			debug: true
+//		}, options);
+//
+//		$.fn.canvasBuildrr.init(this);
+//
+//	};
+//
+//	$.fn.canvasBuildrr.init = function( element ) {
 		/**
 		 * set up the necessary pointers
 		 */
@@ -48,11 +48,14 @@
 				rotation: ''
 			},
 			initialize: function() {
-				this.on("change", refreshCanvas);
+				this.on("change:content", refreshCanvas);
+				this.on("change:fontColor", refreshCanvas);
+				this.on("change:fontSize", refreshCanvas);
 			},
 			write: function() {
+				console.log('write()');
 				context.lineWidth = 1;
-				context.fillStyle = "#CC00FF";
+				context.fillStyle = this.get('fontColor');
 				context.lineStyle = this.get('fontColor');
 				context.font = this.get('fontSize') + 'px ' + this.get('fontFamily');
 				context.fillText(this.get('content'), this.get('x'), this.get('y'));
@@ -83,6 +86,7 @@
 			initialize: function(attrs){
 				this.options = attrs;
 				this.render();
+				$('select[name="colorpicker"]').simplecolorpicker();
 			},
 			render: function(){
 				// Compile the template using underscore
@@ -90,16 +94,43 @@
 				// Load the compiled HTML into the Backbone "el"
 				this.$el.append( template );
 
+				$("#cb_canvasWrapper").unbind();
+//				$("#cb_canvasWrapper").bind('mousemove', function( event ) {
+//					mousemoveHandler(event);
+//				});
 				return this;
 			},
 			events: {
-				"keyup .asdf":	"updateText"
+				"keyup .asdf":	"updateText",
+				"click .cb_addEditText": "falseHandler",
+				"click .cb_close": "close",
+				'change select[name="colorpicker"]': 'updateColor',
+				'change select[name="fontsizepicker"]': 'updateFontsize'
 			},
 			updateText: function( event ){
+				console.log('updateText()');
 				this.model.set('content', event.target.value);
+			},
+			updateColor: function( event ){
+				console.log('updateColor()');
+				this.model.set('fontColor', event.target.value);
+			},
+			updateFontsize: function( event ){
+				console.log('updateFontsize()');
+				this.model.set('fontSize', event.target.value);
+			},
+			falseHandler: function( event ){
+				console.log('falseHandler()');
+				return false;
+			},
+			close: function( event ){
+				$('select[name="colorpicker"]').simplecolorpicker('destroy');
+				this.$el.find('.cb_addEditText').remove();
+				$("#cb_canvasWrapper").bind('click', function( event ) {
+					mainMenuHandler(event);
+				});
 			}
 		});
-
 
 
 		/**
@@ -112,7 +143,7 @@
 			// wrap the canvas
 			element.wrap('<div id="cb_canvasWrapper" />');
 			$("#cb_canvasWrapper").css('width', element.attr('width'));
-			$("#cb_canvasWrapper").append('<div id="cb_circleMenu" />');
+			$("#cb_canvasWrapper").after('<div id="cb_circleMenu" />');
 			// create our main action menu
 			$("#cb_circleMenu").append('<a id="cb_addText">Abc</a> <a id="cb_addImage">img</a>');
 			$("#cb_circleMenu").append('<a id="cb_cancel">&times;</a>');
@@ -142,6 +173,7 @@
 				top: event.pageY,
 				left: event.pageX
 			});
+			
 		};
 
 		function initClickHandlers() {
@@ -153,7 +185,7 @@
 				console.log('cb_addText clicked');
 				// hide the menu
 				$('#cb_circleMenu').hide();
-
+				$("#cb_canvasWrapper").unbind('click');
 				textEditHandler(e);
 
 //				// create a wrapper for a text input
@@ -231,28 +263,39 @@
 			});
 		}
 
-		function rect( x, y, w, h ) {
-			context.beginPath();
-			context.rect(x, y, w, h);
-			context.closePath();
-			context.fill();
-		}
-
 		function clear() {
-			context.clearRect(0, 0, $("#cb_canvasWrapper").css('width'), $("#cb_canvasWrapper").css('height'));
-			context.fillStyle = "#FFFFFF";
-			rect(0, 0, $("#cb_canvasWrapper").css('width'), $("#cb_canvasWrapper").css('height'));
+			console.log('clear()');
+			context.save();
+			context.clearRect(0, 0, canvas.width, canvas.height);
+			context.restore();
 		}
 
 		function refreshCanvas() {
+			console.log('refreshCanvas');
 			clear();
 			TextObjectCollection.each(function( textObject ) {
+				console.log(TextObjectCollection);
 				console.log(textObject);
 				textObject.write();
 			});
 		}
 
-		$("#cb_canvasWrapper").mousemove(function( event ) {
+
+		function rotateAndWrite() {
+			context.save();
+			context.translate(newx, newy);
+			context.rotate(-Math.PI/2);
+			context.textAlign = "center";
+			context.fillText("Your Label Here", labelXposition, 0);
+			context.restore();
+		}
+
+
+		$("#cb_canvasWrapper").bind('mousemove', function(event){
+			mousemoveHandler(event);
+		});
+
+		function mousemoveHandler ( event ) {
 			if ( TextObjectCollection.length > 0 ) {
 				var x = event.pageX - $("#cb_canvasWrapper").offset().left;
 				var y = event.pageY - $("#cb_canvasWrapper").offset().top;
@@ -291,8 +334,8 @@
 					}
 				});
 			}
-		});
-
-	};
-
-}(jQuery));
+		}
+//
+//	};
+//
+//}(jQuery));
