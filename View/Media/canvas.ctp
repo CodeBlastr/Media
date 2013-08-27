@@ -18,10 +18,11 @@
 </style>
 
 
-<script type="text/html" id="template-textedit">
+<script type="text/html" id="template-textEdit">
 <div class="cb_addEditText" style="top: <%= top %>px; left: <%= left %>px; position: absolute; display:block; cursor: default;">
 	<div class="cb_textToolbar">
 		<select name="colorpicker">
+			<option value="#000000">Black</option>
 			<option value="#7bd148">Green</option>
 			<option value="#5484ed">Bold blue</option>
 			<option value="#a4bdfc">Blue</option>
@@ -35,21 +36,31 @@
 			<option value="#dbadff">Purple</option>
 			<option value="#e1e1e1">Gray</option>
 		</select>
-		<select name="fontsizepicker" class="input-mini">
+		<select name="fontsizepicker" class="input-small">
 			<option value="10">10px</option>
 			<option value="16">16px</option>
 			<option value="24">24px</option>
 			<option value="32">32px</option>
 			<option value="48">48px</option>
+			<option value="64">64px</option>
+			<option value="72">72px</option>
 		</select>
-		<span class="cb_close">&times;</span>
 		<ul id="fontList">
 			<li class="init">- choose font -</li>
 			<li id="ABeeZee" style="font-family:'ABeeZee';">ABeeZee</li>
 			<li id="Abel" style="font-family:'Abel';">Abel</li>
 		</ul>
+		<span class="cb_close" title="close">&times;</span>
 	</div>
-	<input type="text" class="asdf" />
+	<input type="text" class="textInput" value="<%= content %>" />
+</div>
+</script>
+<script type="text/html" id="template-imageEdit">
+<div class="cb_addEditImage" style="top: <%= top %>px; left: <%= left %>px; position: absolute; display:block; cursor: default;">
+	<div class="cb_imageToolbar">
+		<input type="file" class="filePicker" name="imageLoader"/>
+		<span class="cb_close pull-right" title="close">&times;</span>
+	</div>
 </div>
 </script>
 <link rel="stylesheet" type="text/css" href="/css/google-webfonts.css" />

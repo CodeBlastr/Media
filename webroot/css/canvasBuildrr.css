@@ -1,50 +1,63 @@
 #cb_canvasWrapper {
-  box-shadow: 5px 5px  25px #999;
-  margin-bottom: 100px;
+	box-shadow: 5px 5px  25px #999;
+	margin-bottom: 100px;
+	position: relative;
 }
 
 #cb_circleMenu {
-  display: none;
-  position: relative;
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  background: #fff;
-  text-align: center;
-  box-shadow: 0px 0px 20px #999;
+	display: none;
+	position: absolute;
+	width: 100px;
+	height: 100px;
+	border-radius: 50%;
+	background: #fff;
+	text-align: center;
+	box-shadow: 0px 0px 20px #999;
 }
 
-/* menu items */
+/* main menu items */
 #cb_circleMenu a {
-  margin-top: 28px;
-  display: inline-block;
-  cursor: pointer;
+	margin-top: 28px;
+	display: inline-block;
+	cursor: pointer;
 }
 a#cb_addText {}
 a#cb_addImage {}
 a#cb_cancel {
-  display: block;
+	display: block;
 }
 
 /* input elements */
 .cb_addEditText {
-  display: none;
-  position: relative;
-  background: #efefef;
+	display: none;
+	position: relative;
+	background: #efefef;
+	padding: 5px;
+	border-radius: 5px;
 }
 .cb_addEditImage {
-  display: none;
-  position: relative;
-  width: 100px;
-  height: 50px;
+	display: none;
+	position: relative;
+	background: #efefef;
+	padding: 5px;
+	border-radius: 5px;
 }
 
-ul#fontList {
+/* addEditText elements */
+.cb_addEditText ul#fontList {
     height: 30px;
     width: 150px;
     border: 1px #000 solid;
+	display: inline-block;
 }
-ul#fontList li { padding: 5px 10px; z-index: 2; list-style-type: none; }
-ul#fontList li:not(.init) { float: left; width: 130px; display: none; background: #ddd; }
-ul#fontList li:not(.init):hover, ul li.selected:not(.init) { background: #09f; color: #fff; }
-ul#fontList li.init { cursor: pointer; }
+.cb_addEditText ul#fontList li { padding: 5px 10px; z-index: 2; list-style-type: none; }
+.cb_addEditText ul#fontList li:not(.init) { float: left; width: 130px; display: none; background: #ddd; }
+.cb_addEditText ul#fontList li:not(.init):hover, ul li.selected:not(.init) { background: #09f; color: #fff; }
+.cb_addEditText ul#fontList li.init { cursor: pointer; }
+.cb_addEditText .simplecolorpicker.icon {height: 28px;}
+
+.cb_placeholder {
+	position: absolute;
+	cursor: pointer;
+	border: 1px dotted #ccc;
+}
