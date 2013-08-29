@@ -59,5 +59,7 @@ a#cb_cancel {
 .cb_placeholder {
 	position: absolute;
 	cursor: pointer;
-	border: 1px dotted #ccc;
+}
+.cb_placeholder:hover {
+	border: 1px dashed #ccc;
 }
