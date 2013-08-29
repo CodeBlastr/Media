@@ -13,7 +13,7 @@ var context = canvas.getContext("2d");
 
 var click = {x: '', y: ''};
 
-var canDrag = false;
+var isDragging = false;
 
 var TextObjects = Backbone.Collection.extend({
 	model: TextObject

@@ -35,7 +35,7 @@ var TextEditView = Backbone.View.extend({
 		this.model.set('fontSize', event.target.value);
 	},
 	falseHandler: function( event ) {
-		console.log('falseHandler()');
+		//console.log('falseHandler()');
 		return false;
 	},
 	close: function( event ) {

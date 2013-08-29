@@ -19,6 +19,7 @@ var mainMenuHandler = function( event ) {
 
 $("canvas#canvas").on('click', function( event ) {
 	mainMenuHandler(event);
+	return false;
 });
 
 /**
@@ -44,36 +45,38 @@ $("#cb_cancel").click(function( e ) {
 
 $("#cb_canvasWrapper").parent()
 		.on({
+			mouseup: function(event) {
+				//console.log('mouseUp');
+				$("#cb_canvasWrapper").unbind('mousemove');
+				return false;
+			}
+		})
+		.on({
 			mouseenter: function(event) {
 				//console.log('yep');
+				return false;
 			},
 			mouseleave: function(event) {
 				//console.log('nope');
+				return false;
 			},
 			click: function(event) {
+				console.log('click');
 				var clickedObject = getClickedObject($(this));
 				textEditHandler(event, clickedObject);
 				return false;
 			},
 			mousedown: function(event) {
-				canDrag = true;
 				var clickedObject = getClickedObject($(this));
-				canvas.onmousemove = dragItem(event, clickedObject);
-			},
-			mouseup: function(event) {
-				canDrag = false;
-				canvas.onmousemove = null;
+				$("#cb_canvasWrapper").bind('mousemove', function(event) {
+					clickedObject
+						.set('x', event.pageX - $("#cb_canvasWrapper").offset().left)
+						.set('y', event.pageY - $("#cb_canvasWrapper").offset().top);
+				});
+				return false;
 			}
 		}, ".cb_placeholder");
 
-function dragItem(event, clickedObject) {
-	if ( canDrag === true ) {
-		clickedObject
-				.set('x', event.pageX - $("#cb_canvasWrapper").offset().left)
-				.set('y', event.pageY - $("#cb_canvasWrapper").offset().top);
-	}
-	console.log(canDrag);
-}
 
 function getClickedObject($element) {
 	console.log( 'clicked ' + $element.attr('data-cid') );
