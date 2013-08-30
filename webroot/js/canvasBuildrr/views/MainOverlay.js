@@ -62,8 +62,16 @@ $("#cb_canvasWrapper").parent()
 			},
 			click: function(event) {
 				console.log('click');
-				var clickedObject = getClickedObject($(this));
-				textEditHandler(event, clickedObject);
+
+				if ( $(this).attr('data-model') === 'TextObject' ) {
+					var clickedObject = TextObjectCollection.get($(this).attr('data-cid'));
+					textEditHandler(event, clickedObject);
+				}
+				if ( $(this).attr('data-model') === 'ImageObject' ) {
+					var clickedObject = ImageObjectCollection.get($(this).attr('data-cid'));
+					imageEditHandler(event, clickedObject);
+				}
+
 				return false;
 			},
 			mousedown: function(event) {

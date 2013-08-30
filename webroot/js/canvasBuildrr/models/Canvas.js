@@ -15,7 +15,7 @@ function refreshCanvas() {
 	});
 	//console.log(TextObjectCollection);
 	ImageObjectCollection.each(function( imageObject ) {
-		//console.log(imageObject);
+		console.log(imageObject);
 		imageObject.draw();
 	});
 	return true;

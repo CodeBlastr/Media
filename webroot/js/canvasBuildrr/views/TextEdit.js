@@ -41,12 +41,6 @@ var TextEditView = Backbone.View.extend({
 	close: function( event ) {
 		$('select[name="colorpicker"]').simplecolorpicker('destroy');
 		this.$el.find('.cb_addEditText').remove();
-//		$("#cb_canvasWrapper").bind('click', function( event ) {
-//			mainMenuHandler(event);
-//		});
-//		$("#cb_canvasWrapper").bind('mousemove', function( event ) {
-//			mousemoveHandler(event);
-//		});
 	}
 });
 

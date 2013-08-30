@@ -21,6 +21,13 @@ var ImageEditView = Backbone.View.extend({
 		var imageModel = this.model;
 		reader.onload = function( event ) {
 			//uploadAndResize()
+			var image = new Image();
+			image.src = event.target.result;
+			image.onload = function() {
+				imageModel.set('height', this.height);
+				imageModel.set('width', this.width);
+			};
+
 			imageModel.set('content', event.target.result);
 		};
 		if ( !rFilter.test(event.target.files[0].type) ) {
@@ -35,12 +42,6 @@ var ImageEditView = Backbone.View.extend({
 	},
 	close: function( event ) {
 		this.$el.find('.cb_addEditImage').remove();
-//		$("#cb_canvasWrapper").bind('click', function( event ) {
-//			mainMenuHandler(event);
-//		});
-//		$("#cb_canvasWrapper").bind('mousemove', function( event ) {
-//			mousemoveHandler(event);
-//		});
 	}
 });
 
@@ -54,7 +55,8 @@ var imageEditHandler = function( event, image ) {
 	var imageEditor = new ImageEditView({
 		model: image,
 		el: $("#cb_canvasWrapper"),
-		top: event.pageY + 10,
-		left: event.pageX
+		top: image.get('y') + 10,
+		left: image.get('x'),
+		content: image.get('content')
 	});
 };
