@@ -24,7 +24,11 @@ var TextObject = Backbone.Model.extend({
 				.css('top', this.get('y'))
 				.css('left', this.get('x'))
 				.css('width', this.get('width'))
-				.css('height', this.get('fontSize'));
+				.css('height', this.get('fontSize'))
+				.append( $('<div class="cb_ph_corner cb_ph_bottomLeft" />') )
+				.append( $('<div class="cb_ph_corner cb_ph_bottomRight" />') )
+				.append( $('<div class="cb_ph_corner cb_ph_topLeft" />') )
+				.append( $('<div class="cb_ph_corner cb_ph_topRight" />') );
 		$("#cb_canvasWrapper").append(placeholder);
 	},
 	refresh: function() {

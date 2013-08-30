@@ -76,6 +76,43 @@ $("#cb_canvasWrapper").parent()
 			},
 			mousedown: function(event) {
 				var clickedObject = getClickedObject($(this));
+
+				// detect if they clicked in a corner
+				var divClickX = event.pageX - $(this).offset().left;
+				var divClickY = event.pageY - $(this).offset().top;
+				console.log(divClickX+', '+divClickY);
+
+				var sizeOfCorner = 10;
+
+				if ( divClickX < sizeOfCorner && divClickY < sizeOfCorner ) {
+					// fire top-left corner click action
+					console.log('top-left mousedown');
+				}
+				if ( ($(this).width() - divClickX) < sizeOfCorner && (($(this).height() - divClickY) < sizeOfCorner) ) {
+					// fire bottom-right corner click action
+					console.log('bottom-right mousedown');
+				}
+				if ( ($(this).width() - divClickX) < sizeOfCorner && divClickY < sizeOfCorner ) {
+					// fire top-right corner click action
+					console.log('top-right mousedown');
+				}
+				if ( ($(this).height() - divClickY) < sizeOfCorner && divClickX < sizeOfCorner ) {
+					// fire bottom-left corner click action
+					console.log('bottom-left mousedown');
+				}
+
+				// attach binding for image rotation
+
+				// attach binding for image resizing
+//				var aspectRatio = clickedObject.get('width') / clickedObject.get('height');
+//				var newHeight = newWidth * aspectRatio;
+//				$("#cb_canvasWrapper").bind('mousemove', function(event) {
+//					clickedObject
+//						.set('x', event.pageX - $("#cb_canvasWrapper").offset().left)
+//						.set('height', newHeight);
+//				});
+
+				// attach binding for image movement
 				$("#cb_canvasWrapper").bind('mousemove', function(event) {
 					clickedObject
 						.set('x', event.pageX - $("#cb_canvasWrapper").offset().left)

@@ -59,7 +59,31 @@ a#cb_cancel {
 .cb_placeholder {
 	position: absolute;
 	cursor: pointer;
+	padding: 1px;
 }
 .cb_placeholder:hover {
 	border: 1px dashed #ccc;
+	padding: 0px;
+}
+.cb_ph_corner {
+	position: absolute;
+	height: 10px;
+	width: 10px;
+	background: #09f;
+}
+.cb_ph_bottomLeft {
+	bottom: 0;
+	left: 0;
+}
+.cb_ph_bottomRight {
+	bottom: 0;
+	right: 0;
+}
+.cb_ph_topLeft {
+	top: 0;
+	left: 0;
+}
+.cb_ph_topRight {
+	top: 0;
+	right: 0;
 }
