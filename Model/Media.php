@@ -41,7 +41,7 @@ class Media extends MediaAppModel {
 
 
 	public function beforeSave($options) {
-		parent::__construct($options);
+		parent::beforeSave($options);
 		$this->data['Media']['model'] = !empty($this->data['Media']['model']) ? $this->data['Media']['model'] : 'Media';
 		$this->plugin = strtolower(ZuhaInflector::pluginize($this->data['Media']['model']));
 		$this->_createDirectories();

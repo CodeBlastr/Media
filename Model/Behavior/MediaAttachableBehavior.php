@@ -34,8 +34,6 @@ class MediaAttachableBehavior extends ModelBehavior {
 	 * @return mixed False if the operation should abort. Any other result will continue.
 	 */
 	public function beforeSave(Model $Model) {
-		//debug($Model->data);
-		//break;
 		//doing it this way to protect against saveAll
 		if(isset($Model->data['MediaAttachment'])) {
 			$this->data['MediaAttachment'] = $Model->data['MediaAttachment'];
