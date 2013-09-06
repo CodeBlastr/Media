@@ -262,12 +262,15 @@ class _MediaController extends MediaAppController {
 	 */
 	public function filebrowser($multiple = true, $uid = null) {
 		if($uid == null && $this->Session->read('Auth.User.id') != 1) {
-			$uid = $this->Session->read('Auth.User.id');
+			$uid = $this->userId;
 		}
 		
 		$multiple = isset($this->request->data['mulitple']) ? $this->request->data['mulitple'] : true;
-		
-		$media = $this->Media->find('all', array('conditions' => array('creator_id' => $uid)));
+		if($uid == null) {
+			$media = $this->Media->find('all');
+		}else{
+			$media = $this->Media->find('all', array('conditions' => array('creator_id' => $uid)));
+		}
 		
 		$this->set(compact('media', 'multiple'));
 		
