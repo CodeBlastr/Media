@@ -7,7 +7,7 @@ var ImageObject = Backbone.Model.extend({
 		width: '',
 		height: '',
 		rotation: 0,
-		scale: 0
+		aspectRatio: 1
 	},
 	initialize: function() {
 		this
@@ -50,12 +50,10 @@ var ImageObject = Backbone.Model.extend({
 		img.onload = function() {
 			var width = ( imageObject.get('width') === '' ) ? null : imageObject.get('width');
 			var height = ( imageObject.get('height') === '' ) ? null : imageObject.get('height');
-			//context.drawImage(img, imageObject.get('x'), imageObject.get('y'), width, height);
-			//context.drawImage(img, sx, sy, swidth, sheight, x, y, width, height); // draw w/ clipping
-			
+
 			context.save();
 			if ( imageObject.get('rotation') !== 0 ) {
-				//context.translate(imageObject.get('x'), imageObject.get('y'));
+				// rotate the canvas
 				context.translate(
 					imageObject.get('x') + (img.width / 2),
 					imageObject.get('y') + (img.height / 2)
@@ -65,12 +63,11 @@ var ImageObject = Backbone.Model.extend({
 				// rotate the overlay container
 				$("div[data-cid='"+imageObject.cid+"']").css('transform', 'rotate('+imageObject.get('rotation')+'deg)');
 
-				//context.drawImage(img, -(img.width/2), -(img.height/2));
-				//context.drawImage(img, -img.width, -img.height); //
+				// draw it out
 				context.drawImage(
 					img,
 					0 - img.width / 2,
-					0 -img.height / 2
+					0 - img.height / 2
 				);
 			} else {
 				context.drawImage(img, imageObject.get('x'), imageObject.get('y'), width, height);

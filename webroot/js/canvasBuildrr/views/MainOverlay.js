@@ -105,37 +105,13 @@ $("#cb_canvasWrapper").parent()
 					return false;
 				}
 
-				// attach binding for image rotation
-//				var TO_RADIANS = Math.PI/180;
-//				function drawRotatedImage(image, x, y, angle) { 
-//
-//					// save the current co-ordinate system 
-//					// before we screw with it
-//					context.save(); 
-//
-//					// move to the middle of where we want to draw our image
-//					context.translate(x, y);
-//
-//					// rotate around that point, converting our 
-//					// angle from degrees to radians 
-//					context.rotate(angle * TO_RADIANS);
-//
-//					// draw it up and to the left by half the width
-//					// and height of the image 
-//					context.drawImage(image, -(image.width/2), -(image.height/2));
-//
-//					// and restore the co-ords to how they were when we began
-//					context.restore(); 
-//				}
-
-
 				// attach binding for image resizing
 //				var aspectRatio = clickedObject.get('width') / clickedObject.get('height');
 //				var newHeight = newWidth * aspectRatio;
 //				$("#cb_canvasWrapper").bind('mousemove', function(event) {
 //					clickedObject
-//						.set('x', event.pageX - $("#cb_canvasWrapper").offset().left)
-//						.set('height', newHeight);
+//						.set('width', newWidth)
+//						.set('height', newWidth * (clickedObject.get('width') / clickedObject.get('height')));
 //				});
 
 				// attach binding for image movement
@@ -171,10 +147,22 @@ $("#cb_canvasWrapper").parent()
 					console.log('resize tool');
 					$("#cb_canvasWrapper").bind('mousemove', function(event) {
 						console.log('resizing');
-						clickedObject.set('scale', clickedObject.get('y') - (event.clientY-canvas.offsetTop) );
+
+						//var newWidth = clickedObject.get('width') + (event.clientX - $("#cb_canvasWrapper").offset().left) - clickedObject.get('x'); // good X
+						var newWidth = clickedObject.get('width') + (event.clientY - $("#cb_canvasWrapper").offset().top) - clickedObject.get('y'); // same as above..?
+
+						if ( newWidth > 40 ) {
+							clickedObject
+								.set('width', newWidth)
+								.set('height', newWidth * (clickedObject.get('aspectRatio')));
+						}
 					});
 					return false;
 				}
+				return false;
+			},
+			mouseup: function(event) {
+				$("#cb_canvasWrapper").unbind('mousemove');
 				return false;
 			}
 
