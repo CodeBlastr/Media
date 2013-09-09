@@ -6,15 +6,18 @@ var ImageObject = Backbone.Model.extend({
 		y: '',
 		width: '',
 		height: '',
-		rotation: ''
+		rotation: 0,
+		scale: 0
 	},
 	initialize: function() {
-		this.on("change:content", this.refresh);
-		this.on("change:x", this.refresh);
-		this.on("change:y", this.refresh);
-		this.on("change:width", this.refresh);
-		this.on("change:height", this.refresh);
-		this.on("change:rotation", this.refresh);
+		this
+			.on("change:x", this.refresh)
+			.on("change:y", this.refresh)
+			.on("change:scale", this.refresh)
+			.on("change:width", this.refresh)
+			.on("change:height", this.refresh)
+			.on("change:content", this.refresh)
+			.on("change:rotation", this.refresh);
 		// create a placeholder div for this new object on the canvas
 		var placeholder = $('<div class="cb_placeholder" />');
 		placeholder
@@ -23,7 +26,11 @@ var ImageObject = Backbone.Model.extend({
 				.css('top', this.get('y'))
 				.css('left', this.get('x'))
 				.css('width', this.get('width'))
-				.css('height', this.get('height'));
+				.css('height', this.get('height'))
+				.append( $('<div class="cb_ph_corner cb_ph_bottomLeft btn btn-mini" />') )
+				.append( $('<div class="cb_ph_corner cb_ph_bottomRight btn btn-mini" />') )
+				.append( '<div class="cb_ph_corner cb_ph_topLeft btn btn-mini"><i class="icon-resize-full"></i></div>' )
+				.append( '<div class="cb_ph_corner cb_ph_topRight btn btn-mini"><i class="icon icon-refresh"></i></div>' );
 		$("#cb_canvasWrapper").append(placeholder);
 	},
 	refresh: function() {
@@ -33,7 +40,9 @@ var ImageObject = Backbone.Model.extend({
 				.css('top', this.get('y'))
 				.css('left', this.get('x'))
 				.css('width', this.get('width'))
-				.css('height', this.get('height'));
+				.css('height', this.get('height'))
+				.css('centerX', this.get('width') / 2)
+				.css('centerY', this.get('height') / 2);
 	},
 	draw: function() {
 		var img = new Image();
@@ -41,8 +50,33 @@ var ImageObject = Backbone.Model.extend({
 		img.onload = function() {
 			var width = ( imageObject.get('width') === '' ) ? null : imageObject.get('width');
 			var height = ( imageObject.get('height') === '' ) ? null : imageObject.get('height');
-			context.drawImage(img, imageObject.get('x'), imageObject.get('y'), width, height);
+			//context.drawImage(img, imageObject.get('x'), imageObject.get('y'), width, height);
 			//context.drawImage(img, sx, sy, swidth, sheight, x, y, width, height); // draw w/ clipping
+			
+			context.save();
+			if ( imageObject.get('rotation') !== 0 ) {
+				//context.translate(imageObject.get('x'), imageObject.get('y'));
+				context.translate(
+					imageObject.get('x') + (img.width / 2),
+					imageObject.get('y') + (img.height / 2)
+				);
+				context.rotate(imageObject.get('rotation') * Math.PI / 180);
+				
+				// rotate the overlay container
+				$("div[data-cid='"+imageObject.cid+"']").css('transform', 'rotate('+imageObject.get('rotation')+'deg)');
+
+				//context.drawImage(img, -(img.width/2), -(img.height/2));
+				//context.drawImage(img, -img.width, -img.height); //
+				context.drawImage(
+					img,
+					0 - img.width / 2,
+					0 -img.height / 2
+				);
+			} else {
+				context.drawImage(img, imageObject.get('x'), imageObject.get('y'), width, height);
+			}
+			context.restore();
+
 		};
 		img.src = this.get('content');
 		//debug

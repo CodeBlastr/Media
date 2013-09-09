@@ -51,8 +51,8 @@ var textEditHandler = function( event, text ) {
 		//debug
 		console.log('text added to textCollection at: ' + click.x + ', ' + click.y);
 	} else {
-		console.log('editing text object:');
-		console.log(text);
+		console.log('editing text object: ' + text.cid);
+		//console.log(text);
 	}
 	var textEditor = new TextEditView({
 		model: text,

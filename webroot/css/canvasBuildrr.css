@@ -58,7 +58,7 @@ a#cb_cancel {
 
 .cb_placeholder {
 	position: absolute;
-	cursor: pointer;
+	cursor: move;
 	padding: 1px;
 }
 .cb_placeholder:hover {
@@ -66,10 +66,14 @@ a#cb_cancel {
 	padding: 0px;
 }
 .cb_ph_corner {
+	display: none;
 	position: absolute;
-	height: 10px;
-	width: 10px;
+/*	height: 14px;
+	width: 14px;*/
+}
+.cb_placeholder:hover .cb_ph_corner {
 	background: #09f;
+	display: block;
 }
 .cb_ph_bottomLeft {
 	bottom: 0;
@@ -86,4 +90,15 @@ a#cb_cancel {
 .cb_ph_topRight {
 	top: 0;
 	right: 0;
+}
+.cb_ph_rotator {
+	position: absolute;
+	top: -30px;
+	left: 50%;
+	height: 27px;
+	width: 0px;
+}
+.cb_placeholder:hover .cb_ph_rotator,
+.cb_ph_rotator:hover {
+	border: 1px dashed #666;
 }
