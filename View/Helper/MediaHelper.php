@@ -15,13 +15,13 @@ class MediaHelper extends AppHelper {
 	);
 	
 	public $types = array(
-		'image' => array('jpg', 'jpeg', 'gif', 'png'),
+		'images' => array('jpg', 'jpeg', 'gif', 'png'),
 		'video' => array('mpg', 'mov', 'wmv', 'rm', '3g2', '3gp', '3gp2', '3gpp', '3gpp2', 'avi', 'divx', 'dv', 'dv-avi', 'dvx', 'f4v', 'flv', 'h264', 'hdmov', 'm4v', 'mkv', 'mp4', 'mp4v', 'mpe', 'mpeg', 'mpeg4', 'mpg', 'nsv', 'qt', 'swf', 'xvid'),
 		'audio' => array('aif', 'mid', 'midi', 'mka', 'mp1', 'mp2', 'mp3', 'mpa', 'wav', 'aac', 'flac', 'ogg', 'ra', 'raw', 'wma'),
 		'document' => array('pdf', 'doc', 'docx', 'ods', 'odt'),
 	);
 	
-	public $mediaPath = '/theme/default/media/images/'; 
+	public $mediaPath = '/theme/default/media/'; 
 	
 	public function display($item, $options = array()) {
 		$this->options = array_merge($this->options, $options);
@@ -34,8 +34,8 @@ class MediaHelper extends AppHelper {
 	}
 	
 
-	public function imageMedia ($item) {
-		$imagePath = $this->mediaPath.$item['filename'].'.'.$item['extension'];
+	public function imagesMedia ($item) {
+		$imagePath = $this->mediaPath.$this->type.DS.$item['filename'].'.'.$item['extension'];
 		$thumbImageOptions = array(
 				'width' => $this->options['width'],
 				'height' => $this->options['height'],
@@ -57,13 +57,30 @@ class MediaHelper extends AppHelper {
 				));
 	}
 	
+	/**
+	 * Audio display helper uses jplayer see
+	 * http://jplayer.org/
+	 */
+	
+	public function audioMedia ($item) {
+		$track = array($item['extension'] => $this->mediaPath.$this->type.DS.$item['filename'].'.'.$item['extension']);
+		return $this->_View->Element('Media.audio_display', 
+			array(
+				'tracks' => json_encode($track),
+				'class' => $this->options['class'],
+				'url' => $this->options['url'],
+				'id' => $item['id'],
+				'title' => $item['title']
+				));
+	}
+	
 	public function videoMedia ($item) {
 		
 	}
 	
 	protected function _getType($item) {
 		foreach($this->types as $type => $extensions) {
-			if(!array_search($item['extension'], $extensions)) {
+			if(array_search($item['extension'], $extensions)) {
 				$this->type = $type;
 				return true;
 			}

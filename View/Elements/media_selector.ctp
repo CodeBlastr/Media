@@ -4,7 +4,7 @@
 ?>
 
 <div id="MediaSelector">
-	<a class="btn" href="/media/media/filebrowser">Select Media</a>
+	<a class="btn btn-primary" href="/media/media/filebrowser">Select Media</a>
 	
 	<div id="MediaSelected" class="clearfix">
 		<?php if (isset($media) && !empty($media)) {
@@ -39,7 +39,7 @@ var multiple = <?php echo $multiple ? 'true' : 'false'; ?>;
 			
 			$.post("/media/media/filebrowser", { multiple: multiple })
 				.done(function(html) {
-					html = '<div id="MediaBrowserPopUp"><a href="#insert" class="btn">Insert</a><a href="#close" class="btn">Close</a>'+html+'</div>';
+					html = '<div id="MediaBrowserPopUp"><a href="#insert" class="btn btn-primary">Insert</a><a href="#close" class="btn btn-primary">Close</a>'+html+'</div>';
 	  				$('body').append(html);
 	  				$('#MediaBrowserPopUp').css('left', ($(window).width()*.5)-($('#MediaBrowserPopUp').width()/2)).css('top', '30px');
 	  				$('body').append('<div class="modal-backdrop fade in"></div>');
@@ -108,6 +108,49 @@ var multiple = <?php echo $multiple ? 'true' : 'false'; ?>;
 		float: left;
 		padding:10px;
 		background: #fff;
+	}
+	
+	div.jp-audio {
+		width:100%;
+	}
+	div.jp-audio ul.jp-controls {
+		width: 100%;
+		clear: both;
+	}
+	div.jp-audio div.jp-progress {
+		float:none;
+		margin: 0 auto;
+	}
+	div.jp-audio div.jp-type-single div.jp-progress {
+	    clear: both;
+	    left: 0;
+	    position: relative;
+	    top: 3px;
+	    width: 73%;
+	}
+	div.jp-current-time, div.jp-duration {
+	    font-size: 0.64em;
+	    font-style: oblique;
+	    width: 60px;
+	    padding-bottom:3px;
+	}
+	div.jp-audio a.jp-volume-max, div.jp-audio-stream a.jp-volume-max {
+	   margin-left: 57px;
+    margin-top: 11px;
+	}	
+	div.jp-audio div.jp-volume-bar {
+	    left: 128px;
+	    top: 36px;
+	}
+	div.jp-audio div.jp-type-single a.jp-mute, div.jp-audio div.jp-type-single a.jp-unmute {
+    	margin-left: 9px;
+	}
+	div.jp-current-time, div.jp-duration {
+	    font-size: 0.64em;
+	    font-style: oblique;
+	    margin-top: -14px;
+	    padding-bottom: 3px;
+	    width: 60px;
 	}
 	
 </style>
