@@ -29,7 +29,7 @@ var ImageObject = Backbone.Model.extend({
 				.css('height', this.get('height'))
 				.append( $('<div class="cb_ph_corner cb_ph_bottomLeft btn btn-mini" />') )
 				.append( $('<div class="cb_ph_corner cb_ph_bottomRight btn btn-mini" />') )
-				.append( '<div class="cb_ph_corner cb_ph_topLeft btn btn-mini"><i class="icon-resize-full"></i></div>' )
+				.append( '<div class="cb_ph_corner cb_ph_topLeft btn btn-mini"><i class="icon-resize-horizontal"></i></div>' )
 				.append( '<div class="cb_ph_corner cb_ph_topRight btn btn-mini"><i class="icon icon-refresh"></i></div>' );
 		$("#cb_canvasWrapper").append(placeholder);
 	},
@@ -50,13 +50,13 @@ var ImageObject = Backbone.Model.extend({
 		img.onload = function() {
 			var width = ( imageObject.get('width') === '' ) ? null : imageObject.get('width');
 			var height = ( imageObject.get('height') === '' ) ? null : imageObject.get('height');
-
+			
 			context.save();
 			if ( imageObject.get('rotation') !== 0 ) {
 				// rotate the canvas
 				context.translate(
-					imageObject.get('x') + (img.width / 2),
-					imageObject.get('y') + (img.height / 2)
+					imageObject.get('x') + (width / 2),
+					imageObject.get('y') + (height / 2)
 				);
 				context.rotate(imageObject.get('rotation') * Math.PI / 180);
 				
@@ -66,8 +66,10 @@ var ImageObject = Backbone.Model.extend({
 				// draw it out
 				context.drawImage(
 					img,
-					0 - img.width / 2,
-					0 - img.height / 2
+					0 - width / 2,
+					0 - height / 2,
+					width,
+					height
 				);
 			} else {
 				context.drawImage(img, imageObject.get('x'), imageObject.get('y'), width, height);

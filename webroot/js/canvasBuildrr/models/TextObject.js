@@ -30,7 +30,7 @@ var TextObject = Backbone.Model.extend({
 				.css('height', this.get('fontSize'))
 				.append( $('<div class="cb_ph_corner cb_ph_bottomLeft btn btn-mini" />') )
 				.append( $('<div class="cb_ph_corner cb_ph_bottomRight btn btn-mini" />') )
-				.append( '<div class="cb_ph_corner cb_ph_topLeft btn btn-mini"><i class="icon-resize-full"></i></div>' )
+				.append( '<div class="cb_ph_corner cb_ph_topLeft btn btn-mini"><i class="icon-resize-horizontal"></i></div>' )
 				.append( '<div class="cb_ph_corner cb_ph_topRight btn btn-mini"><i class="icon icon-refresh"></i></div>' );
 		$("#cb_canvasWrapper").append(placeholder);
 	},

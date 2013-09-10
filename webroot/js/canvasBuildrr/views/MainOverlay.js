@@ -75,46 +75,8 @@ $("#cb_canvasWrapper").parent()
 				return false;
 			},
 			mousedown: function(event) {
+				// attach binding for object movement
 				var clickedObject = getClickedObject($(this));
-
-				// detect if they clicked in a corner
-				var divClickX = event.pageX - $(this).offset().left;
-				var divClickY = event.pageY - $(this).offset().top;
-				//console.log(divClickX+', '+divClickY);
-
-				var sizeOfCorner = 10;
-
-				if ( divClickX < sizeOfCorner && divClickY < sizeOfCorner ) {
-					// fire top-left corner click action
-					console.log('top-left mousedown');
-					return false;
-				}
-				if ( ($(this).width() - divClickX) < sizeOfCorner && (($(this).height() - divClickY) < sizeOfCorner) ) {
-					// fire bottom-right corner click action
-					console.log('bottom-right mousedown');
-					return false;
-				}
-				if ( ($(this).width() - divClickX) < sizeOfCorner && divClickY < sizeOfCorner ) {
-					// fire top-right corner click action
-					console.log('top-right mousedown');
-					return false;
-				}
-				if ( ($(this).height() - divClickY) < sizeOfCorner && divClickX < sizeOfCorner ) {
-					// fire bottom-left corner click action
-					console.log('bottom-left mousedown');
-					return false;
-				}
-
-				// attach binding for image resizing
-//				var aspectRatio = clickedObject.get('width') / clickedObject.get('height');
-//				var newHeight = newWidth * aspectRatio;
-//				$("#cb_canvasWrapper").bind('mousemove', function(event) {
-//					clickedObject
-//						.set('width', newWidth)
-//						.set('height', newWidth * (clickedObject.get('width') / clickedObject.get('height')));
-//				});
-
-				// attach binding for image movement
 				$("#cb_canvasWrapper").bind('mousemove', function(event) {
 					clickedObject
 						.set('x', event.clientX - $("#cb_canvasWrapper").offset().left)
@@ -145,11 +107,21 @@ $("#cb_canvasWrapper").parent()
 				}
 				if ( $(this).hasClass("cb_ph_topLeft") ) {
 					console.log('resize tool');
+					var xPrev;
 					$("#cb_canvasWrapper").bind('mousemove', function(event) {
 						console.log('resizing');
 
 						//var newWidth = clickedObject.get('width') + (event.clientX - $("#cb_canvasWrapper").offset().left) - clickedObject.get('x'); // good X
-						var newWidth = clickedObject.get('width') + (event.clientY - $("#cb_canvasWrapper").offset().top) - clickedObject.get('y'); // same as above..?
+						//var newWidth = clickedObject.get('width') + (event.clientY - $("#cb_canvasWrapper").offset().top) - clickedObject.get('y'); // same as above..?				        
+				        
+				        if ( xPrev < event.pageX ) {
+				        	// mouse moving right
+				        	var newWidth = clickedObject.get('width') + 1;
+				        } else {
+				        	// mouse moving left
+				        	var newWidth = clickedObject.get('width') - 1;
+				        }
+				        xPrev = event.pageX;
 
 						if ( newWidth > 40 ) {
 							clickedObject
