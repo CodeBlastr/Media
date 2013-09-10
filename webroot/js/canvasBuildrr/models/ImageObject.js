@@ -7,7 +7,8 @@ var ImageObject = Backbone.Model.extend({
 		width: '',
 		height: '',
 		rotation: 0,
-		aspectRatio: 1
+		aspectRatio: 1,
+		scale: [1,1]
 	},
 	initialize: function() {
 		this
@@ -27,10 +28,10 @@ var ImageObject = Backbone.Model.extend({
 				.css('left', this.get('x'))
 				.css('width', this.get('width'))
 				.css('height', this.get('height'))
-				.append( $('<div class="cb_ph_corner cb_ph_bottomLeft btn btn-mini" />') )
-				.append( $('<div class="cb_ph_corner cb_ph_bottomRight btn btn-mini" />') )
-				.append( '<div class="cb_ph_corner cb_ph_topLeft btn btn-mini"><i class="icon-resize-horizontal"></i></div>' )
-				.append( '<div class="cb_ph_corner cb_ph_topRight btn btn-mini"><i class="icon icon-refresh"></i></div>' );
+				.append( '<div class="cb_ph_corner cb_ph_bottomLeft btn btn-mini"><i class="icon icon-resize-horizontal"></i></div>' )
+				.append( '<div class="cb_ph_corner cb_ph_bottomRight btn btn-mini"><i class="icon icon-resize-vertical"></i></div>' )
+				.append( '<div class="cb_ph_corner cb_ph_topLeft btn btn-mini"><i class="icon-fullscreen"></i></div>' )
+				.append( '<div class="cb_ph_corner cb_ph_topRight btn btn-mini"><i class="icon icon-repeat"></i></div>' );
 		$("#cb_canvasWrapper").append(placeholder);
 	},
 	refresh: function() {
@@ -51,6 +52,9 @@ var ImageObject = Backbone.Model.extend({
 			var width = ( imageObject.get('width') === '' ) ? null : imageObject.get('width');
 			var height = ( imageObject.get('height') === '' ) ? null : imageObject.get('height');
 			
+			var dx;
+			var dy;
+			
 			context.save();
 			if ( imageObject.get('rotation') !== 0 ) {
 				// rotate the canvas
@@ -62,20 +66,25 @@ var ImageObject = Backbone.Model.extend({
 				
 				// rotate the overlay container
 				$("div[data-cid='"+imageObject.cid+"']").css('transform', 'rotate('+imageObject.get('rotation')+'deg)');
-
-				// draw it out
-				context.drawImage(
-					img,
-					0 - width / 2,
-					0 - height / 2,
-					width,
-					height
-				);
+				
+				dx = -(width / 2);
+				dy = -(height / 2);
 			} else {
-				context.drawImage(img, imageObject.get('x'), imageObject.get('y'), width, height);
+				dx = imageObject.get('x');
+				dy = imageObject.get('y');
 			}
+			if (imageObject.get('scale')[0] == -1) {
+				dx = -dx;
+				width = -width;
+			}
+			if (imageObject.get('scale')[1] == -1) {
+				dy = -dy;
+				height = -height;
+			}
+			context.scale(imageObject.get('scale')[0], imageObject.get('scale')[1]); // to flip vertically, ctx.scale(1,-1);
+			
+			context.drawImage(img, dx, dy, width, height);
 			context.restore();
-
 		};
 		img.src = this.get('content');
 		//debug

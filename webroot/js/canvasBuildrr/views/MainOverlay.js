@@ -131,6 +131,16 @@ $("#cb_canvasWrapper").parent()
 					});
 					return false;
 				}
+				if ( $(this).hasClass("cb_ph_bottomLeft") ) {
+					console.log('flip horizontal tool');
+					clickedObject.set('scale', [clickedObject.get('scale')[0] * -1, 1]);
+					return false;
+				}
+				if ( $(this).hasClass("cb_ph_bottomRight") ) {
+					console.log('flip vertical tool');
+					clickedObject.set('scale', [1, clickedObject.get('scale')[1] * -1]);
+					return false;
+				}
 				return false;
 			},
 			mouseup: function(event) {
