@@ -25,11 +25,11 @@ class MediaHelper extends AppHelper {
 	
 	public function display($item, $options = array()) {
 		$this->options = array_merge($this->options, $options);
-		if($this->_getType($item['Media'])) {
+		if ($this->_getType($item['Media'])) {
 			$method = $this->type.'Media';
 			return $this->$method($item['Media']);	
-		}else {
-			return '';
+		} else {
+			return '<img src="/img/noImage.jpg" />';
 		}
 	}
 	
@@ -42,12 +42,14 @@ class MediaHelper extends AppHelper {
 				'alt' => $item['title'],
 				'class' => 'media-image-thumb',
 		);
+
 		$image = $this->Html->image($imagePath, $thumbImageOptions,	array(
     		'conversion' => $this->options['conversion'],
 			'quality' => 75,
 			'alt' => 'thumbnail',
+			'caller' => 'Media'
 		));
-		
+
 		return $this->_View->Element('Media.image_display', 
 			array(
 				'image' => $image,
@@ -80,7 +82,7 @@ class MediaHelper extends AppHelper {
 	
 	protected function _getType($item) {
 		foreach($this->types as $type => $extensions) {
-			if(array_search($item['extension'], $extensions)) {
+			if(in_array($item['extension'], $extensions)) {
 				$this->type = $type;
 				return true;
 			}
