@@ -10,6 +10,7 @@ var ImageObject = Backbone.Model.extend({
 		aspectRatio: 1,
 		scale: [1,1]
 	},
+	url: '/media/media/canvas',
 	initialize: function() {
 		this
 			.on("change:x", this.refresh)
@@ -34,7 +35,8 @@ var ImageObject = Backbone.Model.extend({
 				.append( '<div class="cb_ph_corner cb_ph_topRight btn btn-mini"><i class="icon icon-repeat"></i></div>' );
 		$("#cb_canvasWrapper").append(placeholder);
 	},
-	refresh: function() {
+	refresh: function(changedAttr) {
+		//this.save({changedAttr: this.get(changedAttr)});
 		refreshCanvas();
 		// update the placeholder div
 		$("div[data-cid='"+this.cid+"']")

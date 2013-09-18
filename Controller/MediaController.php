@@ -2,7 +2,7 @@
 
 /**
  * To Extend use code
- * $refuseInit = true; require_once(ROOT.DS.'app'.DS.'Plugin'.DS.'Courses'.DS.'Controller'.DS.'MediaController.php');
+ * $refuseInit = true; require_once(ROOT.DS.'app'.DS.'Plugin'.DS.'Media'.DS.'Controller'.DS.'MediaController.php');
  */
 
 
@@ -35,25 +35,25 @@ class _MediaController extends MediaAppController {
 
 
 	public function add() {
-		if(!empty($this->request->data)) {
+		if (!empty($this->request->data)) {
             $this->request->data['User']['id'] = $this->Auth->user('id');
 			#debug($this->request->data);break;
 			if ($this->Media->save($this->request->data)) {
 				$this->Session->setFlash('Media saved.');
 				#$this->redirect('/media/media/edit/'.$this->Media->id);
-				if($this->request->isAjax()) {
+				if ($this->request->isAjax()) {
 					$this->set('media', $this->Media->findById($this->Media->id));
 					$this->layout = false;
 					$this->view = 'ajax-upload';
-				}else {
+				} else {
 					$this->redirect(array('action' => 'my'));
 				}
 				
 			} else {
 				
-				if($this->request->isAjax()) {
+				if ($this->request->isAjax()) {
 					throw new InternalErrorException('Upload Failed');
-				}else {
+				} else {
 					$this->Session->setFlash('Invalid Upload.');
 				}
 				
@@ -207,22 +207,18 @@ class _MediaController extends MediaAppController {
 	 * @return array|boolean
 	 */
 	function sorted($mediaType, $field, $sortOrder, $numberOfResults) {
-#debug('Media.'.$field.' '.strtoupper($sortOrder));
 	    $options = array(
           'conditions' => array(
 		    'Media.type' => strtolower($mediaType),
 		    'Media.is_visible' => '1'
           ),
           'order' => array('Media.'.$field => $sortOrder),
-          //'order' => array('Media.id' => 'desc'),
-
           'limit' => $numberOfResults
 	    );
 
 	    return $this->Media->find('all', $options);
 
-	}//sorted()
-
+	}
 
 
 /**
@@ -282,15 +278,32 @@ class _MediaController extends MediaAppController {
 
 
 	public function canvas($id = null) {
-		if ( $id ) {
-			$canvas = $this->Media->find('first', array(
-				'conditions' => array(
-					'Media.id' => $id
-				)
-			));
-			$this->set('media', $media);
+		switch ($this->request->method()) {
+			case ('POST'):
+				$this->render(false);
+				$this->response->statusCode($this->Media->addCanvasObject($this->request->data));
+				break;
+			case ('PUT'):
+				$this->render(false);
+				$this->response->statusCode($this->Media->updateCanvasObject($this->request->data));
+				break;
+			case ('DELETE'):
+				$this->render(false);
+				$this->response->statusCode($this->Media->deleteCanvasObject($this->request->data));
+				break;
+			case ('GET'):
+			default:
+				if ($id) {
+					$this->request->data = $this->Media->find('first', array(
+							'conditions' => array(
+									'Media.id' => $id
+							)
+					));
+				}
+				break;
 		}
 	}
+		
 	
 	/**
 	 * Lazy Loader Function derives from imgsrc link.

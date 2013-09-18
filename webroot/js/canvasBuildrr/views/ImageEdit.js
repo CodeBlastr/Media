@@ -27,6 +27,7 @@ var ImageEditView = Backbone.View.extend({
 				imageModel.set('height', this.height);
 				imageModel.set('width', this.width);
 				imageModel.set('aspectRatio', this.width / this.height);
+				imageModel.save();
 			};
 
 			imageModel.set('content', event.target.result);

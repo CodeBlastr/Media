@@ -168,6 +168,103 @@ class Media extends MediaAppModel {
 	}
 
 
+	/**
+	 * @todo Need to return $this->id as `id` in the json object !
+	 * 
+	 * @param array $data
+	 * @return string
+	 */
+	public function addCanvasObject($data) {
+		if ($data['type'] == 'image') {
+			$added = $this->_saveCanvasImageObject($data);
+		}
+
+		return ($added) ? '200' : '403';
+	}
+
+	/**
+	 * saves image file from image object to the file server
+	 * 
+	 * @param array $data
+	 * @return array|boolean
+	 */
+	private function _saveCanvasImageObject($data) {
+		// make sure that this is (probably) safe to pass to fopen()
+		if (strpos($data['content'], 'data:') !== 0) {
+			return '403';
+		}
+		
+		$image = fopen($data['content'], 'r');
+		$metadata = stream_get_meta_data($image);
+		
+		switch ($metadata['mediatype']) {
+			case ('image/png'):
+				$extension = 'png';
+				break;
+			case ('image/jpeg'):
+				$extension = 'jpg';
+				break;
+			case ('image/gif'):
+				$extension = 'gif';
+				break;
+			case ('image/bmp'):
+				$extension = 'bmp';
+				break;
+			default:
+				return false;
+				break;
+		}
+		
+		// set filename
+		$uuid = $this->_generateUUID();
+		
+		// write image to disk
+		$imageString = str_replace('data:'.$metadata['mediatype'].';base64,', '', $data['content']);
+		$imageString = base64_decode($imageString);
+		$fopen = fopen(sys_get_temp_dir() . $uuid, 'wb');
+		$written = fwrite($fopen, $imageString);
+		fclose($fopen);
+		
+		if ($written) {
+			// clean up
+			unset($data['cid']);
+			unset($data['content']);
+			
+			// save record to database server
+			$added = $this->save(array(
+					'Media' => array(
+						'filename' => array(
+								'name' => $uuid . '.' . $extension,
+								'tmp_name' => sys_get_temp_dir() . $uuid
+								),
+						'data' => serialize($data)
+					)
+			));
+		} else {
+			$added = false;
+		}
+
+		return $added;
+		
+	}
+	
+	public function updateCanvasObject($data) {
+		if (true) {
+			return '200';
+		} else {
+			return '403';
+		}
+	}
+	
+	public function deleteCanvasObject($data) {
+		if (true) {
+			return '200';
+		} else {
+			return '403';
+		}
+	}
+	
+
 /**
  * Recordings were saved to the recording server, and now we need to move them to the local server.
  *
