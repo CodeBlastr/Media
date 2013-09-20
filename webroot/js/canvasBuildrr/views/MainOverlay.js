@@ -81,6 +81,7 @@ $("#cb_canvasWrapper").parent()
 				var clickedObject = CanvasObjectCollection.get($(this).attr('data-cid'));
 				$("#cb_canvasWrapper").bind('mousemove', function(event) {
 					console.log('moving object');
+					console.log(clickedObject);
 					clickedObject
 						.set('x', event.clientX - $("#cb_canvasWrapper").offset().left)
 						.set('y', event.clientY - $("#cb_canvasWrapper").offset().top);

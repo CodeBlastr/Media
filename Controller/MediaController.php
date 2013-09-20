@@ -278,26 +278,31 @@ class _MediaController extends MediaAppController {
 
 
 	public function canvas($id = null) {
-		debug($this->request->method());
-		debug($this->request->data);
+
 		switch ($this->request->method()) {
 			case ('POST'):
-				$this->autoRender = false;
-				$response = $this->Media->addCanvasObject($this->request->data);
-				$this->response->statusCode($response['statusCode']);
-				$this->response->body(json_encode($response['body']));
+				if (isset($this->request->params['named']['collection'])) {
+					$response = $this->Media->addCanvasCollection($this->request->data);
+				} else {
+					$response = $this->Media->addCanvasObjects($this->request->data);
+				}
+				$this->__returnJsonResponse($response);
 				break;
 			case ('PUT'):
-				$this->autoRender = false;
-				$response = $this->Media->updateCanvasObject($this->request->data);
-				$this->response->statusCode($response['statusCode']);
-				$this->response->body(json_encode($response['body']));
+				if (isset($this->request->params['named']['collection'])) {
+					$response = $this->Media->updateCanvasCollection($this->request->data);
+				} else {
+					$response = $this->Media->updateCanvasObjects($this->request->data);
+				}
+				$this->__returnJsonResponse($response);
 				break;
 			case ('DELETE'):
-				$this->autoRender = false;
-				$response = $this->Media->deleteCanvasObject($this->request->data);
-				$this->response->statusCode($response['statusCode']);
-				$this->response->body(json_encode($response['body']));
+				if (isset($this->request->params['named']['collection'])) {
+					$response = $this->Media->deleteCanvasCollection($this->request->data);
+				} else {
+					$response = $this->Media->deleteCanvasObjects($this->request->data);
+				}
+				$this->__returnJsonResponse($response);
 				break;
 			case ('GET'):
 			default:
@@ -307,9 +312,21 @@ class _MediaController extends MediaAppController {
 									'Media.id' => $id
 							)
 					));
+// 					if ($this->request->isAjax()) {
+// 							$this->__returnJsonResponse(array(
+// 								'statusCode' => '200',
+// 								'body' => $this->request->data
+// 							));
+// 					}
 				}
 				break;
 		}
+	}
+	
+	protected function __returnJsonResponse($response) {
+		$this->autoRender = false;
+		$this->response->statusCode($response['statusCode']);
+		$this->response->body(json_encode($response['body']));
 	}
 		
 	

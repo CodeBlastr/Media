@@ -28,6 +28,7 @@ class Media extends MediaAppModel {
 			)
 		);
 
+	public $screenshotId;
 
 	public function __construct($id = false, $table = null, $ds = null) {
 		parent::__construct($id, $table, $ds);
@@ -153,10 +154,10 @@ class Media extends MediaAppModel {
 
 
 /**
- * Handles an uloaded file (ie. doc, pdf, etc)
+ * Handles an uploaded file (ie. doc, pdf, etc)
  */
 	public function uploadFile($data) {
-		$uuid = $this->_generateUUID();
+		$uuid = $this->__uuid().uniqid();
 		$newFile =  $this->themeDirectory . DS . $this->data['Media']['type'] . DS . $uuid . '.' . $this->fileExtension;
 		if (rename($data['Media']['filename']['tmp_name'], $newFile)) :
 			$data['Media']['filename'] = $uuid; // change the filename to just the filename
@@ -167,32 +168,58 @@ class Media extends MediaAppModel {
 		endif;
 	}
 
-
+	
 	/**
-	 * @todo Need to return $this->id as `id` in the json object !
-	 * 
+	 * This function needs to do the following things:
+	 *  - save the metadata of each image
+	 *  - save the entire models of TextObjects
+	 *  - (maybe) either return the entire collection so we can .reset() or just the collection's id
+	 *  
 	 * @param array $data
-	 * @return string
+	 * @return array
 	 */
-	public function addCanvasObject($data) {
-		foreach ($data as $canvasObject) {
-			if ($canvasObject['type'] == 'image') {
-				$added = $this->_saveCanvasImageObject($canvasObject);
-			} elseif ($canvasObject['type'] == 'text') {
-				$added = $this->_saveCanvasTextObject($canvasObject);
-			}			
-		}
+	public function addCanvasCollection($data) {
 
-		if ($added) {
+		// save all image objects as rows in `media`
+		$addedObjects = $this->addCanvasObjects($data);
+		
+		// save a "parent" row that has all data
+		$this->id = $this->screenshotId;
+		$this->saveField('data', json_encode($addedObjects), array('callbacks' => false));
+		
+		if ($addedObjects) {
 			return array(
 					'statusCode' => '200',
-					'body' => array(
-						'id' => $this->id
-					)
+					'body' => json_encode($addedObjects)
+					//'body' => array('id' => $this->screenshotId)
 			);
 		} else {
 			return array('statusCode' => '403');
 		}
+	}
+	
+
+	/**
+	 * 
+	 * @param array $data
+	 * @return string
+	 */
+	public function addCanvasObjects($data) {
+		$objects = false;
+		foreach ($data as $canvasObject) {
+			if ($canvasObject['type'] == 'image' || $canvasObject['type'] == 'screenshot') {
+				$savedImage = $this->_saveCanvasImageObject($canvasObject);
+				if ($canvasObject['type'] == 'screenshot') {
+					$this->screenshotId = $this->id;
+				}
+				$canvasObject['id'] = $savedImage['Media']['id'];
+				$canvasObject['content'] = '/theme/Default/media/' . $savedImage['Media']['type'] . '/' .  $savedImage['Media']['filename'] . '.' . $savedImage['Media']['extension'];
+				$objects[] = $canvasObject;
+			}
+			$objects[] = $canvasObject;
+		}
+
+		return $objects;
 
 	}
 
@@ -230,8 +257,8 @@ class Media extends MediaAppModel {
 				break;
 		}
 		
-		// set filename
-		$uuid = $this->_generateUUID();
+		// set temp filename
+		$uuid = $this->__uuid().uniqid();
 		
 		// write image to disk
 		$imageString = str_replace('data:'.$metadata['mediatype'].';base64,', '', $data['content']);
@@ -242,27 +269,39 @@ class Media extends MediaAppModel {
 		
 		if ($written) {
 			// clean up
-			unset($data['cid']);
-			unset($data['content']);
+// 			unset($data['cid']);
+// 			unset($data['content']);
 			
 			// save record to database server
+			$this->create();
 			$added = $this->save(array(
 					'Media' => array(
 						'filename' => array(
 								'name' => $uuid . '.' . $extension,
 								'tmp_name' => sys_get_temp_dir() . $uuid
 								),
-						'data' => json_encode($data)
+// 						'data' => json_encode($data)
 					)
-			));	
+			));
 		}
 
 		return $added;
 		
 	}
 	
-	public function updateCanvasObject($data) {
-		if (true) {
+	public function updateCanvasObjects($data) {
+		$added = false;
+		foreach ($data as $canvasObject) {
+			if (!(isset($canvasObject['id']))) {
+				if ($canvasObject['type'] == 'image') {
+					$added = $this->_saveCanvasImageObject($canvasObject);
+				} elseif ($canvasObject['type'] == 'text') {
+					$added = $this->_saveCanvasTextObject($canvasObject);
+				}
+			}
+		}
+		
+		if ($added) {
 			return array('statusCode' => '200');
 		} else {
 			return array('statusCode' => '403');
@@ -270,7 +309,8 @@ class Media extends MediaAppModel {
 	}
 	
 	public function deleteCanvasObject($data) {
-		if (true) {
+		$added = false;
+		if ($added) {
 			return array('statusCode' => '200');
 		} else {
 			return array('statusCode' => '403');
