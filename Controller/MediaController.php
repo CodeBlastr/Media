@@ -278,18 +278,26 @@ class _MediaController extends MediaAppController {
 
 
 	public function canvas($id = null) {
+		debug($this->request->method());
+		debug($this->request->data);
 		switch ($this->request->method()) {
 			case ('POST'):
-				$this->render(false);
-				$this->response->statusCode($this->Media->addCanvasObject($this->request->data));
+				$this->autoRender = false;
+				$response = $this->Media->addCanvasObject($this->request->data);
+				$this->response->statusCode($response['statusCode']);
+				$this->response->body(json_encode($response['body']));
 				break;
 			case ('PUT'):
-				$this->render(false);
-				$this->response->statusCode($this->Media->updateCanvasObject($this->request->data));
+				$this->autoRender = false;
+				$response = $this->Media->updateCanvasObject($this->request->data);
+				$this->response->statusCode($response['statusCode']);
+				$this->response->body(json_encode($response['body']));
 				break;
 			case ('DELETE'):
-				$this->render(false);
-				$this->response->statusCode($this->Media->deleteCanvasObject($this->request->data));
+				$this->autoRender = false;
+				$response = $this->Media->deleteCanvasObject($this->request->data);
+				$this->response->statusCode($response['statusCode']);
+				$this->response->body(json_encode($response['body']));
 				break;
 			case ('GET'):
 			default:

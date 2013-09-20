@@ -47,9 +47,9 @@ var TextEditView = Backbone.View.extend({
 var textEditHandler = function( event, text ) {
 	if ( text === undefined ) {
 		text = new TextObject({x: click.x, y: click.y});
-		TextObjectCollection.add(text);
+		CanvasObjectCollection.add(text);
 		//debug
-		console.log('text added to textCollection at: ' + click.x + ', ' + click.y);
+		console.log('text added to CanvasObjectCollection at: ' + click.x + ', ' + click.y);
 	} else {
 		console.log('editing text object: ' + text.cid);
 		//console.log(text);

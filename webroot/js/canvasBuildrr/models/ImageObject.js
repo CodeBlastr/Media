@@ -37,7 +37,7 @@ var ImageObject = Backbone.Model.extend({
 	},
 	refresh: function(changedAttr) {
 		//this.save({changedAttr: this.get(changedAttr)});
-		refreshCanvas();
+		CanvasObjectCollection.refreshCanvas();
 		// update the placeholder div
 		$("div[data-cid='"+this.cid+"']")
 				.css('top', this.get('y'))
@@ -72,14 +72,17 @@ var ImageObject = Backbone.Model.extend({
 				dx = -(width / 2);
 				dy = -(height / 2);
 			} else {
+				// no rotation - just draw it where it says it should be.
 				dx = imageObject.get('x');
 				dy = imageObject.get('y');
 			}
 			if (imageObject.get('scale')[0] == -1) {
+				// flipped horizontally
 				dx = -dx;
 				width = -width;
 			}
 			if (imageObject.get('scale')[1] == -1) {
+				// flipped vertically
 				dy = -dy;
 				height = -height;
 			}
@@ -91,5 +94,42 @@ var ImageObject = Backbone.Model.extend({
 		img.src = this.get('content');
 		//debug
 		console.log('drawing image at: ' + this.get('x') + ', ' + this.get('y'));
+	},
+	resize: function() {
+		console.log('resizing image');
+		var imageObject = this;
+		var xPrev;
+		$("#cb_canvasWrapper").bind('mousemove', function(event) {
+			console.log('resizing');
+
+			//var newWidth = clickedObject.get('width') + (event.clientX - $("#cb_canvasWrapper").offset().left) - clickedObject.get('x'); // good X
+			//var newWidth = clickedObject.get('width') + (event.clientY - $("#cb_canvasWrapper").offset().top) - clickedObject.get('y'); // same as above..?				        
+	        
+	        if ( xPrev < event.pageX ) {
+	        	// mouse moving right
+	        	var newWidth = imageObject.get('width') + 1;
+	        } else {
+	        	// mouse moving left
+	        	var newWidth = imageObject.get('width') - 1;
+	        }
+	        xPrev = event.pageX;
+
+			if ( newWidth > 40 ) {
+				imageObject
+					.set('width', newWidth)
+					.set('height', newWidth * (imageObject.get('aspectRatio')));
+			}
+		});
+		return false;
+	},
+	autoResize: function() {
+		console.log('auto resizing image');
+		if ( this.get('aspectRatio') > (canvas.width / canvas.height) ) {
+			this.set('width', canvas.width);
+			this.set('height', canvas.width / this.get('aspectRatio'));
+		} else {
+			this.set('width', canvas.width / this.get('aspectRatio'));
+			this.set('height', canvas.height);
+		}
 	}
 });

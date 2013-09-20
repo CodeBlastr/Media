@@ -175,11 +175,25 @@ class Media extends MediaAppModel {
 	 * @return string
 	 */
 	public function addCanvasObject($data) {
-		if ($data['type'] == 'image') {
-			$added = $this->_saveCanvasImageObject($data);
+		foreach ($data as $canvasObject) {
+			if ($canvasObject['type'] == 'image') {
+				$added = $this->_saveCanvasImageObject($canvasObject);
+			} elseif ($canvasObject['type'] == 'text') {
+				$added = $this->_saveCanvasTextObject($canvasObject);
+			}			
 		}
 
-		return ($added) ? '200' : '403';
+		if ($added) {
+			return array(
+					'statusCode' => '200',
+					'body' => array(
+						'id' => $this->id
+					)
+			);
+		} else {
+			return array('statusCode' => '403');
+		}
+
 	}
 
 	/**
@@ -189,9 +203,10 @@ class Media extends MediaAppModel {
 	 * @return array|boolean
 	 */
 	private function _saveCanvasImageObject($data) {
+		$added = false;
 		// make sure that this is (probably) safe to pass to fopen()
 		if (strpos($data['content'], 'data:') !== 0) {
-			return '403';
+			return false;
 		}
 		
 		$image = fopen($data['content'], 'r');
@@ -237,11 +252,9 @@ class Media extends MediaAppModel {
 								'name' => $uuid . '.' . $extension,
 								'tmp_name' => sys_get_temp_dir() . $uuid
 								),
-						'data' => serialize($data)
+						'data' => json_encode($data)
 					)
-			));
-		} else {
-			$added = false;
+			));	
 		}
 
 		return $added;
@@ -250,17 +263,17 @@ class Media extends MediaAppModel {
 	
 	public function updateCanvasObject($data) {
 		if (true) {
-			return '200';
+			return array('statusCode' => '200');
 		} else {
-			return '403';
+			return array('statusCode' => '403');
 		}
 	}
 	
 	public function deleteCanvasObject($data) {
 		if (true) {
-			return '200';
+			return array('statusCode' => '200');
 		} else {
-			return '403';
+			return array('statusCode' => '403');
 		}
 	}
 	
@@ -338,4 +351,4 @@ class Media extends MediaAppModel {
 	}
 
 
-}//class{}
+}

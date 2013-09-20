@@ -2,9 +2,11 @@
 element.wrap('<div id="cb_canvasWrapper" />');
 $("#cb_canvasWrapper").css('width', element.attr('width'));
 $("#cb_canvasWrapper").after('<div id="cb_circleMenu" />');
+
 // create our main action menu
 $("#cb_circleMenu").append('<a id="cb_addText">Abc</a> <a id="cb_addImage">img</a>');
 $("#cb_circleMenu").append('<a id="cb_cancel">&times;</a>');
+
 
 var mainMenuHandler = function( event ) {
 	// show the menu
@@ -34,6 +36,7 @@ $("#cb_addText").click(function( e ) {
 $("#cb_addImage").click(function( e ) {
 	$('#cb_circleMenu').hide();
 	imageEditHandler(e);
+	console.log('#cb_addImage clicked');
 	return false;
 });
 
@@ -61,14 +64,13 @@ $("#cb_canvasWrapper").parent()
 				return false;
 			},
 			click: function(event) {
-				console.log('click');
-
+				console.log('.cb_placeholder click');
+				
+				var clickedObject = CanvasObjectCollection.get($(this).attr('data-cid'));
 				if ( $(this).attr('data-model') === 'TextObject' ) {
-					var clickedObject = TextObjectCollection.get($(this).attr('data-cid'));
 					textEditHandler(event, clickedObject);
 				}
 				if ( $(this).attr('data-model') === 'ImageObject' ) {
-					var clickedObject = ImageObjectCollection.get($(this).attr('data-cid'));
 					imageEditHandler(event, clickedObject);
 				}
 
@@ -76,15 +78,34 @@ $("#cb_canvasWrapper").parent()
 			},
 			mousedown: function(event) {
 				// attach binding for object movement
-				var clickedObject = getClickedObject($(this));
+				var clickedObject = CanvasObjectCollection.get($(this).attr('data-cid'));
 				$("#cb_canvasWrapper").bind('mousemove', function(event) {
+					console.log('moving object');
 					clickedObject
 						.set('x', event.clientX - $("#cb_canvasWrapper").offset().left)
 						.set('y', event.clientY - $("#cb_canvasWrapper").offset().top);
+					// stop the event that launches the Object Editors while dragging
+					stopPropogation('.cb_placeholder', 'click');
+					return false;
 				});
-				return false;
+				
 			}
 		}, ".cb_placeholder");
+
+var cb_placeholderClick = function(event) {
+	console.log('.cb_placeholder click');
+
+	if ( $(this).attr('data-model') === 'TextObject' ) {
+		var clickedObject = TextObjectCollection.get($(this).attr('data-cid'));
+		textEditHandler(event, clickedObject);
+	}
+	if ( $(this).attr('data-model') === 'ImageObject' ) {
+		var clickedObject = ImageObjectCollection.get($(this).attr('data-cid'));
+		imageEditHandler(event, clickedObject);
+	}
+
+	return false;
+};
 
 /**
  * corner clicks
@@ -95,8 +116,18 @@ $("#cb_canvasWrapper").parent()
 				console.log('corner click');
 				return false;
 			},
+			dblclick: function(event) {
+				if ( $(this).hasClass("cb_ph_topLeft") ) {
+					
+					var clickedObject = CanvasObjectCollection.get($(this).parent().attr('data-cid'));
+					if ( clickedObject.get('type') === 'image' ) {
+						clickedObject.autoResize();
+					}
+				}
+			},
 			mousedown: function(event) {
-				var clickedObject = getClickedObject( $(this).parent() );
+				var clickedObject = CanvasObjectCollection.get($(this).parent().attr('data-cid'));
+				
 				if ( $(this).hasClass("cb_ph_topRight") ) {
 					console.log('rotate tool');
 					$("#cb_canvasWrapper").bind('mousemove', function(event) {
@@ -105,42 +136,26 @@ $("#cb_canvasWrapper").parent()
 					});
 					return false;
 				}
+				
 				if ( $(this).hasClass("cb_ph_topLeft") ) {
 					console.log('resize tool');
-					var xPrev;
-					$("#cb_canvasWrapper").bind('mousemove', function(event) {
-						console.log('resizing');
-
-						//var newWidth = clickedObject.get('width') + (event.clientX - $("#cb_canvasWrapper").offset().left) - clickedObject.get('x'); // good X
-						//var newWidth = clickedObject.get('width') + (event.clientY - $("#cb_canvasWrapper").offset().top) - clickedObject.get('y'); // same as above..?				        
-				        
-				        if ( xPrev < event.pageX ) {
-				        	// mouse moving right
-				        	var newWidth = clickedObject.get('width') + 1;
-				        } else {
-				        	// mouse moving left
-				        	var newWidth = clickedObject.get('width') - 1;
-				        }
-				        xPrev = event.pageX;
-
-						if ( newWidth > 40 ) {
-							clickedObject
-								.set('width', newWidth)
-								.set('height', newWidth * (clickedObject.get('aspectRatio')));
-						}
-					});
-					return false;
+					if ( clickedObject.get('type') === 'image' ) {
+						clickedObject.resize();
+					}
 				}
+				
 				if ( $(this).hasClass("cb_ph_bottomLeft") ) {
 					console.log('flip horizontal tool');
 					clickedObject.set('scale', [clickedObject.get('scale')[0] * -1, 1]);
 					return false;
 				}
+				
 				if ( $(this).hasClass("cb_ph_bottomRight") ) {
 					console.log('flip vertical tool');
 					clickedObject.set('scale', [1, clickedObject.get('scale')[1] * -1]);
 					return false;
 				}
+				
 				return false;
 			},
 			mouseup: function(event) {
@@ -151,15 +166,9 @@ $("#cb_canvasWrapper").parent()
 		}, ".cb_ph_corner");
 
 
-function getClickedObject($element) {
-	console.log( 'clicked ' + $element.attr('data-cid') );
-	var clickedObject = false;
-	if ( $element.attr('data-model') === 'TextObject' ) {
-		clickedObject = TextObjectCollection.get($element.attr('data-cid'));
-	}
-	if ( $element.attr('data-model') === 'ImageObject' ) {
-		clickedObject = ImageObjectCollection.get($element.attr('data-cid'));
-	}
-
-	return clickedObject;
+function stopPropogation(selector, event) {
+    $(selector).on(event, function(e) {
+        e.stopPropagation();
+        return false;
+    });
 }

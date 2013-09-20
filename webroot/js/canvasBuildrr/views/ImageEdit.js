@@ -17,6 +17,8 @@ var ImageEditView = Backbone.View.extend({
 	},
 	uploadImage: function( event ) {
 		console.log('uploadImage()');
+		$(".filePicker").attr('disabled', 'disabled');
+		$(".cb_addEditImage").fadeOut(10000);
 		var reader = new FileReader(), rFilter = /^image\/(?:bmp|cis\-cod|gif|ief|jpeg|pipeg|png|svg\+xml|tiff|x\-cmu\-raster|x\-cmx|x\-icon|x\-portable\-anymap|x\-portable\-bitmap|x\-portable\-graymap|x\-portable\-pixmap|x\-rgb|x\-xbitmap|x\-xpixmap|x\-xwindowdump)$/i;
 		var imageModel = this.model;
 		reader.onload = function( event ) {
@@ -27,7 +29,7 @@ var ImageEditView = Backbone.View.extend({
 				imageModel.set('height', this.height);
 				imageModel.set('width', this.width);
 				imageModel.set('aspectRatio', this.width / this.height);
-				imageModel.save();
+				//imageModel.save();				
 			};
 
 			imageModel.set('content', event.target.result);
@@ -37,6 +39,7 @@ var ImageEditView = Backbone.View.extend({
 			return;
 		}
 		reader.readAsDataURL(event.target.files[0]);
+		this.close();
 	},
 	falseHandler: function( event ) {
 		console.log('falseHandler()');
@@ -50,9 +53,9 @@ var ImageEditView = Backbone.View.extend({
 var imageEditHandler = function( event, image ) {
 	if ( image === undefined ) {
 		image = new ImageObject({x: click.x, y: click.y});
-		ImageObjectCollection.add(image);
+		CanvasObjectCollection.add(image);
 		//debug
-		console.log('image added to imageCollection at: ' + click.x + ', ' + click.y);
+		console.log('image added to CanvasObjectCollection at: ' + click.x + ', ' + click.y);
 	}
 	var imageEditor = new ImageEditView({
 		model: image,
