@@ -2,7 +2,7 @@
 
 /**
  * To Extend use code
- * $refuseInit = true; require_once(ROOT.DS.'app'.DS.'Plugin'.DS.'Courses'.DS.'Controller'.DS.'MediaController.php');
+ * $refuseInit = true; require_once(ROOT.DS.'app'.DS.'Plugin'.DS.'Media'.DS.'Controller'.DS.'MediaController.php');
  */
 
 
@@ -35,25 +35,25 @@ class _MediaController extends MediaAppController {
 
 
 	public function add() {
-		if(!empty($this->request->data)) {
+		if (!empty($this->request->data)) {
             $this->request->data['User']['id'] = $this->Auth->user('id');
 			#debug($this->request->data);break;
 			if ($this->Media->save($this->request->data)) {
 				$this->Session->setFlash('Media saved.');
 				#$this->redirect('/media/media/edit/'.$this->Media->id);
-				if($this->request->isAjax()) {
+				if ($this->request->isAjax()) {
 					$this->set('media', $this->Media->findById($this->Media->id));
 					$this->layout = false;
 					$this->view = 'ajax-upload';
-				}else {
+				} else {
 					$this->redirect(array('action' => 'my'));
 				}
 				
 			} else {
 				
-				if($this->request->isAjax()) {
+				if ($this->request->isAjax()) {
 					throw new InternalErrorException('Upload Failed');
-				}else {
+				} else {
 					$this->Session->setFlash('Invalid Upload.');
 				}
 				
@@ -207,22 +207,18 @@ class _MediaController extends MediaAppController {
 	 * @return array|boolean
 	 */
 	function sorted($mediaType, $field, $sortOrder, $numberOfResults) {
-#debug('Media.'.$field.' '.strtoupper($sortOrder));
 	    $options = array(
           'conditions' => array(
 		    'Media.type' => strtolower($mediaType),
 		    'Media.is_visible' => '1'
           ),
           'order' => array('Media.'.$field => $sortOrder),
-          //'order' => array('Media.id' => 'desc'),
-
           'limit' => $numberOfResults
 	    );
 
 	    return $this->Media->find('all', $options);
 
-	}//sorted()
-
+	}
 
 
 /**
@@ -282,15 +278,57 @@ class _MediaController extends MediaAppController {
 
 
 	public function canvas($id = null) {
-		if ( $id ) {
-			$canvas = $this->Media->find('first', array(
-				'conditions' => array(
-					'Media.id' => $id
-				)
-			));
-			$this->set('media', $media);
+
+		switch ($this->request->method()) {
+			case ('POST'):
+				if (isset($this->request->params['named']['collection'])) {
+					$response = $this->Media->addCanvasCollection($this->request->data);
+				} else {
+					$response = $this->Media->addCanvasObjects($this->request->data);
+				}
+				$this->__returnJsonResponse($response);
+				break;
+			case ('PUT'):
+				if (isset($this->request->params['named']['collection'])) {
+					$response = $this->Media->updateCanvasCollection($this->request->data);
+				} else {
+					$response = $this->Media->updateCanvasObjects($this->request->data);
+				}
+				$this->__returnJsonResponse($response);
+				break;
+			case ('DELETE'):
+				if (isset($this->request->params['named']['collection'])) {
+					$response = $this->Media->deleteCanvasCollection($this->request->data);
+				} else {
+					$response = $this->Media->deleteCanvasObjects($this->request->data);
+				}
+				$this->__returnJsonResponse($response);
+				break;
+			case ('GET'):
+			default:
+				if ($id) {
+					$this->request->data = $this->Media->find('first', array(
+							'conditions' => array(
+									'Media.id' => $id
+							)
+					));
+// 					if ($this->request->isAjax()) {
+// 							$this->__returnJsonResponse(array(
+// 								'statusCode' => '200',
+// 								'body' => $this->request->data
+// 							));
+// 					}
+				}
+				break;
 		}
 	}
+	
+	protected function __returnJsonResponse($response) {
+		$this->autoRender = false;
+		$this->response->statusCode($response['statusCode']);
+		$this->response->body(json_encode($response['body']));
+	}
+		
 	
 	/**
 	 * Lazy Loader Function derives from imgsrc link.

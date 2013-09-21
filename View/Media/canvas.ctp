@@ -3,7 +3,9 @@
 		<canvas id="canvas" width="425" height="550">Your browser does not support HTML5 Canvas.</canvas>
 	</div>
 	<div class="span4">
-<!--		<input type="text" id="line1" name="line1" />-->
+		<div>
+			<div class="btn" id="saveCanvas" data-saved="false">Save</div>
+		</div>
 	</div>
 </div>
 
@@ -74,7 +76,6 @@
 
 <script type="text/javascript" src="/media/js/canvasBuildrr/models/TextObject.js"></script>
 <script type="text/javascript" src="/media/js/canvasBuildrr/models/ImageObject.js"></script>
-<script type="text/javascript" src="/media/js/canvasBuildrr/models/Canvas.js"></script>
 <script type="text/javascript" src="/media/js/canvasBuildrr.js"></script>
 <script type="text/javascript" src="/media/js/canvasBuildrr/views/MainOverlay.js"></script>
 <script type="text/javascript" src="/media/js/canvasBuildrr/views/TextEdit.js"></script>
@@ -87,3 +88,9 @@
 		//$("#canvas").canvasBuildrr();
 	});
 </script>
+
+<?php if (!(empty($this->request->data))) : ?>
+<script>
+	CanvasObjectCollection.reset(<?php echo json_encode($this->request->data['Media']['data']); ?>);
+</script>
+<?php endif; ?>

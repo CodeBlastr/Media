@@ -1,23 +1,17 @@
 function clear() {
-	//console.log('clear()');
 	context.save();
 	context.clearRect(0, 0, canvas.width, canvas.height);
 	context.restore();
 }
 
 function refreshCanvas() {
-	//console.log('refreshCanvas');
 	clear();
-	//console.log(TextObjectCollection);
-	TextObjectCollection.each(function( textObject ) {
-		//console.log(textObject);
-		textObject.write();
+	
+	CanvasObjectCollection.each(function( canvasObject ) {
+		console.log(canvasObject);
+		canvasObject.draw();
 	});
-	//console.log(TextObjectCollection);
-	ImageObjectCollection.each(function( imageObject ) {
-		console.log(imageObject);
-		imageObject.draw();
-	});
+	
 	return true;
 }
 

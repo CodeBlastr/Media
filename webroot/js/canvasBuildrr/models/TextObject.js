@@ -11,6 +11,7 @@ var TextObject = Backbone.Model.extend({
 		rotation: 0,
 		scale: 0
 	},
+	url: '/media/media/canvas',
 	initialize: function() {
 		// init event listeners
 		this.on("change:content", this.refresh)
@@ -35,7 +36,7 @@ var TextObject = Backbone.Model.extend({
 		$("#cb_canvasWrapper").append(placeholder);
 	},
 	refresh: function() {
-		refreshCanvas();
+		CanvasObjectCollection.refreshCanvas();
 		// update the placeholder div
 		$("div[data-cid='"+this.cid+"']")
 				.css('top', this.get('y') - this.get('fontSize'))
@@ -43,7 +44,7 @@ var TextObject = Backbone.Model.extend({
 				.css('width', this.get('width'))
 				.css('height', this.get('fontSize'));
 	},
-	write: function() {
+	draw: function() {
 
 		//console.log('objectXY: ' + this.get('x') + ', ' + this.get('y'));
 		//console.log('object width,font: ' + this.get('width') + ', ' + this.get('fontSize'));
