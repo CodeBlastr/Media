@@ -1,9 +1,9 @@
 <link rel="stylesheet" type="text/css" href="/js/plugins/jQuery.jPlayer.2.4.0/blue.monday/jplayer.blue.monday.css">
 <script type="text/javascript" src="/js/plugins/jQuery.jPlayer.2.4.0/jquery.jplayer.min.js"></script>
-
+<script type="text/javascript" src="/js/plugins/jQuery.jPlayer.2.4.0/add-on/jplayer.playlist.min.js"></script>
 <div id="jplayerList" class="<?php echo $class; ?>">
 
-<div id="jquery_jplayer_<?php echo $id; ?>" class="jp-jplayer"></div>
+<div id="jquery_jplayer" class="jp-jplayer"></div>
 
 <div id="jp_container_1" class="jp-audio">
     <div class="jp-type-single">
@@ -34,10 +34,12 @@
             <div class="jp-duration"></div>                   
         </div>
         <div class="jp-title">
-            <ul>
-                <li><?php echo $title; ?></li>
-            </ul>
         </div>
+        <div class="jp-playlist">
+         <ul>
+		      <li></li>
+		    </ul>
+		</div>
         <div class="jp-no-solution">
             <span>Update Required</span>
             To play the media you will need to either update your browser to a recent version or update your <a href="http://get.adobe.com/flashplayer/" target="_blank">Flash plugin</a>.
@@ -53,18 +55,44 @@
 	$(document).ready(function() {
 		var tracks = <?php echo $tracks ?>;
 		console.log(tracks);
-	    $("#jquery_jplayer_<?php echo $id; ?>").jPlayer({
-	        ready: function(event) {
-	            $(this).jPlayer("setMedia", tracks);
-	        },
-	        wmode: "window",
-			smoothPlayBar: true,
-			keyEnabled: true,
-			solution: "html, flash",
-	        swfPath: "/js/plugins/jQuery.jPlayer.2.4.0/",
-	        supplied: "mp3"
-	    });
+		var myPlaylist = new jPlayerPlaylist({
+			  jPlayer: "#jquery_jplayer",
+			  cssSelectorAncestor: "#jp_container_1",
+			  cssSelector: {
+				  videoPlay: '.jp-video-play',
+				  play: '.jp-play',
+				  pause: '.jp-pause',
+				  stop: '.jp-stop',
+				  seekBar: '.jp-seek-bar',
+				  playBar: '.jp-play-bar',
+				  mute: '.jp-mute',
+				  unmute: '.jp-unmute',
+				  volumeBar: '.jp-volume-bar',
+				  volumeBarValue: '.jp-volume-bar-value',
+				  volumeMax: '.jp-volume-max',
+				  currentTime: '.jp-current-time',
+				  duration: '.jp-duration',
+				  fullScreen: '.jp-full-screen',
+				  restoreScreen: '.jp-restore-screen',
+				  repeat: '.jp-repeat',
+				  repeatOff: '.jp-repeat-off',
+				  gui: '.jp-gui',
+				  noSolution: '.jp-no-solution'
+				 },
+				  
+			}, tracks, {
+			  playlistOptions: {
+			    enableRemoveControls: false
+			  },
+			  swfPath: "/js/plugins/jQuery.jPlayer.2.4.0/",
+			  supplied: "ogv, m4v, oga, mp3",
+			  smoothPlayBar: true,
+			  keyEnabled: true,
+			  audioFullScreen: false // Allows the audio poster to go full screen via keyboard
+			});
+		$('#jquery_jplayer').hide();
 	});   
 })(jQuery);
 
 </script>
+

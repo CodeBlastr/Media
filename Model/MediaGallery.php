@@ -10,13 +10,26 @@
 class MediaGallery extends MediaAppModel {
 		
 	public $name = 'MediaGallery';
+	public $actsAs = array('Media.MediaAttachable');
 	
-	public $hasMany = array(
-		'Media' => array(
-            'className'     => 'Media.Media',
-            'foreignKey'    => 'foreign_key',
-            'dependent'     => true
+	 public $hasOne = array(
+        'Thumbnail' => array(
+            'className' => 'Media.Media',
+        	'foreignKey' => false,
+            'conditions' => array('Thumbnail.id' => 'MediaGallery.thumbail'),
+            'dependent' => true
         )
-	);
+    );
+	 
+	 public $belongsTo = array(
+ 		'Creator' => array(
+ 				'className' => 'Users.User',
+ 				'foreignKey' => 'creator_id',
+ 		),
+ 		'Modifier' => array(
+ 				'className' => 'Users.User',
+ 				'foreignKey' => 'modifier_id',
+ 		)
+	 );
 	
 }

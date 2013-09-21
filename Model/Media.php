@@ -27,7 +27,7 @@ class Media extends MediaAppModel {
 			'foreignKey' => 'user_id'
 			)
 		);
-
+	
 
 	public function __construct($id = false, $table = null, $ds = null) {
 		parent::__construct($id, $table, $ds);
@@ -36,6 +36,7 @@ class Media extends MediaAppModel {
 		$this->uploadVideoDirectory =  'videos';
 		$this->uploadAudioDirectory = 'audio';
 		$this->uploadImageDirectory = 'images';
+		$this->mediaUrl = '/theme/default/media/';
 		$this->order = array("{$this->alias}.created");
 	}
 

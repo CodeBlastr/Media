@@ -1,5 +1,4 @@
 <?php
-
 App::uses('AppHelper', 'View/Helper');
 class MediaHelper extends AppHelper {
 	
@@ -20,8 +19,14 @@ class MediaHelper extends AppHelper {
 		'audio' => array('aif', 'mid', 'midi', 'mka', 'mp1', 'mp2', 'mp3', 'mpa', 'wav', 'aac', 'flac', 'ogg', 'ra', 'raw', 'wma'),
 		'document' => array('pdf', 'doc', 'docx', 'ods', 'odt'),
 	);
+
 	
-	public $mediaPath = '/theme/default/media/'; 
+	
+	public function __construct(View $View, $settings = array()) {
+	 	parent::__construct($View, $settings);
+	 	$this->mediaPath = DS.'theme'.DS.'default'.DS.'media'.DS;
+	 	$this->mediaUrl = '/theme/default/media/';
+	}
 	
 	public function display($item, $options = array()) {
 		$this->options = array_merge($this->options, $options);
@@ -35,7 +40,7 @@ class MediaHelper extends AppHelper {
 	
 
 	public function imagesMedia ($item) {
-		$imagePath = $this->mediaPath.$this->type.DS.$item['filename'].'.'.$item['extension'];
+		$imagePath = $this->mediaUrl.$this->type.'/'.$item['filename'].'.'.$item['extension'];
 		$thumbImageOptions = array(
 				'width' => $this->options['width'],
 				'height' => $this->options['height'],
@@ -65,7 +70,7 @@ class MediaHelper extends AppHelper {
 	 */
 	
 	public function audioMedia ($item) {
-		$track = array($item['extension'] => $this->mediaPath.$this->type.DS.$item['filename'].'.'.$item['extension']);
+		$track = array($item['extension'] => $this->mediaUrl.$this->type.'/'.$item['filename'].'.'.$item['extension']);
 		return $this->_View->Element('Media.audio_display', 
 			array(
 				'tracks' => json_encode($track),
@@ -73,6 +78,37 @@ class MediaHelper extends AppHelper {
 				'url' => $this->options['url'],
 				'id' => $item['id'],
 				'title' => $item['title']
+				));
+	}
+	
+	/**
+	 * jplayer display helper uses jplayer see
+	 * http://jplayer.org/
+	 */
+	
+	public function jplayer ($items, $options = array()) {
+		$tracks = array();
+		if(is_array($items)) {
+			foreach($items as $item) {
+				$this->_getType($item['Media']);
+				$track = array(
+					'title' => $item['Media']['title'],
+				    'mp3' => $this->mediaUrl.$this->type.'/'.$item['Media']['filename'].'.'.$item['Media']['extension'],
+					'poster' => ''
+				);
+				$tracks[] = $track;
+			}
+		}else {
+			$this->audioMedia($items);
+		}
+		
+		return $this->_View->Element('Media.jplayer_list',
+				array(
+						'tracks' => json_encode($tracks),
+						'class' => $this->options['class'],
+						'url' => $this->options['url'],
+						'id' => $item['id'],
+						'title' => $item['title']
 				));
 	}
 	
