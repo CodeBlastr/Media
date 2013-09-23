@@ -37,27 +37,32 @@ class _MediaController extends MediaAppController {
 	public function add() {
 		if (!empty($this->request->data)) {
             $this->request->data['User']['id'] = $this->Auth->user('id');
-			#debug($this->request->data);break;
-			if ($this->Media->save($this->request->data)) {
+			$mediaarray = array();
+			foreach($this->request->data['Media']['files'] as $file) {
+				//debug($file);break;
+				$media['Media'] = array(
+					'user_id' => $this->Auth->user('id'),
+					'filename' => $file
+				);
+				$this->Media->create();
+				$media = $this->Media->save($media);
+				if($media) {
+					$mediaarray[] = $media;
+				}
+			}
+			if(!empty($mediaarray)) {
 				$this->Session->setFlash('Media saved.');
-				#$this->redirect('/media/media/edit/'.$this->Media->id);
 				if ($this->request->isAjax()) {
-					$this->set('media', $this->Media->findById($this->Media->id));
+					$this->set('media', $mediaarray);
 					$this->layout = false;
 					$this->view = 'ajax-upload';
 				} else {
 					$this->redirect(array('action' => 'my'));
 				}
-				
-			} else {
-				
-				if ($this->request->isAjax()) {
-					throw new InternalErrorException('Upload Failed');
-				} else {
-					$this->Session->setFlash('Invalid Upload.');
-				}
-				
+			}else {
+				$this->Session->setFlash('Upload failed, check directory permissions');
 			}
+			
 		}
 
 	}//upload()
@@ -81,6 +86,34 @@ class _MediaController extends MediaAppController {
 	}//edit()
 
 
+	public function delete($id) {
+		try{
+			if(isset($id) && $this->Media->exists($id)) {
+				//Get the media info so we can delete the file
+				$media = $this->Media->findById($id);
+				$type = $this->Media->mediaType($media['Media']['extension']);
+				$this->loadModel('Media.MediaAttachment');
+				//Delete the media don't cascade because we need better control over what get delete
+				if(!$this->Media->delete($id, false)) {
+					throw new Exception('Could not delete Media Record');
+				}
+				if(!$this->MediaAttachment->deleteAll(array('media_id' => $id))) {
+					throw new Exception('Could not delete attachment records');
+				}
+				if(!unlink($this->Media->themeDirectory.DS.$type.DS.$media['Media']['filename'].'.'.$media['Media']['extension'])) {
+					throw new Exception('Could not delete file, please check permissions');
+				}
+				$this->Session->setFlash(__('Deleted %n', !empty($media['Media']['title']) ? $media['Media']['title'] : $id ));
+			}else {
+				throw new MethodNotAllowedException('Action not allowed');
+			}
+		}catch(Exception $e) {
+			$this->Session->setFlash($e->getMessage());
+		}
+		
+		$this->redirect($this->referer());
+	}
+	
 
 /**
  *

@@ -37,6 +37,10 @@
 						<?php echo $this->Media->display($item, array('width' => 100, 'height' => 100)); ?>
 						<p style="text-align: center;"><?php echo $item['Media']['title']; ?></p>
 					</a>
+					<div class="actions">
+					<?php echo $this->Html->link('<span class="glyphicon glyphicon-remove-circle"></span>', array('action' => 'delete', $item['Media']['id']), array('escape' => false), __('Are you sure you want to delete %s', !empty($item['Media']['title']) ? $item['Media']['title'] : $item['Media']['id'])); ?>
+					</div>
+					
 				</li>
 				
 				

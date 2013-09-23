@@ -50,33 +50,34 @@ class Media extends MediaAppModel {
 		$this->data = $this->_handleRecordings($this->data);
 		$this->data = $this->_handleCanvasImages($this->data);
 		$this->fileExtension = $this->getFileExtension($this->data['Media']['filename']['name']);
-		
 		return $this->processFile();
 	}//beforeSave()
 
 	
 	public function processFile() {
-		if(in_array($this->fileExtension, $this->supportedFileExtensions)) {
-			$this->data['Media']['type'] = 'docs';
+		$this->data['Media']['type'] = $this->mediaType($this->fileExtension);
+		if($this->data['Media']['type']) {
 			$this->data = $this->uploadFile($this->data);
-		} elseif(in_array($this->fileExtension, $this->supportedImageExtensions)) {
-			$this->data['Media']['type'] = 'images';
+			return true;
+		}
+		return false;
+	}
+	
+	public function mediaType($ext) {
+		if(in_array($ext, $this->supportedFileExtensions)) {
+			return 'docs';
 			$this->data = $this->uploadFile($this->data);
-		} elseif (in_array($this->fileExtension, $this->supportedVideoExtensions)) {
-			 $this->data['Media']['type'] = 'videos';
-			// $this->data = $this->encode($this);
-			echo "Encoding support was removed, needs work here.";
-			break;
-		} elseif (in_array($this->fileExtension, $this->supportedAudioExtensions)) {
-			 $this->data['Media']['type'] = 'audio';
-			 $this->data = $this->uploadFile($this->data);
-			 // $this->data = $this->encode($this);
-			 //echo "Encoding support was removed, needs work here.";
+		} elseif(in_array($ext, $this->supportedImageExtensions)) {
+			return 'images';
+		} elseif (in_array($ext, $this->supportedVideoExtensions)) {
+			return 'videos';
+		} elseif (in_array($ext, $this->supportedAudioExtensions)) {
+			return 'audio';
 		} else {
 			// an unsupported file type
 			return false;
 		}
-		return true;
+		
 	}
 
     /**
@@ -376,12 +377,12 @@ class Media extends MediaAppModel {
 	private function _createDirectories() {
 		if (!file_exists($this->themeDirectory)) {
 			if (
-				mkdir($this->themeDirectory, 0777, true) &&
-				mkdir($this->themeDirectory . DS . 'videos', 0777, true) &&
-				mkdir($this->themeDirectory . DS . 'docs', 0777, true) &&
-				mkdir($this->themeDirectory . DS . 'audio', 0777, true) &&
-				mkdir($this->themeDirectory . DS . 'images', 0777, true) &&
-				mkdir($this->themeDirectory . DS . 'images' . DS . 'thumbs', 0777, true)
+				mkdir($this->themeDirectory, 0775, true) &&
+				mkdir($this->themeDirectory . DS . 'videos', 0775, true) &&
+				mkdir($this->themeDirectory . DS . 'docs', 0775, true) &&
+				mkdir($this->themeDirectory . DS . 'audio', 0775, true) &&
+				mkdir($this->themeDirectory . DS . 'images', 0775, true) &&
+				mkdir($this->themeDirectory . DS . 'images' . DS . 'thumbs', 0775, true)
 				) {
 				return true;
 			} else {
