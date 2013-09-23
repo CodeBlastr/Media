@@ -1,6 +1,6 @@
 var ImageObject = Backbone.Model.extend({
 	defaults: {
-		type: 'image',
+		type: 'ImageObject',
 		content: '',
 		x: '',
 		y: '',
@@ -8,7 +8,8 @@ var ImageObject = Backbone.Model.extend({
 		height: '',
 		rotation: 0,
 		aspectRatio: 1,
-		scale: [1,1]
+		scale: [1,1],
+		order: 0
 	},
 	url: '/media/media/canvas',
 	initialize: function() {
@@ -48,6 +49,7 @@ var ImageObject = Backbone.Model.extend({
 				.css('centerY', this.get('height') / 2);
 	},
 	draw: function() {
+		console.log(this);
 		var imageObject = this;
 		if ( imageObject.get('type') !== 'screenshot' ) {
 			var img = new Image();

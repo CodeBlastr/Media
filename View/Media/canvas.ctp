@@ -54,7 +54,7 @@
 		</ul>
 		<span class="cb_close" title="close">&times;</span>
 	</div>
-	<input type="text" class="textInput" value="<%= content %>" />
+	<input type="text" class="textInput" autofocus value="<%= content %>" />
 </div>
 </script>
 <script type="text/html" id="template-imageEdit">
@@ -91,6 +91,7 @@
 
 <?php if (!(empty($this->request->data))) : ?>
 <script>
-	CanvasObjectCollection.reset(<?php echo json_encode($this->request->data['Media']['data']); ?>);
+	CanvasObjectCollection.reset();
+	CanvasObjectCollection.reload(<?php echo json_encode($this->request->data['Media']['data']); ?>);
 </script>
 <?php endif; ?>

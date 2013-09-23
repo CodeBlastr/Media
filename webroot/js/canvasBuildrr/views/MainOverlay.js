@@ -86,27 +86,12 @@ $("#cb_canvasWrapper").parent()
 						.set('x', event.clientX - $("#cb_canvasWrapper").offset().left)
 						.set('y', event.clientY - $("#cb_canvasWrapper").offset().top);
 					// stop the event that launches the Object Editors while dragging
-					stopPropogation('.cb_placeholder', 'click');
+					//stopPropogation('.cb_placeholder', 'click');
 					return false;
 				});
-				
 			}
 		}, ".cb_placeholder");
 
-var cb_placeholderClick = function(event) {
-	console.log('.cb_placeholder click');
-
-	if ( $(this).attr('data-model') === 'TextObject' ) {
-		var clickedObject = TextObjectCollection.get($(this).attr('data-cid'));
-		textEditHandler(event, clickedObject);
-	}
-	if ( $(this).attr('data-model') === 'ImageObject' ) {
-		var clickedObject = ImageObjectCollection.get($(this).attr('data-cid'));
-		imageEditHandler(event, clickedObject);
-	}
-
-	return false;
-};
 
 /**
  * corner clicks

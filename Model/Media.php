@@ -29,6 +29,8 @@ class Media extends MediaAppModel {
 		);
 
 	public $screenshotId;
+	
+	public $fileExtension;
 
 	public function __construct($id = false, $table = null, $ds = null) {
 		parent::__construct($id, $table, $ds);
@@ -42,16 +44,17 @@ class Media extends MediaAppModel {
 	}
 
 
-	public function beforeSave($options) {
+	public function beforeSave($options = array()) {
 		parent::beforeSave($options);
 		$this->data['Media']['model'] = !empty($this->data['Media']['model']) ? $this->data['Media']['model'] : 'Media';
 		$this->plugin = strtolower(ZuhaInflector::pluginize($this->data['Media']['model']));
-		$this->_createDirectories();
+		$this->__createDirectories();
 		$this->data = $this->_handleRecordings($this->data);
 		$this->data = $this->_handleCanvasImages($this->data);
 		$this->fileExtension = $this->getFileExtension($this->data['Media']['filename']['name']);
+
 		return $this->processFile();
-	}//beforeSave()
+	}
 
 	
 	public function processFile() {
@@ -130,192 +133,19 @@ class Media extends MediaAppModel {
 	}
 
 
-
-/**
- * Get the extension of a given file path
- *
- * @param {string} 		A file name/path string
- */
-    function getFileExtension($filepath) {
-        preg_match('/[^?]*/', $filepath, $matches);
-        $string = $matches[0];
-		
-        $pattern = preg_split('/\./', $string, -1, PREG_SPLIT_OFFSET_CAPTURE);
-		
-        # check if there is any extension
-        if(count($pattern) == 1) {
-            return FALSE;
-        }
-
-        if(count($pattern) > 1) {
-            $filenamepart = $pattern[count($pattern)-1][0];
-            preg_match('/[^?]*/', $filenamepart, $matches);
-            return strtolower($matches[0]);
-        }
-    }
-
-
 /**
  * Handles an uploaded file (ie. doc, pdf, etc)
  */
 	public function uploadFile($data) {
 		$uuid = $this->__uuid().uniqid();
 		$newFile =  $this->themeDirectory . DS . $this->data['Media']['type'] . DS . $uuid . '.' . $this->fileExtension;
-		if (rename($data['Media']['filename']['tmp_name'], $newFile)) :
+
+		if (rename($data['Media']['filename']['tmp_name'], $newFile)) {
 			$data['Media']['filename'] = $uuid; // change the filename to just the filename
 			$data['Media']['extension'] = $this->fileExtension; // change the extension to just the extension
 			return $data;
-		else :
+		} else {
 			throw new Exception(__d('media', 'File Upload of ' . $data['Media']['filename']['name'] . ' to ' . $newFile . '  Failed'));
-		endif;
-	}
-
-	
-	/**
-	 * This function needs to do the following things:
-	 *  - save the metadata of each image
-	 *  - save the entire models of TextObjects
-	 *  - (maybe) either return the entire collection so we can .reset() or just the collection's id
-	 *  
-	 * @param array $data
-	 * @return array
-	 */
-	public function addCanvasCollection($data) {
-
-		// save all image objects as rows in `media`
-		$addedObjects = $this->addCanvasObjects($data);
-		
-		// save a "parent" row that has all data
-		$this->id = $this->screenshotId;
-		$this->saveField('data', json_encode($addedObjects), array('callbacks' => false));
-		
-		if ($addedObjects) {
-			return array(
-					'statusCode' => '200',
-					'body' => json_encode($addedObjects)
-					//'body' => array('id' => $this->screenshotId)
-			);
-		} else {
-			return array('statusCode' => '403');
-		}
-	}
-	
-
-	/**
-	 * 
-	 * @param array $data
-	 * @return string
-	 */
-	public function addCanvasObjects($data) {
-		$objects = false;
-		foreach ($data as $canvasObject) {
-			if ($canvasObject['type'] == 'image' || $canvasObject['type'] == 'screenshot') {
-				$savedImage = $this->_saveCanvasImageObject($canvasObject);
-				if ($canvasObject['type'] == 'screenshot') {
-					$this->screenshotId = $this->id;
-				}
-				$canvasObject['id'] = $savedImage['Media']['id'];
-				$canvasObject['content'] = '/theme/Default/media/' . $savedImage['Media']['type'] . '/' .  $savedImage['Media']['filename'] . '.' . $savedImage['Media']['extension'];
-				$objects[] = $canvasObject;
-			}
-			$objects[] = $canvasObject;
-		}
-
-		return $objects;
-
-	}
-
-	/**
-	 * saves image file from image object to the file server
-	 * 
-	 * @param array $data
-	 * @return array|boolean
-	 */
-	private function _saveCanvasImageObject($data) {
-		$added = false;
-		// make sure that this is (probably) safe to pass to fopen()
-		if (strpos($data['content'], 'data:') !== 0) {
-			return false;
-		}
-		
-		$image = fopen($data['content'], 'r');
-		$metadata = stream_get_meta_data($image);
-		
-		switch ($metadata['mediatype']) {
-			case ('image/png'):
-				$extension = 'png';
-				break;
-			case ('image/jpeg'):
-				$extension = 'jpg';
-				break;
-			case ('image/gif'):
-				$extension = 'gif';
-				break;
-			case ('image/bmp'):
-				$extension = 'bmp';
-				break;
-			default:
-				return false;
-				break;
-		}
-		
-		// set temp filename
-		$uuid = $this->__uuid().uniqid();
-		
-		// write image to disk
-		$imageString = str_replace('data:'.$metadata['mediatype'].';base64,', '', $data['content']);
-		$imageString = base64_decode($imageString);
-		$fopen = fopen(sys_get_temp_dir() . $uuid, 'wb');
-		$written = fwrite($fopen, $imageString);
-		fclose($fopen);
-		
-		if ($written) {
-			// clean up
-// 			unset($data['cid']);
-// 			unset($data['content']);
-			
-			// save record to database server
-			$this->create();
-			$added = $this->save(array(
-					'Media' => array(
-						'filename' => array(
-								'name' => $uuid . '.' . $extension,
-								'tmp_name' => sys_get_temp_dir() . $uuid
-								),
-// 						'data' => json_encode($data)
-					)
-			));
-		}
-
-		return $added;
-		
-	}
-	
-	public function updateCanvasObjects($data) {
-		$added = false;
-		foreach ($data as $canvasObject) {
-			if (!(isset($canvasObject['id']))) {
-				if ($canvasObject['type'] == 'image') {
-					$added = $this->_saveCanvasImageObject($canvasObject);
-				} elseif ($canvasObject['type'] == 'text') {
-					$added = $this->_saveCanvasTextObject($canvasObject);
-				}
-			}
-		}
-		
-		if ($added) {
-			return array('statusCode' => '200');
-		} else {
-			return array('statusCode' => '403');
-		}
-	}
-	
-	public function deleteCanvasObject($data) {
-		$added = false;
-		if ($added) {
-			return array('statusCode' => '200');
-		} else {
-			return array('statusCode' => '403');
 		}
 	}
 	
@@ -371,26 +201,173 @@ class Media extends MediaAppModel {
 		return $data;
 	}
 
-/**
- * Create the directories for this plugin if they aren't there already.
- */
-	private function _createDirectories() {
-		if (!file_exists($this->themeDirectory)) {
-			if (
-				mkdir($this->themeDirectory, 0775, true) &&
-				mkdir($this->themeDirectory . DS . 'videos', 0775, true) &&
-				mkdir($this->themeDirectory . DS . 'docs', 0775, true) &&
-				mkdir($this->themeDirectory . DS . 'audio', 0775, true) &&
-				mkdir($this->themeDirectory . DS . 'images', 0775, true) &&
-				mkdir($this->themeDirectory . DS . 'images' . DS . 'thumbs', 0775, true)
-				) {
-				return true;
-			} else {
-				return false;
-			}
-		} else {return true;
+	
+	/**
+	 * This function needs to do the following things:
+	 *  - save the metadata of each image
+	 *  - save the entire models of TextObjects
+	 *  - (maybe) either return the entire collection so we can .reset() or just the collection's id
+	 *
+	 * @param array $data
+	 * @return array
+	 */
+	public function addCanvasCollection($data) {
+	
+		// save all image objects as rows in `media`
+		$addedObjects = $this->addCanvasObjects($data);
+	
+		// save a "parent" row that has all data
+		$this->id = $this->screenshotId;
+		$this->saveField('data', json_encode($addedObjects), array('callbacks' => false));
+	
+		if ($addedObjects) {
+			return array(
+					'statusCode' => '200',
+					'body' => json_encode($addedObjects)
+			);
+		} else {
+			return array('statusCode' => '403');
 		}
 	}
+	
+	
+	/**
+	 *
+	 * @param array $data
+	 * @return array|boolean
+	 */
+	public function addCanvasObjects($data) {
+		$objects = false;
+		foreach ($data as $canvasObject) {
+			if ($canvasObject['type'] == 'ImageObject' || $canvasObject['type'] == 'screenshot') {
+				$savedImage = $this->_saveCanvasImageObject($canvasObject);
+				if ($canvasObject['type'] == 'screenshot') {
+					$this->screenshotId = $this->id;
+				}
+				$canvasObject['id'] = $savedImage['Media']['id'];
+				$canvasObject['content'] = '/theme/Default/media/' . $savedImage['Media']['type'] . '/' .  $savedImage['Media']['filename'] . '.' . $savedImage['Media']['extension'];
+			}
+			$objects[] = $canvasObject;
+		}
+	
+		return $objects;
+	}
 
+	public function updateCanvasCollection($data) {
+		$objects = false;
+		foreach ($data as $canvasObject) {
+			// save new objects
+			if ($canvasObject['type'] == 'ImageObject' && !(isset($canvasObject['id']))) {
+				$savedImage = $this->_saveCanvasImageObject($canvasObject);
+			}
+			if ($canvasObject['type'] == 'screenshot') {
+				$this->id = $this->screenshotId = $canvasObject['id'];
+				/**
+				 * @todo Update the screenshot
+				 */
+				//$savedImage = $this->_saveCanvasImageObject($canvasObject);
+			}
+			$objects[] = $canvasObject;
+		}
+		
+		$this->saveField('data', json_encode($objects), array('callbacks' => false));
+	}
+	
+	public function updateCanvasObjects($data) {
+		$added = false;
+		foreach ($data as $canvasObject) {
+			if (!(isset($canvasObject['id']))) {
+				if ($canvasObject['type'] == 'ImageObject') {
+					$added = $this->_saveCanvasImageObject($canvasObject);
+				} elseif ($canvasObject['type'] == 'TextObject') {
+					$added = $this->_saveCanvasTextObject($canvasObject);
+				}
+			}
+		}
+	
+		if ($added) {
+			return array('statusCode' => '200');
+		} else {
+			return array('statusCode' => '403');
+		}
+	}
+	
+	
+	/**
+	 * saves image file from image object to the file server
+	 *
+	 * @param array $data
+	 * @return array|boolean
+	 */
+	private function _saveCanvasImageObject($data) {
+		$added = false;
+		// make sure that this is (probably) safe to pass to fopen()
+		if (strpos($data['content'], 'data:') !== 0) {
+			return false;
+		}
+	
+		$image = fopen($data['content'], 'r');
+		$metadata = stream_get_meta_data($image);
 
+		switch ($metadata['mediatype']) {
+			case ('image/png'):
+				$extension = 'png';
+				break;
+			case ('image/jpeg'):
+				$extension = 'jpg';
+				break;
+			case ('image/gif'):
+				$extension = 'gif';
+				break;
+			case ('image/bmp'):
+				$extension = 'bmp';
+				break;
+			default:
+				return false;
+				break;
+		}
+	
+		// set temp filename
+		$uuid = $this->__uuid().uniqid();
+	
+		// write image to disk
+		$imageString = str_replace('data:'.$metadata['mediatype'].';base64,', '', $data['content']);
+		$imageString = base64_decode($imageString);
+		$fopen = fopen(sys_get_temp_dir() . $uuid, 'wb');
+		$written = fwrite($fopen, $imageString);
+		fclose($fopen);
+
+		if ($written) {
+			// clean up
+			// 			unset($data['cid']);
+			// 			unset($data['content']);
+	
+			// save record to database server
+			$this->create();
+			$added = $this->save(array(
+					'Media' => array(
+							'filename' => array(
+									'name' => $uuid . '.' . $extension,
+									'tmp_name' => sys_get_temp_dir() . $uuid
+							),
+							// 						'data' => json_encode($data)
+					)
+			));
+		}
+	
+		return $added;
+	
+	}
+	
+	
+	public function deleteCanvasObject($data) {
+		$added = false;
+		if ($added) {
+			return array('statusCode' => '200');
+		} else {
+			return array('statusCode' => '403');
+		}
+	}
+	
+	
 }

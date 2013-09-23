@@ -44,7 +44,8 @@ var CanvasObjects = Backbone.Collection.extend({
 				success: function(models, resp, xhr) {
 //					console.log(jQuery.parseJSON(models));'
 					// @todo Need to recreate proper models, instead of overwriting with data-only models
-					collection.reset(jQuery.parseJSON(models));
+					collection.reset();
+					this.reload(models);
 				}
 		};
 		if ( method == "update" ) {
@@ -61,21 +62,30 @@ var CanvasObjects = Backbone.Collection.extend({
 			return Backbone.sync( method, collection, options );
 		}
 	},
-	afterReset: function(xThis, options) {
-		//xThis.models;
-		//options.previousModels
-		console.log(xThis.models);
-		console.log(options.previousModels);
-		xThis.models.forEach(function(model, index){
-			options.previousModels.forEach(function(pModel, pIndex){
-				if (model.get('x') === pModel.get('x') && model.get('y') === pModel.get('y')) {
-					// set the id of the div with pModel's cid
-					$('div[data-cid="'+pModel.cid+'"]').attr('data-id', model.get('id'));
-					// assign the new cid's
-					$('div[data-cid="'+pModel.cid+'"]').attr('data-cid', model.cid);
-				}
-			});
-		});
+	reload: function(models) {
+		
+		// config the save button
+		$("#saveCanvas").attr('data-saved', 'true');
+		
+		// wipe the overlays
+        $(".cb_placeholder").remove();
+        
+        // import them to their models
+        models = jQuery.parseJSON(models);
+        models.forEach(function(model, index){
+        	console.log(model);
+        	if (model.type === 'ImageObject' || model.type === 'screenshot') {
+        		image = new ImageObject(model);
+        		CanvasObjectCollection.add(image);
+        	}
+        	if (model.type === 'TextObject') {
+        		text = new TextObject(model);
+        		CanvasObjectCollection.add(text);
+        	}
+        });
+        
+        // render the models
+        this.refreshCanvas();
 	}
 });
 var CanvasObjectCollection = new CanvasObjects();
@@ -91,8 +101,11 @@ $("#saveCanvas").click(function(){
 
 	// update screenshot
 	var hasScreenshot = false;
+	console.log(CanvasObjectCollection);
 	CanvasObjectCollection.each(function( canvasObject, index ) {
+		console.log( canvasObject );
 		if ( canvasObject.get('type') === 'screenshot' ) {
+			console.log(canvasObject);
 			hasScreenshot = true;
 			canvasObject.set('content', canvas.toDataURL());
 			CanvasObjectCollection[index] = canvasObject;
@@ -105,7 +118,7 @@ $("#saveCanvas").click(function(){
 			});
 		CanvasObjectCollection.add(image);
 	}
-	
+
 	CanvasObjectCollection.sync(method, CanvasObjectCollection, options);
 	$(this).attr('data-saved', 'true');
 });

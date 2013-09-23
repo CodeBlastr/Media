@@ -1,6 +1,6 @@
 var TextObject = Backbone.Model.extend({
 	defaults: {
-		type: 'text',
+		type: 'TextObject',
 		content: '',
 		fontFamily: 'Arial',
 		fontColor: '#333333',
@@ -9,7 +9,8 @@ var TextObject = Backbone.Model.extend({
 		x: '',
 		y: '',
 		rotation: 0,
-		scale: 0
+		scale: 0,
+		order: 0
 	},
 	url: '/media/media/canvas',
 	initialize: function() {
@@ -25,7 +26,7 @@ var TextObject = Backbone.Model.extend({
 		placeholder
 				.attr('data-model', 'TextObject')
 				.attr('data-cid', this.cid)
-				.css('top', this.get('y'))
+				.css('top', this.get('y') - this.get('fontSize'))
 				.css('left', this.get('x'))
 				.css('width', this.get('width'))
 				.css('height', this.get('fontSize'))

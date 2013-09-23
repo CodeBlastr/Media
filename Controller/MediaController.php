@@ -311,7 +311,8 @@ class _MediaController extends MediaAppController {
 
 
 	public function canvas($id = null) {
-
+// 		App::uses('Canvas', 'Media.Model');
+// 		$this->Canvas = new Canvas;
 		switch ($this->request->method()) {
 			case ('POST'):
 				if (isset($this->request->params['named']['collection'])) {
@@ -354,12 +355,6 @@ class _MediaController extends MediaAppController {
 				}
 				break;
 		}
-	}
-	
-	protected function __returnJsonResponse($response) {
-		$this->autoRender = false;
-		$this->response->statusCode($response['statusCode']);
-		$this->response->body(json_encode($response['body']));
 	}
 		
 	
@@ -413,6 +408,7 @@ class _MediaController extends MediaAppController {
 	/**
 	 * Image Resize Handling.
 	 * @TODO This probably should be a componenet
+	 * (might need to be a "lib" if you want to use it globally) ^JB 
 	 */
 	 
 	 public $resizeDefaults = array(
