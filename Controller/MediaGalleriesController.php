@@ -47,7 +47,7 @@ class _MediaGalleriesController extends MediaAppController {
 		} else {
 			if ( $this->MediaGallery->save($this->request->data) ) {
 				$this->Session->setFlash('Your media gallery has been updated.');
-				$this->redirect(array('action' => 'my'));
+				$this->redirect(array('action' => 'index'));
 			}
 		}
 	}
