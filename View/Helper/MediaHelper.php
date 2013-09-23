@@ -30,9 +30,10 @@ class MediaHelper extends AppHelper {
 	
 	public function display($item, $options = array()) {
 		$this->options = array_merge($this->options, $options);
-		if ($this->_getType($item['Media'])) {
+		$item = isset($item['Media']) ? $item['Media'] : $item; 
+		if ($this->_getType($item)) {
 			$method = $this->type.'Media';
-			return $this->$method($item['Media']);	
+			return $this->$method($item);	
 		} else {
 			return '<img src="/img/noImage.jpg" />';
 		}
@@ -90,10 +91,11 @@ class MediaHelper extends AppHelper {
 		$tracks = array();
 		if(is_array($items)) {
 			foreach($items as $item) {
-				$this->_getType($item['Media']);
+				$item = isset($item['Media']) ? $item['Media'] : $item;
+				$this->_getType($item);
 				$track = array(
-					'title' => $item['Media']['title'],
-				    'mp3' => $this->mediaUrl.$this->type.'/'.$item['Media']['filename'].'.'.$item['Media']['extension'],
+					'title' => $item['title'],
+				    'mp3' => $this->mediaUrl.$this->type.'/'.$item['filename'].'.'.$item['extension'],
 					'poster' => ''
 				);
 				$tracks[] = $track;

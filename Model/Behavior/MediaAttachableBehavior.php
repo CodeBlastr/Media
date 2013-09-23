@@ -20,7 +20,7 @@ class MediaAttachableBehavior extends ModelBehavior {
 	                	'conditions' => array('MediaAttachment.model' => $Model->alias),
 	            	)
 	    		)
-			));
+			), false);
 	}
 	
 	/**
