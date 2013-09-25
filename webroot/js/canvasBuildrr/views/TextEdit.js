@@ -11,7 +11,7 @@ var TextEditView = Backbone.View.extend({
 		this.$el.find('option[value="'+this.model.get('fontColor')+'"]').attr("selected", "selected");
 		this.$el.find('option[value="'+this.model.get('fontSize')+'"]').attr("selected", "selected");
 
-		$("#cb_canvasWrapper").unbind(); // whoa.. need this for some reason
+		$("#cb_canvasWrapper").unbind();
 
 		return this;
 	},
@@ -23,19 +23,15 @@ var TextEditView = Backbone.View.extend({
 		'change select[name="fontsizepicker"]': 'updateFontsize'
 	},
 	updateText: function( event ) {
-		console.log('updateText()');
 		this.model.set('content', event.target.value);
 	},
 	updateColor: function( event ) {
-		console.log('updateColor()');
 		this.model.set('fontColor', event.target.value);
 	},
 	updateFontsize: function( event ) {
-		console.log('updateFontsize()');
 		this.model.set('fontSize', event.target.value);
 	},
 	falseHandler: function( event ) {
-		//console.log('falseHandler()');
 		return false;
 	},
 	close: function( event ) {
@@ -52,7 +48,6 @@ var textEditHandler = function( event, text ) {
 		console.log('text added to CanvasObjectCollection at: ' + click.x + ', ' + click.y);
 	} else {
 		console.log('editing text object: ' + text.cid);
-		//console.log(text);
 	}
 	var textEditor = new TextEditView({
 		model: text,

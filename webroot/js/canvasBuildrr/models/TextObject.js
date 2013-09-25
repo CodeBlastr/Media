@@ -58,7 +58,7 @@ var TextObject = Backbone.Model.extend({
 		context.lineStyle = this.get('fontColor');
 		context.font = this.get('fontSize') + 'px ' + this.get('fontFamily');
 
-		// write to temp canvas and measure width
+		// measure width
 		this.set("width", context.measureText(this.get('content')).width, {silent:true});
 
 		if ( this.get('rotation') !== 0 ) {

@@ -43,7 +43,6 @@ var CanvasObjects = Backbone.Collection.extend({
 		var options = {
 				success: function(models, resp, xhr) {
 //					console.log(jQuery.parseJSON(models));'
-					// @todo Need to recreate proper models, instead of overwriting with data-only models
 					collection.reset();
 					this.reload(models);
 				}

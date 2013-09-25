@@ -22,16 +22,13 @@ var ImageEditView = Backbone.View.extend({
 		var reader = new FileReader(), rFilter = /^image\/(?:bmp|cis\-cod|gif|ief|jpeg|pipeg|png|svg\+xml|tiff|x\-cmu\-raster|x\-cmx|x\-icon|x\-portable\-anymap|x\-portable\-bitmap|x\-portable\-graymap|x\-portable\-pixmap|x\-rgb|x\-xbitmap|x\-xpixmap|x\-xwindowdump)$/i;
 		var imageModel = this.model;
 		reader.onload = function( event ) {
-			//uploadAndResize()
 			var image = new Image();
 			image.src = event.target.result;
 			image.onload = function() {
 				imageModel.set('height', this.height);
 				imageModel.set('width', this.width);
 				imageModel.set('aspectRatio', this.width / this.height);
-				//imageModel.save();				
 			};
-
 			imageModel.set('content', event.target.result);
 		};
 		if ( !rFilter.test(event.target.files[0].type) ) {
@@ -42,7 +39,6 @@ var ImageEditView = Backbone.View.extend({
 		this.close();
 	},
 	falseHandler: function( event ) {
-		console.log('falseHandler()');
 		return false;
 	},
 	close: function( event ) {

@@ -49,14 +49,12 @@ var ImageObject = Backbone.Model.extend({
 				.css('centerY', this.get('height') / 2);
 	},
 	draw: function() {
-		console.log(this);
 		var imageObject = this;
 		if ( imageObject.get('type') !== 'screenshot' ) {
 			var img = new Image();
 			img.onload = function() {
 				var width = ( imageObject.get('width') === '' ) ? null : imageObject.get('width');
 				var height = ( imageObject.get('height') === '' ) ? null : imageObject.get('height');
-				
 				var dx;
 				var dy;
 				

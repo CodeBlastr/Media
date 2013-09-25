@@ -56,11 +56,9 @@ $("#cb_canvasWrapper").parent()
 		})
 		.on({
 			mouseenter: function(event) {
-				//console.log('yep');
 				return false;
 			},
 			mouseleave: function(event) {
-				//console.log('nope');
 				return false;
 			},
 			click: function(event) {
@@ -99,12 +97,10 @@ $("#cb_canvasWrapper").parent()
 $("#cb_canvasWrapper").parent()
 		.on({
 			click: function(event) {
-				console.log('corner click');
 				return false;
 			},
 			dblclick: function(event) {
 				if ( $(this).hasClass("cb_ph_topLeft") ) {
-					
 					var clickedObject = CanvasObjectCollection.get($(this).parent().attr('data-cid'));
 					if ( clickedObject.get('type') === 'image' ) {
 						clickedObject.autoResize();
