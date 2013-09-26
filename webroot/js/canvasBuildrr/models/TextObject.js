@@ -18,6 +18,7 @@ var TextObject = Backbone.Model.extend({
 		this.on("change:content", this.refresh)
 			.on("change:fontSize", this.refresh)
 			.on("change:fontColor", this.refresh)
+			.on("change:fontFamily", this.refresh)
 			.on("change:y", this.refresh)
 			.on("change:x", this.refresh)
 			.on("change:rotation", this.refresh);

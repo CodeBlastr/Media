@@ -9,17 +9,6 @@
 	</div>
 </div>
 
-<style>
-	canvas {
-		background:	#fff;
-	}
-	#cb_canvasWrapper {
-		cursor: crosshair;
-	}
-	.cb_close { cursor: pointer; }
-</style>
-
-
 <script type="text/html" id="template-textEdit">
 <div class="cb_addEditText" style="top: <%= top %>px; left: <%= left %>px; position: absolute; display:block; cursor: default;">
 	<div class="cb_textToolbar">
@@ -47,11 +36,22 @@
 			<option value="64">64px</option>
 			<option value="72">72px</option>
 		</select>
-		<ul id="fontList">
-			<li class="init">- choose font -</li>
-			<li id="ABeeZee" style="font-family:'ABeeZee';">ABeeZee</li>
-			<li id="Abel" style="font-family:'Abel';">Abel</li>
-		</ul>
+		<div class="fontInputBox">
+			<input type="text" name="font" id="font" placeholder="- choose font -" readonly>
+			<ul id="fontList">
+				<li style="font-family:'Arial';">Arial</li>
+				<li style="font-family:'Open Sans';">Open Sans</li>
+				<li style="font-family:'Oswald';">Oswald</li>
+				<li style="font-family:'Lobster';">Lobster</li>
+				<li style="font-family:'Shadows Into Light';">Shadows Into Light</li>
+				<li style="font-family:'Crafty Girls';">Crafty Girls</li>
+				<li style="font-family:'Changa One';">Changa One</li>
+				<li style="font-family:'Happy Monkey';">Happy Monkey</li>
+				<li style="font-family:'Special Elite';">Special Elite</li>
+				<li style="font-family:'Coming Soon';">Coming Soon</li>
+				<li style="font-family:'Pacifico';">Pacifico</li>
+			</ul>
+		</div>
 		<span class="cb_close" title="close">&times;</span>
 	</div>
 	<input type="text" class="textInput" autofocus value="<%= content %>" />
@@ -87,6 +87,28 @@
 	$(document).ready(function() {
 		//$("#canvas").canvasBuildrr();
 	});
+
+	$(function() {
+		var toggleList = $(".arrows, #subject"),
+			list = $(".subject ul"),
+			item = list.find("li"),
+			subject = $("#subject");
+
+		toggleList.on("click", function(){
+			$(".arrows").toggleClass("is-active");
+			list.fadeToggle(); // hide show list
+		});
+
+		item.on("click", function(){ // click on item
+			var itemVal = $(this).find(".val").text();
+			subject.val(itemVal);
+			list.fadeOut();
+			item.removeClass("is-active");
+			$(this).addClass("is-active");
+			$(".arrows").removeClass("is-active");
+		});
+	});
+	
 </script>
 
 <?php if (!(empty($this->request->data))) : ?>

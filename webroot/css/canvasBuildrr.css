@@ -1,7 +1,14 @@
+canvas {
+	background:	#fff;
+}
+
+.cb_close { cursor: pointer; }
+
 #cb_canvasWrapper {
 	box-shadow: 5px 5px  25px #999;
 	margin-bottom: 100px;
 	position: relative;
+	cursor: crosshair;
 }
 
 #cb_circleMenu {
@@ -44,16 +51,43 @@ a#cb_cancel {
 }
 
 /* addEditText elements */
-.cb_addEditText ul#fontList {
-    height: 30px;
-    width: 150px;
-    border: 1px #000 solid;
-	display: inline-block;
+div.fontInputBox { /*subject dropdown*/
+		position: relative;
+		display: inline-block;
+		width: 125px;
 }
-.cb_addEditText ul#fontList li { padding: 5px 10px; z-index: 2; list-style-type: none; }
-.cb_addEditText ul#fontList li:not(.init) { float: left; width: 130px; display: none; background: #ddd; }
-.cb_addEditText ul#fontList li:not(.init):hover, ul li.selected:not(.init) { background: #09f; color: #fff; }
-.cb_addEditText ul#fontList li.init { cursor: pointer; }
+#font {
+	width: 110px;
+	cursor: pointer;
+	background: #fff;
+}
+div.fontInputBox span.arrows {
+	position: absolute;
+	top: .45em;
+	right: .5em;
+}
+div.fontInputBox ul {
+	display: none;
+	position: absolute;
+	z-index: 100;
+	left: 0;
+	box-shadow: 3px 2px 4px rgba(0,0,0,.1); 
+	background: #fff;
+	border: 1px solid #ccc;
+	width: 90%;
+	margin: -30px 0 0 1em;
+	border-radius: 5px;
+}
+div.fontInputBox ul	li {
+	cursor: pointer;
+	padding: .7em .75em;
+	font-size: .85em;
+	overflow: hidden;
+}
+div.fontInputBox ul	img {
+	float: right;
+}
+
 .cb_addEditText .simplecolorpicker.icon {height: 28px;}
 
 .cb_placeholder {

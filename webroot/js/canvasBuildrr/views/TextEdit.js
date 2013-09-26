@@ -19,8 +19,21 @@ var TextEditView = Backbone.View.extend({
 		"keyup .textInput": "updateText",
 		"click .cb_addEditText": "falseHandler",
 		"click .cb_close": "close",
+		'click #font': 'toggleFonts',
+		'click #fontList li': 'selectFont',
 		'change select[name="colorpicker"]': 'updateColor',
-		'change select[name="fontsizepicker"]': 'updateFontsize'
+		'change select[name="fontsizepicker"]': 'updateFontsize',
+	},
+	toggleFonts: function( event ) {
+		$("#fontList").fadeToggle();
+	},
+	selectFont: function( event ) {
+		this.model.set('fontFamily', event.target.innerHTML);
+		$("#font")
+			.val(event.target.innerHTML)
+			.css('font-family', event.target.innerHTML);
+		$("#fontList").fadeOut();
+		return false;
 	},
 	updateText: function( event ) {
 		this.model.set('content', event.target.value);
