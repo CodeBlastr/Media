@@ -10,6 +10,7 @@ var TextEditView = Backbone.View.extend({
 
 		this.$el.find('option[value="'+this.model.get('fontColor')+'"]').attr("selected", "selected");
 		this.$el.find('option[value="'+this.model.get('fontSize')+'"]').attr("selected", "selected");
+		this.$el.find('input#font').val(this.model.get('fontFamily'));
 
 		$("#cb_canvasWrapper").unbind();
 
@@ -56,7 +57,7 @@ var TextEditView = Backbone.View.extend({
 var textEditHandler = function( event, text ) {
 	if ( text === undefined ) {
 		text = new TextObject({x: click.x, y: click.y});
-		CanvasObjectCollection.add(text);
+		CanvasObjectCollection.get('collection').add(text);
 		//debug
 		console.log('text added to CanvasObjectCollection at: ' + click.x + ', ' + click.y);
 	} else {

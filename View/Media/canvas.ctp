@@ -4,8 +4,33 @@
 	</div>
 	<div class="span4">
 		<div>
-			<div class="btn" id="saveCanvas" data-saved="false">Save</div>
+		
+			<div id="backgroundControls" style="background: #fff; padding: 15px;">
+				<label>
+					Background color: 
+					<select name="bgColorpicker">
+						<option value="#ffffff">White</option>
+						<option value="#000000">Black</option>
+						<option value="#7bd148">Green</option>
+						<option value="#5484ed">Bold blue</option>
+						<option value="#a4bdfc">Blue</option>
+						<option value="#46d6db">Turquoise</option>
+						<option value="#7ae7bf">Light green</option>
+						<option value="#51b749">Bold green</option>
+						<option value="#fbd75b">Yellow</option>
+						<option value="#ffb878">Orange</option>
+						<option value="#ff887c">Red</option>
+						<option value="#dc2127">Bold red</option>
+						<option value="#dbadff">Purple</option>
+						<option value="#e1e1e1">Gray</option>
+					</select>
+				</label>
+			</div>
+
+			<div class="btn" id="saveCanvas" data-saved="false">Save progress</div>
+			
 		</div>
+		
 	</div>
 </div>
 
@@ -89,31 +114,35 @@
 	});
 
 	$(function() {
-		var toggleList = $(".arrows, #subject"),
+		var toggleList = $("#subject"),
 			list = $(".subject ul"),
 			item = list.find("li"),
 			subject = $("#subject");
 
 		toggleList.on("click", function(){
 			$(".arrows").toggleClass("is-active");
-			list.fadeToggle(); // hide show list
+			list.fadeToggle(); // hide list
 		});
 
-		item.on("click", function(){ // click on item
+		item.on("click", function(){
 			var itemVal = $(this).find(".val").text();
 			subject.val(itemVal);
 			list.fadeOut();
 			item.removeClass("is-active");
 			$(this).addClass("is-active");
-			$(".arrows").removeClass("is-active");
 		});
 	});
+
+	$('select[name="bgColorpicker"]').simplecolorpicker({picker: true});
 	
 </script>
 
 <?php if (!(empty($this->request->data))) : ?>
 <script>
-	CanvasObjectCollection.reset();
-	CanvasObjectCollection.reload(<?php echo json_encode($this->request->data['Media']['data']); ?>);
+//console.log(CanvasObjectCollection);
+//console.log(CanvasObjectCollection.get('collection'));
+
+CanvasObjectCollection.get('collection').reset();
+CanvasObjectCollection.get('collection').reload(<?php echo json_encode($this->request->data['Media']['data']); ?>);
 </script>
 <?php endif; ?>

@@ -3,14 +3,13 @@
  * @description Adds simple image and text manipulation to a canvas element.
  * @author Joel Byrnes <joel@buildrr.com>
  */
-var element = $("#canvas");
 
 /**
  * set up the necessary pointers
  */
+var element = $("#canvas");
 var canvas = document.getElementById(element.attr('id'));
 var context = canvas.getContext("2d");
-
 var click = {x: '', y: ''};
 
 var CanvasObjects = Backbone.Collection.extend({
@@ -24,7 +23,7 @@ var CanvasObjects = Backbone.Collection.extend({
 	// wipes the canvas clean
 	clear: function() {
 		context.save();
-		context.fillStyle = 'rgb(255,255,255)';
+		context.fillStyle = CanvasObjectCollection.get('backgroundColor');
 		context.fillRect(0, 0, canvas.width, canvas.height);
 		context.restore();
 	},
@@ -39,10 +38,8 @@ var CanvasObjects = Backbone.Collection.extend({
 	},
 	sync: function( method, collection, options ) {
 		console.log('syncing CanvasObjectCollection');
-//		console.log(JSON.stringify(collection));
 		var options = {
 				success: function(models, resp, xhr) {
-//					console.log(jQuery.parseJSON(models));'
 					collection.reset();
 					this.reload(models);
 				}
@@ -53,9 +50,10 @@ var CanvasObjects = Backbone.Collection.extend({
 			collectionClone.each(function( clonedObject, index ) {
 				if ( clonedObject.get('type') === 'image' && clonedObject.get('id') ) {
 					clonedObject.set('content', '');
-					collectionClone[index] = clonedObject;
+					collectionClone.models[index] = clonedObject;
 				}
 			});
+			console.log(collectionClone);
 			return Backbone.sync( method, collectionClone, options );
 		} else {
 			return Backbone.sync( method, collection, options );
@@ -75,11 +73,11 @@ var CanvasObjects = Backbone.Collection.extend({
         	console.log(model);
         	if (model.type === 'ImageObject' || model.type === 'screenshot') {
         		image = new ImageObject(model);
-        		CanvasObjectCollection.add(image);
+        		CanvasObjectCollection.get('collection').add(image);
         	}
         	if (model.type === 'TextObject') {
         		text = new TextObject(model);
-        		CanvasObjectCollection.add(text);
+        		CanvasObjectCollection.get('collection').add(text);
         	}
         });
         
@@ -87,8 +85,45 @@ var CanvasObjects = Backbone.Collection.extend({
         this.refreshCanvas();
 	}
 });
-var CanvasObjectCollection = new CanvasObjects();
+//var CanvasObjectCollection = new CanvasObjects();
 
+var CollectionContainer = Backbone.Model.extend({
+    defaults: {
+    	collection: new CanvasObjects(),
+    	//CanvasObjectCollection: new CanvasObjects(),
+        backgroundColor: '#ffffff'
+    },
+    initialize: function() {
+    	console.log('CollectionContainer init');
+		this.on("change:backgroundColor", this.get('collection').refreshCanvas);
+    },
+    parse: function(response, options) {
+        // update the inner collection
+        this.get("collection").reset(response.CanvasObjectCollection);
+
+        // this mightn't be necessary
+        delete response.CanvasObjectCollection;
+
+        return response;
+    }
+});
+
+var CanvasObjectCollection = new CollectionContainer();
+
+
+/**
+ * BACKGROUND CONTROLS
+ */
+$("select[name='bgColorpicker']").change(function(){
+//	console.log($(this).val());
+	console.log(CanvasObjectCollection);
+	CanvasObjectCollection.set('backgroundColor', $(this).val());
+});
+
+
+/**
+ * SAVE BUTTON
+ */
 $("#saveCanvas").click(function(){
 	var options = {};
 	var method;

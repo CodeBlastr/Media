@@ -239,6 +239,9 @@ class Media extends MediaAppModel {
 	public function addCanvasObjects($data) {
 		$objects = false;
 		foreach ($data as $canvasObject) {
+			// we only need to save ImageObjects and the screenshot.
+			// The screenshot is used as the "parent" of our canvas, so we temporarily store that
+			// and save the data for this "parent" row in addCanvasCollection
 			if ($canvasObject['type'] == 'ImageObject' || $canvasObject['type'] == 'screenshot') {
 				$savedImage = $this->_saveCanvasImageObject($canvasObject);
 				if ($canvasObject['type'] == 'screenshot') {

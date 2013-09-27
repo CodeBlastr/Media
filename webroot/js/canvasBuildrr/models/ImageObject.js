@@ -2,8 +2,8 @@ var ImageObject = Backbone.Model.extend({
 	defaults: {
 		type: 'ImageObject',
 		content: '',
-		x: '',
-		y: '',
+		x: 0,
+		y: 0,
 		width: '',
 		height: '',
 		rotation: 0,
@@ -38,7 +38,7 @@ var ImageObject = Backbone.Model.extend({
 	},
 	refresh: function(changedAttr) {
 		//this.save({changedAttr: this.get(changedAttr)});
-		CanvasObjectCollection.refreshCanvas();
+		CanvasObjectCollection.get('collection').refreshCanvas();
 		// update the placeholder div
 		$("div[data-cid='"+this.cid+"']")
 				.css('top', this.get('y'))

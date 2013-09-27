@@ -315,6 +315,7 @@ class _MediaController extends MediaAppController {
 // 		$this->Canvas = new Canvas;
 		switch ($this->request->method()) {
 			case ('POST'):
+				debug($this->request->data);break;
 				if (isset($this->request->params['named']['collection'])) {
 					$response = $this->Media->addCanvasCollection($this->request->data);
 				} else {
@@ -323,6 +324,7 @@ class _MediaController extends MediaAppController {
 				$this->__returnJsonResponse($response);
 				break;
 			case ('PUT'):
+				debug($this->request->data);break;
 				if (isset($this->request->params['named']['collection'])) {
 					$response = $this->Media->updateCanvasCollection($this->request->data);
 				} else {
