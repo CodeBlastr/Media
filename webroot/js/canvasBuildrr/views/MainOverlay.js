@@ -112,9 +112,18 @@ $("#cb_canvasWrapper").parent()
 				
 				if ( $(this).hasClass("cb_ph_topRight") ) {
 					console.log('rotate tool');
+					var xPrev;
 					$("#cb_canvasWrapper").bind('mousemove', function(event) {
 						console.log('rotating');
-						clickedObject.set('rotation', clickedObject.get('x') - (event.clientX-canvas.offsetLeft) );
+						if ( xPrev < event.pageX ) {
+				        	// mouse moving right
+				        	var newRotation = clickedObject.get('rotation') + 1;
+				        } else {
+				        	// mouse moving left
+				        	var newRotation = clickedObject.get('rotation') - 1;
+				        }
+				        xPrev = event.pageX;
+						clickedObject.set('rotation', newRotation );
 					});
 					return false;
 				}
