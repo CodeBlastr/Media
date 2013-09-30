@@ -102,7 +102,7 @@ $("#cb_canvasWrapper").parent()
 			dblclick: function(event) {
 				if ( $(this).hasClass("cb_ph_topLeft") ) {
 					var clickedObject = CanvasObjectCollection.get($(this).parent().attr('data-cid'));
-					if ( clickedObject.get('type') === 'image' ) {
+					if ( clickedObject.get('type') === 'ImageObject' ) {
 						clickedObject.autoResize();
 					}
 				}
@@ -117,10 +117,10 @@ $("#cb_canvasWrapper").parent()
 						console.log('rotating');
 						if ( xPrev < event.pageX ) {
 				        	// mouse moving right
-				        	var newRotation = clickedObject.get('rotation') + 1;
+				        	var newRotation = clickedObject.get('rotation') + 2;
 				        } else {
 				        	// mouse moving left
-				        	var newRotation = clickedObject.get('rotation') - 1;
+				        	var newRotation = clickedObject.get('rotation') - 2;
 				        }
 				        xPrev = event.pageX;
 						clickedObject.set('rotation', newRotation );
@@ -130,7 +130,7 @@ $("#cb_canvasWrapper").parent()
 				
 				if ( $(this).hasClass("cb_ph_topLeft") ) {
 					console.log('resize tool');
-					if ( clickedObject.get('type') === 'image' ) {
+					if ( clickedObject.get('type') === 'ImageObject' ) {
 						clickedObject.resize();
 					}
 				}
