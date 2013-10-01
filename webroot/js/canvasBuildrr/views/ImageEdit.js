@@ -55,9 +55,9 @@ var imageEditHandler = function( event, image ) {
 	}
 	var imageEditor = new ImageEditView({
 		model: image,
-		el: $("#cb_canvasWrapper"),
-		top: image.get('y') + 10,
-		left: image.get('x'),
+		el: $("#cb_canvasWrapper").parent(),
+		top: image.get('y') + $("#cb_canvasWrapper").offset().top + 10,
+		left: image.get('x') + $("#cb_canvasWrapper").offset().left,
 		content: image.get('content')
 	});
 };

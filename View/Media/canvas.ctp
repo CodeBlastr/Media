@@ -11,61 +11,75 @@
 
 <script type="text/html" id="template-textEdit">
 <div class="cb_addEditText" style="top: <%= top %>px; left: <%= left %>px;">
-	<div class="cb_textToolbar">
-		<select name="colorpicker">
-			<option value="#000000">Black</option>
-			<option value="#e1e1e1">Gray</option>
-			<option value="#ffffff">White</option>
-			<option value="#5484ed">Bold blue</option>
-			<option value="#a4bdfc">Blue</option>
-			<option value="#46d6db">Turquoise</option>
-			<option value="#7ae7bf">Seafoam</option>
-			<option value="#7bd148">Green</option>
-			<option value="#51b749">Bold green</option>
-			<option value="#fbd75b">Yellow</option>
-			<option value="#ffb878">Orange</option>
-			<option value="#ff887c">Red</option>
-			<option value="#dc2127">Bold red</option>
-			<option value="#663399">Royal Purple</option>
-			<option value="#dbadff">Light Purple</option>
-			<option value="#ff0080">Hot Pink</option>
-			
-		</select>
-		<select name="fontsizepicker" class="input-small">
-			<option value="10">10px</option>
-			<option value="16">16px</option>
-			<option value="24">24px</option>
-			<option value="32">32px</option>
-			<option value="48">48px</option>
-			<option value="64">64px</option>
-			<option value="72">72px</option>
-		</select>
-		<div class="fontInputBox">
-			<input type="text" name="font" id="font" placeholder="- choose font -" readonly>
-			<ul id="fontList">
-				<li style="font-family:'Arial';">Arial</li>
-				<li style="font-family:'Open Sans';">Open Sans</li>
-				<li style="font-family:'Oswald';">Oswald</li>
-				<li style="font-family:'Lobster';">Lobster</li>
-				<li style="font-family:'Shadows Into Light';">Shadows Into Light</li>
-				<li style="font-family:'Crafty Girls';">Crafty Girls</li>
-				<li style="font-family:'Changa One';">Changa One</li>
-				<li style="font-family:'Happy Monkey';">Happy Monkey</li>
-				<li style="font-family:'Special Elite';">Special Elite</li>
-				<li style="font-family:'Coming Soon';">Coming Soon</li>
-				<li style="font-family:'Pacifico';">Pacifico</li>
-			</ul>
+	<div class="pull-left">
+		<div class="cb_textToolbar">
+			<select name="colorpicker">
+				<option value="#000000">Black</option>
+				<option value="#e1e1e1">Gray</option>
+				<option value="#ffffff">White</option>
+				<option value="#5484ed">Bold blue</option>
+				<option value="#a4bdfc">Blue</option>
+				<option value="#46d6db">Turquoise</option>
+				<option value="#7ae7bf">Seafoam</option>
+				<option value="#7bd148">Green</option>
+				<option value="#51b749">Bold green</option>
+				<option value="#fbd75b">Yellow</option>
+				<option value="#ffb878">Orange</option>
+				<option value="#ff887c">Red</option>
+				<option value="#dc2127">Bold red</option>
+				<option value="#663399">Royal Purple</option>
+				<option value="#dbadff">Light Purple</option>
+				<option value="#ff0080">Hot Pink</option>
+				
+			</select>
+			<select name="fontsizepicker" class="input-small">
+				<option value="10">10px</option>
+				<option value="16">16px</option>
+				<option value="24">24px</option>
+				<option value="32">32px</option>
+				<option value="48">48px</option>
+				<option value="64">64px</option>
+				<option value="72">72px</option>
+			</select>
+			<div class="fontInputBox">
+				<input type="text" name="font" id="font" placeholder="- choose font -" readonly>
+				<ul id="fontList">
+					<li style="font-family:'Arial';">Arial</li>
+					<li style="font-family:'Open Sans';">Open Sans</li>
+					<li style="font-family:'Oswald';">Oswald</li>
+					<li style="font-family:'Lobster';">Lobster</li>
+					<li style="font-family:'Shadows Into Light';">Shadows Into Light</li>
+					<li style="font-family:'Crafty Girls';">Crafty Girls</li>
+					<li style="font-family:'Changa One';">Changa One</li>
+					<li style="font-family:'Happy Monkey';">Happy Monkey</li>
+					<li style="font-family:'Special Elite';">Special Elite</li>
+					<li style="font-family:'Coming Soon';">Coming Soon</li>
+					<li style="font-family:'Pacifico';">Pacifico</li>
+				</ul>
+			</div>
 		</div>
-		<span class="cb_close" title="close">&times;</span>
+		<input type="text" class="textInput" autofocus value="<%= content %>" />
 	</div>
-	<input type="text" class="textInput" autofocus value="<%= content %>" />
+	<div class="pull-right" style="box-shadow: 1px 1px 6px #ccc; margin-left: 4px; text-align: center;">
+		<div class="cb_close" title="close">&times;</div>
+		<div class="cb_up" title="Move up"><i class="icon-arrow-up"></i></div>
+		<div class="cb_down" title="Move down"><i class="icon-arrow-down"></i></div>
+		<div class="cb_remove" title="Remove image"><i class="icon-trash"></i></div>
+	</div>
 </div>
 </script>
 <script type="text/html" id="template-imageEdit">
 <div class="cb_addEditImage" style="top: <%= top %>px; left: <%= left %>px;">
 	<div class="cb_imageToolbar">
-		<input type="file" class="filePicker" name="imageLoader"/>
-		<span class="cb_close pull-right" title="close">&times;</span>
+		<div class="pull-left">
+			<input type="file" class="filePicker" name="imageLoader"/>
+		</div>
+		<div class="pull-right" style="box-shadow: 1px 1px 6px #ccc; margin-left: 4px; text-align: center;">
+			<div class="cb_close" title="close">&times;</div>
+			<div class="cb_up" title="Move up"><i class="icon-arrow-up"></i></div>
+			<div class="cb_down" title="Move down"><i class="icon-arrow-down"></i></div>
+			<div class="cb_remove" title="Remove image"><i class="icon-trash"></i></div>
+		</div>
 	</div>
 </div>
 </script>

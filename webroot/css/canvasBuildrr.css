@@ -43,6 +43,7 @@ a#cb_cancel {
 	position: absolute;
 	display:block;
 	cursor: default;
+	box-shadow: 0 0 5px #747474;
 }
 
 /* addEditText elements */
