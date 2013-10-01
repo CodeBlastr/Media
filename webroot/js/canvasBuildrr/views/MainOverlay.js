@@ -77,12 +77,21 @@ $("#cb_canvasWrapper").parent()
 			mousedown: function(event) {
 				// attach binding for object movement
 				var clickedObject = CanvasObjectCollection.get($(this).attr('data-cid'));
+				var cursorPosition = {
+					originalX: $("#cb_canvasWrapper").offset().left - event.pageX,
+					originalY: $("#cb_canvasWrapper").offset().top - event.pageY
+				};
+				var objectPosition = {
+					originalX: clickedObject.get('x'),
+					originalY: clickedObject.get('y')
+				};
+				
 				$("#cb_canvasWrapper").bind('mousemove', function(event) {
 					console.log('moving object');
-					console.log(clickedObject);
 					clickedObject
-						.set('x', event.clientX - $("#cb_canvasWrapper").offset().left)
-						.set('y', event.clientY - $("#cb_canvasWrapper").offset().top);
+						.set('x', objectPosition.originalX - (($("#cb_canvasWrapper").offset().left - event.pageX) - cursorPosition.originalX))
+						.set('y', objectPosition.originalY - (($("#cb_canvasWrapper").offset().top - event.pageY) - cursorPosition.originalY));
+						//.set('y', event.clientY - $("#cb_canvasWrapper").offset().top);
 					// stop the event that launches the Object Editors while dragging
 					//stopPropogation('.cb_placeholder', 'click');
 					return false;
