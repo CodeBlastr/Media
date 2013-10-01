@@ -167,10 +167,3 @@ $("#cb_canvasWrapper").parent()
 
 		}, ".cb_ph_corner");
 
-
-function stopPropogation(selector, event) {
-    $(selector).on(event, function(e) {
-        e.stopPropagation();
-        return false;
-    });
-}
