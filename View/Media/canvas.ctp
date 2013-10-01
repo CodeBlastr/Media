@@ -10,22 +10,26 @@
 </div>
 
 <script type="text/html" id="template-textEdit">
-<div class="cb_addEditText" style="top: <%= top %>px; left: <%= left %>px; position: absolute; display:block; cursor: default;">
+<div class="cb_addEditText" style="top: <%= top %>px; left: <%= left %>px; position: absolute; display:block; cursor: default;" title="click to Edit Text.">
 	<div class="cb_textToolbar">
 		<select name="colorpicker">
 			<option value="#000000">Black</option>
-			<option value="#7bd148">Green</option>
+			<option value="#e1e1e1">Gray</option>
+			<option value="#ffffff">White</option>
 			<option value="#5484ed">Bold blue</option>
 			<option value="#a4bdfc">Blue</option>
 			<option value="#46d6db">Turquoise</option>
-			<option value="#7ae7bf">Light green</option>
+			<option value="#7ae7bf">Seafoam</option>
+			<option value="#7bd148">Green</option>
 			<option value="#51b749">Bold green</option>
 			<option value="#fbd75b">Yellow</option>
 			<option value="#ffb878">Orange</option>
 			<option value="#ff887c">Red</option>
 			<option value="#dc2127">Bold red</option>
-			<option value="#dbadff">Purple</option>
-			<option value="#e1e1e1">Gray</option>
+			<option value="#663399">Royal Purple</option>
+			<option value="#dbadff">Light Purple</option>
+			<option value="#ff0080">Hot Pink</option>
+			
 		</select>
 		<select name="fontsizepicker" class="input-small">
 			<option value="10">10px</option>
