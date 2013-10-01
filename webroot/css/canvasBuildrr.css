@@ -35,19 +35,14 @@ a#cb_cancel {
 }
 
 /* input elements */
-.cb_addEditText {
-	display: none;
-	position: relative;
-	background: #efefef;
-	padding: 5px;
-	border-radius: 5px;
-}
+.cb_addEditText,
 .cb_addEditImage {
-	display: none;
-	position: relative;
 	background: #efefef;
 	padding: 5px;
 	border-radius: 5px;
+	position: absolute;
+	display:block;
+	cursor: default;
 }
 
 /* addEditText elements */

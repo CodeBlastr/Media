@@ -10,7 +10,7 @@
 </div>
 
 <script type="text/html" id="template-textEdit">
-<div class="cb_addEditText" style="top: <%= top %>px; left: <%= left %>px; position: absolute; display:block; cursor: default;" title="click to Edit Text.">
+<div class="cb_addEditText" style="top: <%= top %>px; left: <%= left %>px;">
 	<div class="cb_textToolbar">
 		<select name="colorpicker">
 			<option value="#000000">Black</option>
@@ -62,7 +62,7 @@
 </div>
 </script>
 <script type="text/html" id="template-imageEdit">
-<div class="cb_addEditImage" style="top: <%= top %>px; left: <%= left %>px; position: absolute; display:block; cursor: default;">
+<div class="cb_addEditImage" style="top: <%= top %>px; left: <%= left %>px;">
 	<div class="cb_imageToolbar">
 		<input type="file" class="filePicker" name="imageLoader"/>
 		<span class="cb_close pull-right" title="close">&times;</span>
