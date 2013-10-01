@@ -294,11 +294,20 @@ class _MediaController extends MediaAppController {
 			$uid = $this->userId;
 		}
 		
-		$multiple = isset($this->request->data['mulitple']) ? $this->request->data['mulitple'] : true;
-		if($uid == null) {
-			$media = $this->Media->find('all');
-		}else{
-			$media = $this->Media->find('all', array('conditions' => array('creator_id' => $uid)));
+		$galleryid = isset($this->request->query['galleryid']) ? $this->request->query['galleryid'] : array();
+		$this->loadModel('Media.MediaGallery');
+		$this->set('galleries', $this->MediaGallery->find('list'));
+		
+		if(!empty($galleryid)) {
+			$media = $this->MediaGallery->find('first', array('contain' => 'Media', 'conditions' => array('id' => $galleryid)));
+			$media = $media['Media'];
+		}else {
+			$multiple = isset($this->request->data['mulitple']) ? $this->request->data['mulitple'] : true;
+			if($uid == null) {
+				$media = $this->Media->find('all');
+			}else{
+				$media = $this->Media->find('all', array('conditions' => array('creator_id' => $uid)));
+			}
 		}
 		
 		$this->set(compact('media', 'multiple'));
