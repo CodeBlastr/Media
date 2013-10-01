@@ -1,6 +1,7 @@
 <?php
 	//Setting the $selected variable on element call will control how many items can be selected
 	$multiple = isset($multiple) && is_bool($multiple) ? $multiple : false;
+	$galleryid = isset($galleryid) ? '?galleryid='.$galleryid : '';
 ?>
 
 <div id="MediaSelector">
@@ -37,14 +38,14 @@ var multiple = <?php echo $multiple ? 'true' : 'false'; ?>;
 				mediaSelected.push(obj);
 			});
 			
-			$.post("/media/media/filebrowser", { multiple: multiple })
+			$.post("/media/media/filebrowser<?php echo $galleryid; ?>", { multiple: multiple })
 				.done(function(html) {
 					html = '<div id="MediaBrowserPopUp"><a href="#insert" class="btn btn-primary">Insert</a><a href="#close" class="btn btn-primary">Close</a>'+html+'</div>';
 	  				$('body').append(html);
 	  				$('#MediaBrowserPopUp').css('left', ($(window).width()*.5)-($('#MediaBrowserPopUp').width()/2)).css('top', '30px');
 	  				$('body').append('<div class="modal-backdrop fade in"></div>');
 	  				for(var i=0 ; i < mediaSelected.length ; i++ ) {
-	  					$('#mediaBrowser').find('#'+mediaSelected[i].attr('id')).closest('a').addClass('selected');
+	  					$('#mediaBrowser').find('#'+mediaSelected[i].attr('id')).closest('.media-item-con').addClass('selected');
 	  				}
 	  				$('#MediaBrowserPopUp').show('slow');
 	  				loaded = true;
