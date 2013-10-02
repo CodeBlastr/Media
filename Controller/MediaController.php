@@ -92,9 +92,10 @@ class _MediaController extends MediaAppController {
 			$this->request->data = $this->Media->findById($uid);
 		} else {
             // save the new media metadata
-            if ($this->Media->save($this->request->data)) {
+            debug($this->Media->save($this->request->data));
+            if ($this->Media->save($this->request->data, array('callbacks' => false))) {
                 $this->Session->setFlash('Your media has been updated.');
-                $this->redirect(array('action' => 'my'));
+                $this->redirect($this->referer());
             }
 		}
 	}//edit()
