@@ -50,9 +50,12 @@
 		
 		<div id="mediaUpload" class="media-upload panel">
 			<div class="upload-form">
-			<?php
-	   			 echo $this->Form->create('Media', array('plugin' => 'media', 'controller' => 'media', 'action' => 'add'), array('type' => 'file'));
-				
+			<?php;
+				 if(isset($galleryid)) {
+	   			 	echo $this->Form->create('Media', array('plugin' => 'media', 'controller' => 'media', 'action' => 'add', $galleryid), array('type' => 'file'));
+				  }else {
+						echo $this->Form->create('Media', array('plugin' => 'media', 'controller' => 'media', 'action' => 'add'), array('type' => 'file'));
+					}
 				 echo $this->Form->input('Media.filename', array('type'=>'file', 'label' => 'Upload a file from your computer:')); // , 'accept' => 'audio/* video/*'
 				
 				 //echo $this->Form->input('Media.submittedurl', array('type'=>'text', 'label' => 'Alternatively enter the URL of a file that is already online:'));

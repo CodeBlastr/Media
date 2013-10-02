@@ -36,16 +36,30 @@ class _MediaController extends MediaAppController {
 
 	public function add() {
 		if (!empty($this->request->data)) {
+			if(isset($this->request->data['MediaAttachment'])) {
+				$this->loadModel('Media.MediaAttachment');
+			}
+			
             $this->request->data['User']['id'] = $this->Auth->user('id');
 			$mediaarray = array();
 			foreach($this->request->data['Media']['files'] as $file) {
-				//debug($file);break;
 				$media['Media'] = array(
 					'user_id' => $this->Auth->user('id'),
 					'filename' => $file
 				);
 				$this->Media->create();
 				$media = $this->Media->save($media);
+				if(isset($this->request->data['MediaAttachment'])) {
+					$attachedmedia = array(
+						'MediaAttachment' => array(
+							'media_id' => $media['Media']['id'],
+							'model' => $this->request->data['MediaAttachment']['model'],
+							'foreign_key' => $this->request->data['MediaAttachment']['foreign_key'],
+					));
+					$this->MediaAttachment->create();
+					$media = $this->MediaAttachment->save($attachedmedia);
+				}
+				
 				if($media) {
 					$mediaarray[] = $media;
 				}
@@ -295,6 +309,9 @@ class _MediaController extends MediaAppController {
 		}
 		
 		$galleryid = isset($this->request->query['galleryid']) ? $this->request->query['galleryid'] : array();
+		if(!empty($galleryid)) {
+			$this->set('galleryid', $galleryid);
+		}
 		$this->loadModel('Media.MediaGallery');
 		$this->set('galleries', $this->MediaGallery->find('list'));
 		
