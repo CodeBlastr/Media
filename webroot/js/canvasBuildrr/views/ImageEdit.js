@@ -7,28 +7,38 @@ var ImageEditView = Backbone.View.extend({
 		var template = _.template($("#template-imageEdit").html(), this.options);
 		this.$el.append(template);
 
-		$("#cb_canvasWrapper").unbind();
+		$("#cb_canvasWrapper").parent().unbind();
 
 		return this;
 	},
 	events: {
 		"change input.filePicker": 'uploadImage',
+		"click .cb_up": "orderUp",
+		"click .cb_down": "orderDown",
 		"click .cb_close": 'close'
+	},
+	orderUp: function( event ) {
+		this.model.set('order', this.model.get('order') + 1);
+	},
+	orderDown: function( event ) {
+		this.model.set('order', this.model.get('order') - 1);
 	},
 	uploadImage: function( event ) {
 		console.log('uploadImage()');
 		$(".filePicker").attr('disabled', 'disabled');
-		$(".cb_addEditImage").fadeOut(10000);
+		$(".cb_addEditImage").fadeOut(5000);
 		var reader = new FileReader(), rFilter = /^image\/(?:bmp|cis\-cod|gif|ief|jpeg|pipeg|png|svg\+xml|tiff|x\-cmu\-raster|x\-cmx|x\-icon|x\-portable\-anymap|x\-portable\-bitmap|x\-portable\-graymap|x\-portable\-pixmap|x\-rgb|x\-xbitmap|x\-xpixmap|x\-xwindowdump)$/i;
 		var imageModel = this.model;
 		reader.onload = function( event ) {
-			var image = new Image();
-			image.src = event.target.result;
-			image.onload = function() {
-				imageModel.set('height', this.height);
-				imageModel.set('width', this.width);
-				imageModel.set('aspectRatio', this.width / this.height);
-			};
+			// var image = new Image();
+			// image.src = event.target.result;
+			// image.onload = function() {
+				// imageModel.set('image', image);
+				// imageModel.set('loaded', true);
+				// imageModel.set('height', this.height);
+				// imageModel.set('width', this.width);
+				// imageModel.set('aspectRatio', this.width / this.height);
+			// };
 			imageModel.set('content', event.target.result);
 		};
 		if ( !rFilter.test(event.target.files[0].type) ) {

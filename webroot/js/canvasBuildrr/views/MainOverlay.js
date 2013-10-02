@@ -47,7 +47,7 @@ $("#cb_cancel").click(function( e ) {
 });
 
 
-$("#cb_canvasWrapper").parent()
+$("#cb_canvasWrapper").parent().parent()
 		.on({
 			mouseup: function(event) {
 				//console.log('mouseUp');
@@ -105,7 +105,7 @@ $("#cb_canvasWrapper").parent()
 /**
  * corner clicks
  */
-$("#cb_canvasWrapper").parent()
+$("#cb_canvasWrapper").parent().parent()
 		.on({
 			click: function(event) {
 				return false;
@@ -134,7 +134,7 @@ $("#cb_canvasWrapper").parent()
 				        	var newRotation = clickedObject.get('rotation') - 2;
 				        }
 				        xPrev = event.pageX;
-						clickedObject.set('rotation', newRotation );
+						clickedObject.set('rotation', newRotation);
 					});
 					return false;
 				}

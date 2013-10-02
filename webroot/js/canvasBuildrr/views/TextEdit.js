@@ -11,7 +11,7 @@ var TextEditView = Backbone.View.extend({
 		this.$el.find('option[value="'+this.model.get('fontColor')+'"]').attr("selected", "selected");
 		this.$el.find('option[value="'+this.model.get('fontSize')+'"]').attr("selected", "selected");
 
-		$("#cb_canvasWrapper").unbind();
+		$("#cb_canvasWrapper").parent().unbind();
 
 		return this;
 	},
@@ -19,12 +19,21 @@ var TextEditView = Backbone.View.extend({
 		"keyup .textInput": "updateText",
 		"click .cb_addEditText": "falseHandler",
 		"click .cb_close": "close",
+		"click .cb_up": "orderUp",
+		"click .cb_down": "orderDown",
 		'click #font': 'toggleFonts',
 		'click #fontList li': 'selectFont',
 		'change select[name="colorpicker"]': 'updateColor',
 		'change select[name="fontsizepicker"]': 'updateFontsize',
 	},
+	orderUp: function( event ) {
+		this.model.set('order', this.model.get('order') + 1);
+	},
+	orderDown: function( event ) {
+		this.model.set('order', this.model.get('order') - 1);
+	},
 	toggleFonts: function( event ) {
+		console.log('toggling font list');
 		$("#fontList").fadeToggle();
 	},
 	selectFont: function( event ) {
@@ -33,6 +42,7 @@ var TextEditView = Backbone.View.extend({
 			.val(event.target.innerHTML)
 			.css('font-family', event.target.innerHTML);
 		$("#fontList").fadeOut();
+		console.log('fading out font list');
 		return false;
 	},
 	updateText: function( event ) {
