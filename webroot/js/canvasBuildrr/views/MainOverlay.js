@@ -7,6 +7,7 @@ $("#cb_canvasWrapper").after('<div id="cb_circleMenu" />');
 $("#cb_circleMenu").append('<a id="cb_addText">Abc</a> <a id="cb_addImage">img</a>');
 $("#cb_circleMenu").append('<a id="cb_cancel">&times;</a>');
 
+var dragged;
 
 var mainMenuHandler = function( event ) {
 	// show the menu
@@ -64,29 +65,39 @@ $("#cb_canvasWrapper").parent()
 			click: function(event) {
 				console.log('.cb_placeholder click');
 				
-				var clickedObject = CanvasObjectCollection.get($(this).attr('data-cid'));
-				if ( $(this).attr('data-model') === 'TextObject' ) {
-					textEditHandler(event, clickedObject);
+				if ( dragged === true ) {
+					dragged = false;
+				} else {
+					var clickedObject = CanvasObjectCollection.get($(this).attr('data-cid'));
+					if ( $(this).attr('data-model') === 'TextObject' ) {
+						textEditHandler(event, clickedObject);
+					}
+					if ( $(this).attr('data-model') === 'ImageObject' ) {
+						imageEditHandler(event, clickedObject);
+					}
 				}
-				if ( $(this).attr('data-model') === 'ImageObject' ) {
-					imageEditHandler(event, clickedObject);
-				}
-
 				return false;
 			},
 			mousedown: function(event) {
 				// attach binding for object movement
 				var clickedObject = CanvasObjectCollection.get($(this).attr('data-cid'));
+				var cursorPosition = {
+					originalX: $("#cb_canvasWrapper").offset().left - event.pageX,
+					originalY: $("#cb_canvasWrapper").offset().top - event.pageY
+				};
+				var objectPosition = {
+					originalX: clickedObject.get('x'),
+					originalY: clickedObject.get('y')
+				};
 				$("#cb_canvasWrapper").bind('mousemove', function(event) {
 					console.log('moving object');
-					console.log(clickedObject);
+					dragged = true;
 					clickedObject
-						.set('x', event.clientX - $("#cb_canvasWrapper").offset().left)
-						.set('y', event.clientY - $("#cb_canvasWrapper").offset().top);
-					// stop the event that launches the Object Editors while dragging
-					//stopPropogation('.cb_placeholder', 'click');
+						.set('x', objectPosition.originalX - (($("#cb_canvasWrapper").offset().left - event.pageX) - cursorPosition.originalX))
+						.set('y', objectPosition.originalY - (($("#cb_canvasWrapper").offset().top - event.pageY) - cursorPosition.originalY));
 					return false;
 				});
+				return false;
 			}
 		}, ".cb_placeholder");
 
@@ -156,10 +167,3 @@ $("#cb_canvasWrapper").parent()
 
 		}, ".cb_ph_corner");
 
-
-function stopPropogation(selector, event) {
-    $(selector).on(event, function(e) {
-        e.stopPropagation();
-        return false;
-    });
-}

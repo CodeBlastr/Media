@@ -4,7 +4,7 @@ var TextObject = Backbone.Model.extend({
 		content: '',
 		fontFamily: 'Arial',
 		fontColor: '#333333',
-		fontSize: 16,
+		fontSize: 32,
 		width: '',
 		x: '',
 		y: '',
@@ -31,6 +31,7 @@ var TextObject = Backbone.Model.extend({
 				.css('left', this.get('x'))
 				.css('width', this.get('width'))
 				.css('height', this.get('fontSize'))
+				.attr('title', 'click to Edit Text')
 				//.append( $('<div class="cb_ph_corner cb_ph_bottomLeft btn btn-mini" />') )
 				//.append( $('<div class="cb_ph_corner cb_ph_bottomRight btn btn-mini" />') )
 				//.append( '<div class="cb_ph_corner cb_ph_topLeft btn btn-mini"><i class="icon-resize-horizontal"></i></div>' )

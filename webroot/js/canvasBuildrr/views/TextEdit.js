@@ -64,9 +64,9 @@ var textEditHandler = function( event, text ) {
 	}
 	var textEditor = new TextEditView({
 		model: text,
-		el: $("#cb_canvasWrapper"),
-		top: text.get('y') + 10,
-		left: text.get('x'),
+		el: $("#cb_canvasWrapper").parent(),
+		top: text.get('y') + $("#cb_canvasWrapper").offset().top + 10,
+		left: text.get('x') + $("#cb_canvasWrapper").offset().left,
 		content: text.get('content')
 	});
 };
