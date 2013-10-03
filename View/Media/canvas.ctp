@@ -60,8 +60,8 @@
 		</div>
 		<input type="text" class="textInput" autofocus value="<%= content %>" />
 	</div>
-	<div class="pull-right" style="box-shadow: 1px 1px 6px #ccc; margin-left: 4px; text-align: center;">
-		<div class="cb_close" title="close">&times;</div>
+	<div class="pull-right editorActions">
+		<div class="cb_close" title="Close">&times;</div>
 		<div class="cb_up" title="Move up"><i class="icon-arrow-up"></i></div>
 		<div class="cb_down" title="Move down"><i class="icon-arrow-down"></i></div>
 		<div class="cb_remove" title="Remove image"><i class="icon-trash"></i></div>
@@ -74,8 +74,8 @@
 		<div class="pull-left">
 			<input type="file" class="filePicker" name="imageLoader"/>
 		</div>
-		<div class="pull-right" style="box-shadow: 1px 1px 6px #ccc; margin-left: 4px; text-align: center;">
-			<div class="cb_close" title="close">&times;</div>
+		<div class="pull-right editorActions">
+			<div class="cb_close" title="Close">&times;</div>
 			<div class="cb_up" title="Move up"><i class="icon-arrow-up"></i></div>
 			<div class="cb_down" title="Move down"><i class="icon-arrow-down"></i></div>
 			<div class="cb_remove" title="Remove image"><i class="icon-trash"></i></div>

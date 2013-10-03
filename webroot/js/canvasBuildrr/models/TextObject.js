@@ -32,7 +32,7 @@ var TextObject = Backbone.Model.extend({
 				.css('left', this.get('x'))
 				.css('width', this.get('width'))
 				.css('height', this.get('fontSize'))
-				.attr('title', 'click to Edit Text')
+				.attr('title', 'click to Edit Text.  drag to Move Text.')
 				.append( '<div class="cb_ph_corner cb_ph_topRight btn btn-mini" title="click & drag to Rotate."><i class="icon icon-refresh"></i></div>' );
 		$("#cb_canvasWrapper").append(placeholder);
 	},
