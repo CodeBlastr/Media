@@ -57,17 +57,25 @@ $("#cb_canvasWrapper").parent().parent()
 		})
 		.on({
 			mouseenter: function(event) {
+				var clickedObject = AppModel.get('collection').get($(this).attr('data-cid'));
+				if ( clickedObject.get('isEditable') === true ) {
+					$(this).addClass('cb_placeholderHover');
+				}
 				return false;
 			},
 			mouseleave: function(event) {
+				$(this).removeClass('cb_placeholderHover');
 				return false;
 			},
 			click: function(event) {
 				console.log('.cb_placeholder click');
+				var clickedObject = AppModel.get('collection').get($(this).attr('data-cid'));
+				if ( clickedObject.get('isEditable') === false ) {
+					return false;
+				}
 				if ( dragged === true ) {
 					dragged = false;
 				} else {
-					var clickedObject = AppModel.get('collection').get($(this).attr('data-cid'));
 					if ( $(this).attr('data-model') === 'TextObject' ) {
 						textEditHandler(event, clickedObject);
 					}
@@ -78,8 +86,11 @@ $("#cb_canvasWrapper").parent().parent()
 				return false;
 			},
 			mousedown: function(event) {
-				// attach binding for object movement
 				var clickedObject = AppModel.get('collection').get($(this).attr('data-cid'));
+				if ( clickedObject.get('isEditable') === false ) {
+					return false;
+				}
+				// attach binding for object movement
 				var cursorPosition = {
 					originalX: $("#cb_canvasWrapper").offset().left - event.pageX,
 					originalY: $("#cb_canvasWrapper").offset().top - event.pageY
@@ -91,9 +102,10 @@ $("#cb_canvasWrapper").parent().parent()
 				$("#cb_canvasWrapper").bind('mousemove', function(event) {
 					console.log('moving object');
 					dragged = true;
-					clickedObject
-						.set('x', objectPosition.originalX - (($("#cb_canvasWrapper").offset().left - event.pageX) - cursorPosition.originalX))
-						.set('y', objectPosition.originalY - (($("#cb_canvasWrapper").offset().top - event.pageY) - cursorPosition.originalY));
+					clickedObject.set({
+						x: objectPosition.originalX - (($("#cb_canvasWrapper").offset().left - event.pageX) - cursorPosition.originalX),
+						y: objectPosition.originalY - (($("#cb_canvasWrapper").offset().top - event.pageY) - cursorPosition.originalY)
+					});
 					return false;
 				});
 				return false;
@@ -110,12 +122,16 @@ $("#cb_canvasWrapper").parent().parent()
 				return false;
 			},
 			dblclick: function(event) {
+				var clickedObject = AppModel.get('collection').get($(this).parent().attr('data-cid'));
 				if ( $(this).hasClass("cb_ph_topLeft") ) {
-					var clickedObject = AppModel.get('collection').get($(this).parent().attr('data-cid'));
 					if ( clickedObject.get('type') === 'ImageObject' ) {
 						clickedObject.autoResize();
 					}
 				}
+				if ( $(this).hasClass("cb_ph_topRight") ) {
+					clickedObject.set('rotation', 0);
+				}
+				return false;
 			},
 			mousedown: function(event) {
 				var clickedObject = AppModel.get('collection').get($(this).parent().attr('data-cid'));
@@ -135,7 +151,6 @@ $("#cb_canvasWrapper").parent().parent()
 				        xPrev = event.pageX;
 						clickedObject.set('rotation', newRotation);
 					});
-					return false;
 				}
 				
 				if ( $(this).hasClass("cb_ph_topLeft") ) {
@@ -148,13 +163,11 @@ $("#cb_canvasWrapper").parent().parent()
 				if ( $(this).hasClass("cb_ph_bottomLeft") ) {
 					console.log('flip horizontal tool');
 					clickedObject.set('scale', [clickedObject.get('scale')[0] * -1, 1]);
-					return false;
 				}
 				
 				if ( $(this).hasClass("cb_ph_bottomRight") ) {
 					console.log('flip vertical tool');
 					clickedObject.set('scale', [1, clickedObject.get('scale')[1] * -1]);
-					return false;
 				}
 				
 				return false;

@@ -90,6 +90,7 @@
 		<div class="cb_up" title="Move up"><i class="icon-arrow-up"></i></div>
 		<div class="cb_down" title="Move down"><i class="icon-arrow-down"></i></div>
 		<div class="cb_remove" title="Remove image"><i class="icon-trash"></i></div>
+		<div class="cb_lock" title="Lock layer"><i class="icon-ok-circle"></i></div>
 	</div>
 </div>
 </script>

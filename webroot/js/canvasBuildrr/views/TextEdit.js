@@ -12,6 +12,12 @@ var TextEditView = Backbone.View.extend({
 		this.$el.find('option[value="'+this.model.get('fontSize')+'"]').attr("selected", "selected");
 		this.$el.find('input#font').val(this.model.get('fontFamily'));
 
+		if ( this.model.get('isEditable') === false ) {
+			this.$el.find('.cb_lock i').attr('class', 'icon-ban-circle');
+		} else {
+			this.$el.find('.cb_lock i').attr('class', 'icon-ok-circle');
+		}
+
 		$("#cb_canvasWrapper").parent().unbind();
 
 		return this;
@@ -22,10 +28,19 @@ var TextEditView = Backbone.View.extend({
 		"click .cb_close": "close",
 		"click .cb_up": "orderUp",
 		"click .cb_down": "orderDown",
+		"click .cb_lock": "toggleLock",
 		'click #font': 'toggleFonts',
 		'click #fontList li': 'selectFont',
 		'change select[name="colorpicker"]': 'updateColor',
 		'change select[name="fontsizepicker"]': 'updateFontsize',
+	},
+	toggleLock: function( event ) {
+		this.model.set('isEditable', !this.model.get('isEditable'));
+		if ( this.model.get('isEditable') === false ) {
+			this.$el.find('.cb_lock i').attr('class', 'icon-ban-circle');
+		} else {
+			this.$el.find('.cb_lock i').attr('class', 'icon-ok-circle');
+		}
 	},
 	orderUp: function( event ) {
 		this.model.set('order', this.model.get('order') + 1);

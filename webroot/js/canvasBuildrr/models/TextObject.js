@@ -10,7 +10,8 @@ var TextObject = Backbone.Model.extend({
 		y: '',
 		rotation: 0,
 		scale: 0,
-		order: 0
+		order: 0,
+		isEditable: true
 	},
 	url: '/media/media/canvas',
 	initialize: function() {
@@ -32,18 +33,20 @@ var TextObject = Backbone.Model.extend({
 				.css('left', this.get('x'))
 				.css('width', this.get('width'))
 				.css('height', this.get('fontSize'))
-				.attr('title', 'click to Edit Text.  drag to Move Text.')
-				.append( '<div class="cb_ph_corner cb_ph_topRight btn btn-mini" title="click & drag to Rotate."><i class="icon icon-refresh"></i></div>' );
+				// .attr('title', 'Click to Edit Text; Drag to Move Text.')
+				.append( '<div class="cb_ph_corner cb_ph_topRight btn btn-mini" title="Drag to Rotate; Double-Click to Reset."><i class="icon icon-refresh"></i></div>' );
 		$("#cb_canvasWrapper").append(placeholder);
 	},
 	refresh: function() {
 		AppModel.get('collection').refreshCanvas();
 		// update the placeholder div
+		var phTitle = ( this.get('isEditable') === true ) ? 'Click to Edit Text; Drag to Move Text.' : '';
 		$("div[data-cid='"+this.cid+"']")
 				.css('top', this.get('y') - this.get('fontSize'))
 				.css('left', this.get('x'))
 				.css('width', this.get('width'))
-				.css('height', this.get('fontSize'));
+				.css('height', this.get('fontSize'))
+				.attr('title', phTitle);
 	},
 	draw: function() {
 		console.log('TextObject::draw() fired.');
@@ -59,28 +62,23 @@ var TextObject = Backbone.Model.extend({
 		// measure width
 		this.set({width: context.measureText(this.get('content')).width}, {silent:true});
 
-		if ( this.get('rotation') !== 0 ) {
-			context.translate(
-				this.get('x') + (this.get('width') / 2),
-				this.get('y') - (this.get('fontSize') / 2)
-			);
-			//console.log('Rotating around: ' + (this.get('x') + (this.get('width') / 2)) + ', ' + (this.get('y') - (this.get('fontSize') / 2)) );
-			context.rotate(this.get('rotation') * Math.PI / 180);
+		context.translate(
+			this.get('x') + (this.get('width') / 2),
+			this.get('y') - (this.get('fontSize') / 2)
+		);
+		//console.log('Rotating around: ' + (this.get('x') + (this.get('width') / 2)) + ', ' + (this.get('y') - (this.get('fontSize') / 2)) );
+		context.rotate(this.get('rotation') * Math.PI / 180);
 
-			// rotate the overlay container
-			$("div[data-cid='"+this.cid+"']").css('transform', 'rotate('+this.get('rotation')+'deg)');
+		// rotate the overlay container
+		$("div[data-cid='"+this.cid+"']").css('transform', 'rotate('+this.get('rotation')+'deg)');
 
-			// draw out
-			context.fillText(
-				this.get('content'),
-				0 - this.get('width') / 2,
-				this.get('fontSize') / 2
-			);
-			console.log('Writing, "'+this.get('content')+'", at: ' + (0 - this.get('width') / 2) + ', ' + (this.get('fontSize') / 2) );
-		} else {
-			context.fillText(this.get('content'), this.get('x'), this.get('y'));
-			console.log('Writing, "'+this.get('content')+'", at: ' + this.get('x') + ', ' + this.get('y'));
-		}
+		// draw out
+		context.fillText(
+			this.get('content'),
+			0 - this.get('width') / 2,
+			this.get('fontSize') / 2
+		);
+		console.log('Writing, "'+this.get('content')+'", at: (' + (0 - this.get('width') / 2) + ', ' + (this.get('fontSize') / 2) + '), rotated ' + this.get('rotation') + 'deg');
 
 		context.restore();	
 		//return true;	

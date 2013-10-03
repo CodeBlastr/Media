@@ -35,7 +35,6 @@ var CanvasObjects = Backbone.Collection.extend({
 	},
 	// redraws each object in the collection
 	refreshCanvas: function() {
-		console.log(this);
 		this.sort();
 		this.clear();
 		this.each(function( canvasObject ) {
@@ -142,8 +141,6 @@ var AppModel = new CollectionContainer();
  * BACKGROUND CONTROLS
  */
 $("select[name='bgColorpicker']").change(function(){
-//	console.log($(this).val());
-	console.log(AppModel);
 	AppModel.set('backgroundColor', $(this).val());
 });
 
