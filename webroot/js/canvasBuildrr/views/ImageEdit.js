@@ -59,9 +59,9 @@ var ImageEditView = Backbone.View.extend({
 var imageEditHandler = function( event, image ) {
 	if ( image === undefined ) {
 		image = new ImageObject({x: click.x, y: click.y});
-		CanvasObjectCollection.get('collection').add(image);
+		AppModel.get('collection').add(image);
 		//debug
-		console.log('image added to CanvasObjectCollection at: ' + click.x + ', ' + click.y);
+		console.log('image added to AppModel.collection at: ' + click.x + ', ' + click.y);
 	}
 	var imageEditor = new ImageEditView({
 		model: image,

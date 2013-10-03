@@ -45,7 +45,7 @@ var ImageObject = Backbone.Model.extend({
 	},
 	refresh: function() {
 		console.log('refreshing an ImageObject');
-		CanvasObjectCollection.get('collection').refreshCanvas();
+		AppModel.get('collection').refreshCanvas();
 		// update the placeholder div
 		$("div[data-cid='"+this.cid+"']")
 				.css('top', this.get('y'))
@@ -127,11 +127,7 @@ var ImageObject = Backbone.Model.extend({
 		var imageObject = this;
 		var xPrev;
 		$("#cb_canvasWrapper").bind('mousemove', function(event) {
-			console.log('resizing');
-
-			//var newWidth = clickedObject.get('width') + (event.clientX - $("#cb_canvasWrapper").offset().left) - clickedObject.get('x'); // good X
-			//var newWidth = clickedObject.get('width') + (event.clientY - $("#cb_canvasWrapper").offset().top) - clickedObject.get('y'); // same as above..?				        
-	        
+			console.log('resizing');   
 	        if ( xPrev < event.pageX ) {
 	        	// mouse moving right
 	        	var newWidth = imageObject.get('width') + 1;

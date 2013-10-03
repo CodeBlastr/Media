@@ -4,14 +4,19 @@
  * @author Joel Byrnes <joel@buildrr.com>
  */
 
+
 /**
- * set up the necessary pointers
+ * set up the necessary pointers & variables
  */
 var element = $("#canvas");
 var canvas = document.getElementById(element.attr('id'));
 var context = canvas.getContext("2d");
 var click = {x: '', y: ''};
 
+
+/**
+ * The collection of our ImageObjects and TextObjects
+ */
 var CanvasObjects = Backbone.Collection.extend({
 	url: '/media/media/canvas/collection:true',
 	comparator: function(model) {
@@ -23,15 +28,16 @@ var CanvasObjects = Backbone.Collection.extend({
 	// wipes the canvas clean
 	clear: function() {
 		context.save();
-		context.fillStyle = CanvasObjectCollection.get('backgroundColor');
+		context.fillStyle = (AppModel !== undefined) ? AppModel.get('backgroundColor') : '#ffffff';
 		context.fillRect(0, 0, canvas.width, canvas.height);
 		context.restore();
+		return this;
 	},
 	// redraws each object in the collection
 	refreshCanvas: function() {
+		console.log(this);
 		this.sort();
 		this.clear();
-		console.log(this);
 		this.each(function( canvasObject ) {
 			if ( canvasObject.get('type') === 'ImageObject' ) {
 				var isLoaded = canvasObject.get('loaded');
@@ -48,9 +54,10 @@ var CanvasObjects = Backbone.Collection.extend({
 			}
 			canvasObject.draw();
 		});
+		return this;
 	},
 	sync: function( method, collection, options ) {
-		console.log('syncing CanvasObjectCollection');
+		console.log('syncing AppModel');
 		var options = {
 				success: function(models, resp, xhr) {
 					collection.reset();
@@ -86,42 +93,49 @@ var CanvasObjects = Backbone.Collection.extend({
         	console.log(model);
         	if (model.type === 'ImageObject' || model.type === 'screenshot') {
         		image = new ImageObject(model);
-        		CanvasObjectCollection.get('collection').add(image);
+        		AppModel.get('collection').add(image);
         	}
         	if (model.type === 'TextObject') {
         		text = new TextObject(model);
-        		CanvasObjectCollection.get('collection').add(text);
+        		AppModel.get('collection').add(text);
         	}
         });
         
         // render the models
         this.refreshCanvas();
+        
+        return this;
 	}
 });
-//var CanvasObjectCollection = new CanvasObjects();
 
+
+/**
+ * A model to hold the collection, so that the collection can have attributes 
+ */
 var CollectionContainer = Backbone.Model.extend({
     defaults: {
     	collection: new CanvasObjects(),
-    	//CanvasObjectCollection: new CanvasObjects(),
         backgroundColor: '#ffffff'
     },
     initialize: function() {
     	console.log('CollectionContainer init');
-		this.on("change:backgroundColor", this.get('collection').refreshCanvas);
+    	var collection = this.get('collection');
+		this.on("change:backgroundColor", function(){
+			collection.refreshCanvas();
+		});
     },
     parse: function(response, options) {
         // update the inner collection
-        this.get("collection").reset(response.CanvasObjectCollection);
+        this.get("collection").reset(response.AppModel);
 
         // this mightn't be necessary
-        delete response.CanvasObjectCollection;
+        delete response.AppModel;
 
         return response;
     }
 });
 
-var CanvasObjectCollection = new CollectionContainer();
+var AppModel = new CollectionContainer();
 
 
 /**
@@ -129,8 +143,8 @@ var CanvasObjectCollection = new CollectionContainer();
  */
 $("select[name='bgColorpicker']").change(function(){
 //	console.log($(this).val());
-	console.log(CanvasObjectCollection);
-	CanvasObjectCollection.set('backgroundColor', $(this).val());
+	console.log(AppModel);
+	AppModel.set('backgroundColor', $(this).val());
 });
 
 
@@ -148,14 +162,14 @@ $("#saveCanvas").click(function(){
 
 	// update screenshot
 	var hasScreenshot = false;
-	console.log(CanvasObjectCollection);
-	CanvasObjectCollection.each(function( canvasObject, index ) {
+	console.log(AppModel);
+	AppModel.each(function( canvasObject, index ) {
 		console.log( canvasObject );
 		if ( canvasObject.get('type') === 'screenshot' ) {
 			console.log(canvasObject);
 			hasScreenshot = true;
 			canvasObject.set('content', canvas.toDataURL());
-			CanvasObjectCollection[index] = canvasObject;
+			AppModel[index] = canvasObject;
 		}
 	});
 	if ( hasScreenshot === false ) {
@@ -163,10 +177,10 @@ $("#saveCanvas").click(function(){
 			'type': 'screenshot',
 			'content': canvas.toDataURL()
 			});
-		CanvasObjectCollection.add(image);
+		AppModel.add(image);
 	}
 
-	CanvasObjectCollection.sync(method, CanvasObjectCollection, options);
+	AppModel.sync(method, AppModel, options);
 	$(this).attr('data-saved', 'true');
 });
 

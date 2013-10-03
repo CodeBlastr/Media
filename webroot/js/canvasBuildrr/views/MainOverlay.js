@@ -67,7 +67,7 @@ $("#cb_canvasWrapper").parent().parent()
 				if ( dragged === true ) {
 					dragged = false;
 				} else {
-					var clickedObject = CanvasObjectCollection.get('collection').get($(this).attr('data-cid'));
+					var clickedObject = AppModel.get('collection').get($(this).attr('data-cid'));
 					if ( $(this).attr('data-model') === 'TextObject' ) {
 						textEditHandler(event, clickedObject);
 					}
@@ -79,7 +79,7 @@ $("#cb_canvasWrapper").parent().parent()
 			},
 			mousedown: function(event) {
 				// attach binding for object movement
-				var clickedObject = CanvasObjectCollection.get('collection').get($(this).attr('data-cid'));
+				var clickedObject = AppModel.get('collection').get($(this).attr('data-cid'));
 				var cursorPosition = {
 					originalX: $("#cb_canvasWrapper").offset().left - event.pageX,
 					originalY: $("#cb_canvasWrapper").offset().top - event.pageY
@@ -111,14 +111,14 @@ $("#cb_canvasWrapper").parent().parent()
 			},
 			dblclick: function(event) {
 				if ( $(this).hasClass("cb_ph_topLeft") ) {
-					var clickedObject = CanvasObjectCollection.get('collection').get($(this).parent().attr('data-cid'));
-					if ( clickedObject.get('type') === 'image' ) {
+					var clickedObject = AppModel.get('collection').get($(this).parent().attr('data-cid'));
+					if ( clickedObject.get('type') === 'ImageObject' ) {
 						clickedObject.autoResize();
 					}
 				}
 			},
 			mousedown: function(event) {
-				var clickedObject = CanvasObjectCollection.get('collection').get($(this).parent().attr('data-cid'));
+				var clickedObject = AppModel.get('collection').get($(this).parent().attr('data-cid'));
 				
 				if ( $(this).hasClass("cb_ph_topRight") ) {
 					console.log('rotate tool');

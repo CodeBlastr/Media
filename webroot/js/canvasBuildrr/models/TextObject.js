@@ -37,7 +37,7 @@ var TextObject = Backbone.Model.extend({
 		$("#cb_canvasWrapper").append(placeholder);
 	},
 	refresh: function() {
-		CanvasObjectCollection.get('collection').refreshCanvas();
+		AppModel.get('collection').refreshCanvas();
 		// update the placeholder div
 		$("div[data-cid='"+this.cid+"']")
 				.css('top', this.get('y') - this.get('fontSize'))

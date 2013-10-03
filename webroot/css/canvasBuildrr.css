@@ -32,6 +32,11 @@ a#cb_cancel {
 	display: block;
 }
 
+#backgroundControls .simplecolorpicker,
+.simplecolorpicker span[role="button"] {
+	border: 1px solid #ccc;
+}
+
 /* input elements */
 .cb_addEditText,
 .cb_addEditImage {

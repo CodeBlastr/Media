@@ -157,10 +157,10 @@
 
 <?php if (!(empty($this->request->data))) : ?>
 <script>
-//console.log(CanvasObjectCollection);
-//console.log(CanvasObjectCollection.get('collection'));
+//console.log(AppModel);
+//console.log(AppModel.get('collection'));
 
-CanvasObjectCollection.get('collection').reset();
-CanvasObjectCollection.get('collection').reload(<?php echo json_encode($this->request->data['Media']['data']); ?>);
+AppModel.get('collection').reset();
+AppModel.get('collection').reload(<?php echo json_encode($this->request->data['Media']['data']); ?>);
 </script>
 <?php endif; ?>
