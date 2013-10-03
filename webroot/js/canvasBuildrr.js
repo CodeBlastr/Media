@@ -35,6 +35,7 @@ var CanvasObjects = Backbone.Collection.extend({
 	},
 	// redraws each object in the collection
 	refreshCanvas: function() {
+		console.log(this);
 		this.sort();
 		this.clear();
 		this.each(function( canvasObject ) {
@@ -54,41 +55,69 @@ var CanvasObjects = Backbone.Collection.extend({
 			canvasObject.draw();
 		});
 		return this;
-	},
-	sync: function( method, collection, options ) {
-		console.log('syncing AppModel');
-		var options = {
-				success: function(models, resp, xhr) {
-					collection.reset();
-					this.reload(models);
-				}
-		};
-		if ( method == "update" ) {
-			// do not send old images up everytime we want to save
-			collectionClone = collection.clone();
-			collectionClone.each(function( clonedObject, index ) {
-				if ( clonedObject.get('type') === 'image' && clonedObject.get('id') ) {
-					clonedObject.set('content', '');
-					collectionClone.models[index] = clonedObject;
-				}
-			});
-			console.log(collectionClone);
-			return Backbone.sync( method, collectionClone, options );
-		} else {
-			return Backbone.sync( method, collection, options );
-		}
-	},
+	}
+});
+
+
+/**
+ * A model to hold the collection, so that the collection can have attributes 
+ */
+var CollectionContainer = Backbone.Model.extend({
+	url: '/media/media/canvas/collection:true',
+    defaults: {
+    	collection: new CanvasObjects(),
+        backgroundColor: '#ffffff'
+    },
+    initialize: function() {
+    	console.log('CollectionContainer init');
+    	console.log(this);
+    	//var collection = (AppModel !== undefined) ? AppModel.get('collection') : this.get('collection');
+		this.on("change:backgroundColor", function(){
+			console.log(this);
+			this.get('collection').refreshCanvas();
+		});
+    },
+    parse: function(response, options) {
+        // update the inner collection
+        this.get("collection").reset(response.AppModel);
+
+        // this mightn't be necessary
+        delete response.AppModel;
+
+        return response;
+    },
+    sync: function( method, model, options ) {
+    	
+    	// create a clone that does not have the JS Image Objects in it
+		AppModelClone = model.clone();
+		AppModelClone.get('collection').each(function( clonedObject, index ) {
+			if ( clonedObject.get('type') === 'ImageObject' || clonedObject.get('type') === 'screenshot' ) {
+				clonedObject.unset('image', {silent: true});
+				AppModelClone.get('collection').models[index] = clonedObject;
+			}
+		});
+		console.log(AppModelClone);
+    	return Backbone.sync( method, AppModelClone, options );
+    },
 	reload: function(models) {
 		console.log('reload');
+		
+		models = jQuery.parseJSON(models);
+		console.log(models);
 		// config the save button
 		$("#saveCanvas").attr('data-saved', 'true');
 		
 		// wipe the overlays
         $(".cb_placeholder").remove();
         
-        // import them to their models
-        models = jQuery.parseJSON(models);
-        models.forEach(function(model, index){
+        AppModel = new CollectionContainer(models);
+        AppModel.set('collection', new CanvasObjects);
+        console.log(AppModel);
+        
+        // import the models
+        //models = jQuery.parseJSON(models);
+        //console.log(models);
+        models.collection.forEach(function(model, index){
         	console.log(model);
         	if (model.type === 'ImageObject' || model.type === 'screenshot') {
         		image = new ImageObject(model);
@@ -101,37 +130,10 @@ var CanvasObjects = Backbone.Collection.extend({
         });
         
         // render the models
-        this.refreshCanvas();
+        AppModel.get('collection').refreshCanvas();
         
         return this;
 	}
-});
-
-
-/**
- * A model to hold the collection, so that the collection can have attributes 
- */
-var CollectionContainer = Backbone.Model.extend({
-    defaults: {
-    	collection: new CanvasObjects(),
-        backgroundColor: '#ffffff'
-    },
-    initialize: function() {
-    	console.log('CollectionContainer init');
-    	var collection = this.get('collection');
-		this.on("change:backgroundColor", function(){
-			collection.refreshCanvas();
-		});
-    },
-    parse: function(response, options) {
-        // update the inner collection
-        this.get("collection").reset(response.AppModel);
-
-        // this mightn't be necessary
-        delete response.AppModel;
-
-        return response;
-    }
 });
 
 var AppModel = new CollectionContainer();
@@ -159,14 +161,13 @@ $("#saveCanvas").click(function(){
 
 	// update screenshot
 	var hasScreenshot = false;
-	console.log(AppModel);
-	AppModel.each(function( canvasObject, index ) {
+	AppModel.get('collection').each(function( canvasObject, index ) {
 		console.log( canvasObject );
 		if ( canvasObject.get('type') === 'screenshot' ) {
 			console.log(canvasObject);
 			hasScreenshot = true;
 			canvasObject.set('content', canvas.toDataURL());
-			AppModel[index] = canvasObject;
+			AppModel.get('collection')[index] = canvasObject;
 		}
 	});
 	if ( hasScreenshot === false ) {
@@ -174,7 +175,7 @@ $("#saveCanvas").click(function(){
 			'type': 'screenshot',
 			'content': canvas.toDataURL()
 			});
-		AppModel.add(image);
+		AppModel.get('collection').add(image);
 	}
 
 	AppModel.sync(method, AppModel, options);

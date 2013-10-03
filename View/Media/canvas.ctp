@@ -162,6 +162,6 @@
 //console.log(AppModel.get('collection'));
 
 AppModel.get('collection').reset();
-AppModel.get('collection').reload(<?php echo json_encode($this->request->data['Media']['data']); ?>);
+AppModel.reload(<?php echo json_encode($this->request->data['Media']['data']); ?>);
 </script>
 <?php endif; ?>

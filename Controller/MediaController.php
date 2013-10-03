@@ -342,29 +342,16 @@ class _MediaController extends MediaAppController {
 // 		$this->Canvas = new Canvas;
 		switch ($this->request->method()) {
 			case ('POST'):
-				debug($this->request->data);break;
-				if (isset($this->request->params['named']['collection'])) {
-					$response = $this->Media->addCanvasCollection($this->request->data);
-				} else {
-					$response = $this->Media->addCanvasObjects($this->request->data);
-				}
+				$response = $this->Media->addCanvasObjects($this->request->data);
 				$this->__returnJsonResponse($response);
 				break;
 			case ('PUT'):
 				debug($this->request->data);break;
-				if (isset($this->request->params['named']['collection'])) {
-					$response = $this->Media->updateCanvasCollection($this->request->data);
-				} else {
-					$response = $this->Media->updateCanvasObjects($this->request->data);
-				}
+				$response = $this->Media->updateCanvasObjects($this->request->data);
 				$this->__returnJsonResponse($response);
 				break;
 			case ('DELETE'):
-				if (isset($this->request->params['named']['collection'])) {
-					$response = $this->Media->deleteCanvasCollection($this->request->data);
-				} else {
-					$response = $this->Media->deleteCanvasObjects($this->request->data);
-				}
+				$response = $this->Media->deleteCanvasObjects($this->request->data);
 				$this->__returnJsonResponse($response);
 				break;
 			case ('GET'):

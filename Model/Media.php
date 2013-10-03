@@ -200,26 +200,26 @@ class Media extends MediaAppModel {
 		}
 		return $data;
 	}
-
+	
 	
 	/**
-	 * This function needs to do the following things:
-	 *  - save the metadata of each image
-	 *  - save the entire models of TextObjects
-	 *  - (maybe) either return the entire collection so we can .reset() or just the collection's id
 	 *
-	 * @param array $data
+	 * @param array $data An entire model from the canvasBuildrr {model:collection:{models}}
 	 * @return array
 	 */
-	public function addCanvasCollection($data) {
+	public function addCanvasObjects($data) {
+		foreach ($data['collection'] as &$canvasObject) {
+			// save the screenshot file.
+			if ($canvasObject['type'] == 'screenshot') {
+				$savedImage = $this->_saveCanvasImageObject($canvasObject);
+				$canvasObject['id'] = $savedImage['Media']['id'];
+				$canvasObject['content'] = '/theme/Default/media/' . $savedImage['Media']['type'] . '/' .  $savedImage['Media']['filename'] . '.' . $savedImage['Media']['extension'];
+			}
+		}
 	
-		// save all image objects as rows in `media`
-		$addedObjects = $this->addCanvasObjects($data);
-	
-		// save a "parent" row that has all data
-		$this->id = $this->screenshotId;
-		$this->saveField('data', json_encode($addedObjects), array('callbacks' => false));
-	
+		// save all data to our screenshot/parent row
+		$addedObjects = $this->saveField('data', json_encode($data), array('callbacks' => false));
+		
 		if ($addedObjects) {
 			return array(
 					'statusCode' => '200',
@@ -228,32 +228,6 @@ class Media extends MediaAppModel {
 		} else {
 			return array('statusCode' => '403');
 		}
-	}
-	
-	
-	/**
-	 *
-	 * @param array $data
-	 * @return array|boolean
-	 */
-	public function addCanvasObjects($data) {
-		$objects = false;
-		foreach ($data as $canvasObject) {
-			// we only need to save ImageObjects and the screenshot.
-			// The screenshot is used as the "parent" of our canvas, so we temporarily store that
-			// and save the data for this "parent" row in addCanvasCollection
-			if ($canvasObject['type'] == 'ImageObject' || $canvasObject['type'] == 'screenshot') {
-				$savedImage = $this->_saveCanvasImageObject($canvasObject);
-				if ($canvasObject['type'] == 'screenshot') {
-					$this->screenshotId = $this->id;
-				}
-				$canvasObject['id'] = $savedImage['Media']['id'];
-				$canvasObject['content'] = '/theme/Default/media/' . $savedImage['Media']['type'] . '/' .  $savedImage['Media']['filename'] . '.' . $savedImage['Media']['extension'];
-			}
-			$objects[] = $canvasObject;
-		}
-	
-		return $objects;
 	}
 
 	public function updateCanvasCollection($data) {
