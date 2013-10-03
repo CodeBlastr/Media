@@ -29,10 +29,23 @@ var CanvasObjects = Backbone.Collection.extend({
 	},
 	// redraws each object in the collection
 	refreshCanvas: function() {
-		console.log(this);
+		this.sort();
 		this.clear();
+		console.log(this);
 		this.each(function( canvasObject ) {
-			console.log(canvasObject);
+			if ( canvasObject.get('type') === 'ImageObject' ) {
+				var isLoaded = canvasObject.get('loaded');
+				var i = 0;
+				while ( isLoaded === false ) {
+					console.log('waiting...');
+					isLoaded = canvasObject.get('loaded');
+					i++;
+					if (i > 100000) {
+						alert('Unable to load image.  Please refresh.');
+						return false;
+					}
+				}
+			}
 			canvasObject.draw();
 		});
 	},
@@ -60,7 +73,7 @@ var CanvasObjects = Backbone.Collection.extend({
 		}
 	},
 	reload: function(models) {
-		
+		console.log('reload');
 		// config the save button
 		$("#saveCanvas").attr('data-saved', 'true');
 		
@@ -156,3 +169,4 @@ $("#saveCanvas").click(function(){
 	CanvasObjectCollection.sync(method, CanvasObjectCollection, options);
 	$(this).attr('data-saved', 'true');
 });
+

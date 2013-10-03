@@ -2,8 +2,6 @@ canvas {
 	background:	#fff;
 }
 
-.cb_close { cursor: pointer; }
-
 #cb_canvasWrapper {
 	box-shadow: 5px 5px  25px #999;
 	margin-bottom: 100px;
@@ -35,38 +33,48 @@ a#cb_cancel {
 }
 
 /* input elements */
-.cb_addEditText {
-	display: none;
-	position: relative;
-	background: #efefef;
-	padding: 5px;
-	border-radius: 5px;
-}
+.cb_addEditText,
 .cb_addEditImage {
-	display: none;
-	position: relative;
 	background: #efefef;
 	padding: 5px;
 	border-radius: 5px;
+	position: absolute;
+	display:block;
+	cursor: default;
+	box-shadow: 0 0 5px #747474;
 }
 
 /* addEditText elements */
-div.fontInputBox { /*subject dropdown*/
-		position: relative;
-		display: inline-block;
-		width: 125px;
+
+.editorActions {
+	box-shadow: 1px 1px 6px #ccc;
+	margin-left: 4px;
+	text-align: center;
 }
-#font {
+.cb_close,
+.cb_up,
+.cb_down,
+.cb_remove {
+	cursor: pointer;
+}
+.cb_close:hover,
+.cb_up:hover i,
+.cb_down:hover i,
+.cb_remove:hover i {
+	background-color: #ccc;
+}
+
+.cb_addEditText div.fontInputBox {
+	position: relative;
+	display: inline-block;
+	width: 125px;
+}
+.cb_addEditText #font {
 	width: 110px;
 	cursor: pointer;
 	background: #fff;
 }
-div.fontInputBox span.arrows {
-	position: absolute;
-	top: .45em;
-	right: .5em;
-}
-div.fontInputBox ul {
+.cb_addEditText div.fontInputBox ul {
 	display: none;
 	position: absolute;
 	z-index: 100;
@@ -78,18 +86,20 @@ div.fontInputBox ul {
 	margin: -30px 0 0 1em;
 	border-radius: 5px;
 }
-div.fontInputBox ul	li {
+.cb_addEditText div.fontInputBox ul	li {
 	cursor: pointer;
 	padding: .7em .75em;
 	font-size: .85em;
 	overflow: hidden;
 }
-div.fontInputBox ul	img {
+.cb_addEditText div.fontInputBox ul	img {
 	float: right;
 }
 
 .cb_addEditText .simplecolorpicker.icon {height: 28px;}
 
+
+/* placeholders */
 .cb_placeholder {
 	position: absolute;
 	cursor: move;

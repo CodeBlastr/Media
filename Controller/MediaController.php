@@ -36,16 +36,30 @@ class _MediaController extends MediaAppController {
 
 	public function add() {
 		if (!empty($this->request->data)) {
+			if(isset($this->request->data['MediaAttachment'])) {
+				$this->loadModel('Media.MediaAttachment');
+			}
+			
             $this->request->data['User']['id'] = $this->Auth->user('id');
 			$mediaarray = array();
 			foreach($this->request->data['Media']['files'] as $file) {
-				//debug($file);break;
 				$media['Media'] = array(
 					'user_id' => $this->Auth->user('id'),
 					'filename' => $file
 				);
 				$this->Media->create();
 				$media = $this->Media->save($media);
+				if(isset($this->request->data['MediaAttachment'])) {
+					$attachedmedia = array(
+						'MediaAttachment' => array(
+							'media_id' => $media['Media']['id'],
+							'model' => $this->request->data['MediaAttachment']['model'],
+							'foreign_key' => $this->request->data['MediaAttachment']['foreign_key'],
+					));
+					$this->MediaAttachment->create();
+					$media = $this->MediaAttachment->save($attachedmedia);
+				}
+				
 				if($media) {
 					$mediaarray[] = $media;
 				}
@@ -78,9 +92,10 @@ class _MediaController extends MediaAppController {
 			$this->request->data = $this->Media->findById($uid);
 		} else {
             // save the new media metadata
-            if ($this->Media->save($this->request->data)) {
+            debug($this->Media->save($this->request->data));
+            if ($this->Media->save($this->request->data, array('callbacks' => false))) {
                 $this->Session->setFlash('Your media has been updated.');
-                $this->redirect(array('action' => 'my'));
+                $this->redirect($this->referer());
             }
 		}
 	}//edit()
@@ -294,11 +309,23 @@ class _MediaController extends MediaAppController {
 			$uid = $this->userId;
 		}
 		
-		$multiple = isset($this->request->data['mulitple']) ? $this->request->data['mulitple'] : true;
-		if($uid == null) {
-			$media = $this->Media->find('all');
-		}else{
-			$media = $this->Media->find('all', array('conditions' => array('creator_id' => $uid)));
+		$galleryid = isset($this->request->query['galleryid']) ? $this->request->query['galleryid'] : array();
+		if(!empty($galleryid)) {
+			$this->set('galleryid', $galleryid);
+		}
+		$this->loadModel('Media.MediaGallery');
+		$this->set('galleries', $this->MediaGallery->find('list'));
+		
+		if(!empty($galleryid)) {
+			$media = $this->MediaGallery->find('first', array('contain' => 'Media', 'conditions' => array('id' => $galleryid)));
+			$media = $media['Media'];
+		}else {
+			$multiple = isset($this->request->data['mulitple']) ? $this->request->data['mulitple'] : true;
+			if($uid == null) {
+				$media = $this->Media->find('all');
+			}else{
+				$media = $this->Media->find('all', array('conditions' => array('creator_id' => $uid)));
+			}
 		}
 		
 		$this->set(compact('media', 'multiple'));
