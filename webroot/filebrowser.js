@@ -54,7 +54,7 @@
 			$(this).addClass('active');
 			showWindow(id);
 			
-		})
+		});
 		
 		$('#mediaBrowser').on('click', 'a.thumbnail', function(e){
 			if($(this).hasClass('selected')) {

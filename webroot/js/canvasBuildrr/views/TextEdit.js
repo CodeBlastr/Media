@@ -12,7 +12,6 @@ var TextEditView = Backbone.View.extend({
 		this.$el.find('option[value="'+this.model.get('fontSize')+'"]').attr("selected", "selected");
 
 		$("#cb_canvasWrapper").unbind();
-
 		return this;
 	},
 	events: {
@@ -36,6 +35,7 @@ var TextEditView = Backbone.View.extend({
 		return false;
 	},
 	updateText: function( event ) {
+		console.log(this.model.cid);
 		this.model.set('content', event.target.value);
 	},
 	updateColor: function( event ) {
