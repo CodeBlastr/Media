@@ -99,17 +99,15 @@ var CollectionContainer = Backbone.Model.extend({
 	reload: function(models) {
 		console.log('reload');
 		
-		models = jQuery.parseJSON(models);
-		console.log(models);
 		// config the save button
 		$("#saveCanvas").attr('data-saved', 'true');
 		
 		// wipe the overlays
         $(".cb_placeholder").remove();
         
+        models = jQuery.parseJSON(models);
         AppModel = new CollectionContainer(models);
         AppModel.set('collection', new CanvasObjects);
-        console.log(AppModel);
         
         // import the models
         models.collection.forEach(function(model, index){

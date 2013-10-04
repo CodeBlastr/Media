@@ -1,15 +1,17 @@
 // wrap the canvas
 element.wrap('<div id="cb_canvasWrapper" />');
 $("#cb_canvasWrapper").css('width', element.attr('width'));
-$("#cb_canvasWrapper").after('<div id="cb_circleMenu" />');
 
 // create our main action menu
+$("#cb_canvasWrapper").after('<div id="cb_circleMenu" />');
 $("#cb_circleMenu").append('<a id="cb_addText">Abc</a> <a id="cb_addImage">img</a>');
 $("#cb_circleMenu").append('<a id="cb_cancel">&times;</a>');
 
 var dragged;
 
 var mainMenuHandler = function( event ) {
+	// get rid of open editors
+	$(".cb_addEditImage, .cb_addEditText").remove();
 	// show the menu
 	$('#cb_circleMenu').css({'top': event.pageY - 50, 'left': event.pageX - 50});
 	$('#cb_circleMenu').show();
@@ -29,20 +31,19 @@ $("canvas#canvas").on('click', function( event ) {
  * Main menu click actions
  */
 $("#cb_addText").click(function( e ) {
-	$('#cb_circleMenu').hide();
+	$('#cb_circleMenu').fadeOut(150);
 	textEditHandler(e);
 	return false;
 });
 
 $("#cb_addImage").click(function( e ) {
-	$('#cb_circleMenu').hide();
+	$('#cb_circleMenu').fadeOut(150);
 	imageEditHandler(e);
-	console.log('#cb_addImage clicked');
 	return false;
 });
 
 $("#cb_cancel").click(function( e ) {
-	$('#cb_circleMenu').hide();
+	$('#cb_circleMenu').fadeOut(150);
 	return false;
 });
 

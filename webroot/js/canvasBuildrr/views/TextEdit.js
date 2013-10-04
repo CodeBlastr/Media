@@ -74,6 +74,16 @@ var TextEditView = Backbone.View.extend({
 		return false;
 	},
 	close: function( event ) {
+		if ( this.model.get('content') === '' ) {
+			this.model.destroy();
+		} else {
+			var locked = !this.model.get('isEditable');
+			if ( locked ) {
+				if ( !window.confirm("Are you sure you want to lock this layer?  This cannot be undone.") ) {
+					return;
+				}
+			}
+		}
 		$('select[name="colorpicker"]').simplecolorpicker('destroy');
 		this.$el.find('.cb_addEditText').remove();
 	}

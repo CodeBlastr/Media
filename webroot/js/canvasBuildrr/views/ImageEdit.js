@@ -26,19 +26,10 @@ var ImageEditView = Backbone.View.extend({
 	uploadImage: function( event ) {
 		console.log('uploadImage()');
 		$(".filePicker").attr('disabled', 'disabled');
-		$(".cb_addEditImage").fadeOut(5000);
+		$(".cb_addEditImage").fadeOut(3000);
 		var reader = new FileReader(), rFilter = /^image\/(?:bmp|cis\-cod|gif|ief|jpeg|pipeg|png|svg\+xml|tiff|x\-cmu\-raster|x\-cmx|x\-icon|x\-portable\-anymap|x\-portable\-bitmap|x\-portable\-graymap|x\-portable\-pixmap|x\-rgb|x\-xbitmap|x\-xpixmap|x\-xwindowdump)$/i;
 		var imageModel = this.model;
 		reader.onload = function( event ) {
-			// var image = new Image();
-			// image.src = event.target.result;
-			// image.onload = function() {
-				// imageModel.set('image', image);
-				// imageModel.set('loaded', true);
-				// imageModel.set('height', this.height);
-				// imageModel.set('width', this.width);
-				// imageModel.set('aspectRatio', this.width / this.height);
-			// };
 			imageModel.set('content', event.target.result);
 		};
 		if ( !rFilter.test(event.target.files[0].type) ) {
@@ -52,7 +43,17 @@ var ImageEditView = Backbone.View.extend({
 		return false;
 	},
 	close: function( event ) {
-		this.$el.find('.cb_addEditImage').remove();
+		if ( this.model.get('content') === '' ) {
+			this.model.destroy();
+		} else {
+			var locked = !this.model.get('isEditable');
+			if ( locked ) {
+				if ( !window.confirm("Are you sure you want to lock this layer?  This cannot be undone.") ) {
+					return;
+				}
+			}
+		}
+		this.$el.find('.cb_addEditImage').fadeOut(150).remove();
 	}
 });
 

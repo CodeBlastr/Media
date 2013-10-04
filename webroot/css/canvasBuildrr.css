@@ -55,18 +55,22 @@ a#cb_cancel {
 	box-shadow: 1px 1px 6px #ccc;
 	margin-left: 4px;
 	text-align: center;
+	width: 20px;
 }
 .cb_close,
 .cb_up,
 .cb_down,
-.cb_remove {
+.cb_remove,
+.cb_lock {
 	cursor: pointer;
 }
 .cb_close:hover,
 .cb_up:hover i,
 .cb_down:hover i,
-.cb_remove:hover i {
-	background-color: #ccc;
+.cb_remove:hover i,
+.cb_lock:hover i {
+	border-radius: 5px;
+	background-color: #fff;
 }
 
 .cb_addEditText div.fontInputBox {
