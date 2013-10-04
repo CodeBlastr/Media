@@ -346,7 +346,6 @@ class _MediaController extends MediaAppController {
 				$this->__returnJsonResponse($response);
 				break;
 			case ('PUT'):
-				debug($this->request->data);break;
 				$response = $this->Media->updateCanvasObjects($this->request->data);
 				$this->__returnJsonResponse($response);
 				break;
@@ -362,6 +361,10 @@ class _MediaController extends MediaAppController {
 									'Media.id' => $id
 							)
 					));
+					$this->request->data['Media']['data'] = json_decode($this->request->data['Media']['data']);
+					$this->request->data['Media']['data']->id = $id;
+					$this->request->data['Media']['data'] = json_encode($this->request->data['Media']['data']);
+
 // 					if ($this->request->isAjax()) {
 // 							$this->__returnJsonResponse(array(
 // 								'statusCode' => '200',

@@ -70,10 +70,7 @@ var CollectionContainer = Backbone.Model.extend({
     },
     initialize: function() {
     	console.log('CollectionContainer init');
-    	console.log(this);
-    	//var collection = (AppModel !== undefined) ? AppModel.get('collection') : this.get('collection');
 		this.on("change:backgroundColor", function(){
-			console.log(this);
 			this.get('collection').refreshCanvas();
 		});
     },
@@ -115,10 +112,7 @@ var CollectionContainer = Backbone.Model.extend({
         console.log(AppModel);
         
         // import the models
-        //models = jQuery.parseJSON(models);
-        //console.log(models);
         models.collection.forEach(function(model, index){
-        	console.log(model);
         	if (model.type === 'ImageObject' || model.type === 'screenshot') {
         		image = new ImageObject(model);
         		AppModel.get('collection').add(image);

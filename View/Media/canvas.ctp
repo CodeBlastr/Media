@@ -30,7 +30,6 @@
 			<div class="btn" id="saveCanvas" data-saved="false">Save progress</div>
 			
 		</div>
-		
 	</div>
 </div>
 

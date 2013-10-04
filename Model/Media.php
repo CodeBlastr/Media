@@ -230,25 +230,7 @@ class Media extends MediaAppModel {
 		}
 	}
 
-	public function updateCanvasCollection($data) {
-		$objects = false;
-		foreach ($data as $canvasObject) {
-			// save new objects
-			if ($canvasObject['type'] == 'ImageObject' && !(isset($canvasObject['id']))) {
-				$savedImage = $this->_saveCanvasImageObject($canvasObject);
-			}
-			if ($canvasObject['type'] == 'screenshot') {
-				$this->id = $this->screenshotId = $canvasObject['id'];
-				/**
-				 * @todo Update the screenshot
-				 */
-				//$savedImage = $this->_saveCanvasImageObject($canvasObject);
-			}
-			$objects[] = $canvasObject;
-		}
-		
-		$this->saveField('data', json_encode($objects), array('callbacks' => false));
-	}
+
 	
 	public function updateCanvasObjects($data) {
 		$added = false;
@@ -256,14 +238,21 @@ class Media extends MediaAppModel {
 			if (!(isset($canvasObject['id']))) {
 				if ($canvasObject['type'] == 'ImageObject') {
 					$added = $this->_saveCanvasImageObject($canvasObject);
-				} elseif ($canvasObject['type'] == 'TextObject') {
-					$added = $this->_saveCanvasTextObject($canvasObject);
 				}
 			}
 		}
+
+		$this->id = $data['id'];
+		unset($data['id']);
 	
-		if ($added) {
-			return array('statusCode' => '200');
+		// save all data to our screenshot/parent row
+		$addedObjects = $this->saveField('data', json_encode($data), array('callbacks' => false));
+		
+		if ($addedObjects) {
+			return array(
+					'statusCode' => '200',
+					'body' => json_encode($addedObjects)
+			);
 		} else {
 			return array('statusCode' => '403');
 		}
@@ -277,11 +266,13 @@ class Media extends MediaAppModel {
 	 * @return array|boolean
 	 */
 	private function _saveCanvasImageObject($data) {
-		$added = false;
+		
 		// make sure that this is (probably) safe to pass to fopen()
 		if (strpos($data['content'], 'data:') !== 0) {
 			return false;
 		}
+	
+		$added = false;
 	
 		$image = fopen($data['content'], 'r');
 		$metadata = stream_get_meta_data($image);
@@ -315,20 +306,15 @@ class Media extends MediaAppModel {
 		fclose($fopen);
 
 		if ($written) {
-			// clean up
-			// 			unset($data['cid']);
-			// 			unset($data['content']);
-	
 			// save record to database server
 			$this->create();
 			$added = $this->save(array(
-					'Media' => array(
-							'filename' => array(
-									'name' => $uuid . '.' . $extension,
-									'tmp_name' => sys_get_temp_dir() . $uuid
-							),
-							// 						'data' => json_encode($data)
+				'Media' => array(
+					'filename' => array(
+						'name' => $uuid . '.' . $extension,
+						'tmp_name' => sys_get_temp_dir() . $uuid
 					)
+				)
 			));
 		}
 	
