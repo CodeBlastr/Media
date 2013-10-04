@@ -11,7 +11,6 @@ class Media extends MediaAppModel {
  */
 	public $supportedVideoExtensions = array('mpg', 'mov', 'wmv', 'rm', '3g2', '3gp', '3gp2', '3gpp', '3gpp2', 'avi', 'divx', 'dv', 'dv-avi', 'dvx', 'f4v', 'flv', 'h264', 'hdmov', 'm4v', 'mkv', 'mp4', 'mp4v', 'mpe', 'mpeg', 'mpeg4', 'mpg', 'nsv', 'qt', 'swf', 'xvid');
 
-
 /**
  * An array of audio types we accept to the media plugin.
  */
@@ -27,8 +26,6 @@ class Media extends MediaAppModel {
 			'foreignKey' => 'user_id'
 			)
 		);
-
-	public $screenshotId;
 	
 	public $fileExtension;
 
@@ -200,26 +197,62 @@ class Media extends MediaAppModel {
 		}
 		return $data;
 	}
-
+	
 	
 	/**
-	 * This function needs to do the following things:
-	 *  - save the metadata of each image
-	 *  - save the entire models of TextObjects
-	 *  - (maybe) either return the entire collection so we can .reset() or just the collection's id
 	 *
-	 * @param array $data
+	 * @param array $data An entire model from the canvasBuildrr {model:collection:{models}}
 	 * @return array
 	 */
-	public function addCanvasCollection($data) {
+	public function addCanvasObjects($data) {
+		foreach ($data['collection'] as &$canvasObject) {
+			// save the screenshot file.
+			if ($canvasObject['type'] == 'screenshot') {
+				$savedImage = $this->_saveCanvasImageObject($canvasObject);
+				$canvasObject['id'] = $savedImage['Media']['id'];
+				$canvasObject['content'] = '/theme/Default/media/' . $savedImage['Media']['type'] . '/' .  $savedImage['Media']['filename'] . '.' . $savedImage['Media']['extension'];
+			}
+		}
 	
-		// save all image objects as rows in `media`
-		$addedObjects = $this->addCanvasObjects($data);
+		// save all data to our screenshot/parent row
+		$addedObjects = $this->saveField('data', json_encode($data), array('callbacks' => false));
+		
+		if ($addedObjects) {
+			return array(
+					'statusCode' => '200',
+					'body' => json_encode($addedObjects)
+			);
+		} else {
+			return array('statusCode' => '403');
+		}
+	}
+
+
 	
-		// save a "parent" row that has all data
-		$this->id = $this->screenshotId;
-		$this->saveField('data', json_encode($addedObjects), array('callbacks' => false));
+	public function updateCanvasObjects($data) {
+		$added = false;
+//		foreach ($data as $canvasObject) {
+//			if (!(isset($canvasObject['id']))) {
+//				if ($canvasObject['type'] == 'ImageObject') {
+//					$added = $this->_saveCanvasImageObject($canvasObject);
+//				}
+//			}
+//		}
+
+		foreach ($data as $canvasObject) {
+			if ($canvasObject['type'] == 'screenshot') {
+				$savedImage = $this->_saveCanvasImageObject($canvasObject, $data['id']);
+				$canvasObject['id'] = $savedImage['Media']['id'];
+				$canvasObject['content'] = '/theme/Default/media/' . $savedImage['Media']['type'] . '/' .  $savedImage['Media']['filename'] . '.' . $savedImage['Media']['extension'];
+			}
+		}
+
+		$this->id = $data['id'];
+		unset($data['id']);
 	
+		// save all data to our screenshot/parent row
+		$addedObjects = $this->saveField('data', json_encode($data), array('callbacks' => false));
+		
 		if ($addedObjects) {
 			return array(
 					'statusCode' => '200',
@@ -232,79 +265,19 @@ class Media extends MediaAppModel {
 	
 	
 	/**
-	 *
-	 * @param array $data
-	 * @return array|boolean
-	 */
-	public function addCanvasObjects($data) {
-		$objects = false;
-		foreach ($data as $canvasObject) {
-			if ($canvasObject['type'] == 'ImageObject' || $canvasObject['type'] == 'screenshot') {
-				$savedImage = $this->_saveCanvasImageObject($canvasObject);
-				if ($canvasObject['type'] == 'screenshot') {
-					$this->screenshotId = $this->id;
-				}
-				$canvasObject['id'] = $savedImage['Media']['id'];
-				$canvasObject['content'] = '/theme/Default/media/' . $savedImage['Media']['type'] . '/' .  $savedImage['Media']['filename'] . '.' . $savedImage['Media']['extension'];
-			}
-			$objects[] = $canvasObject;
-		}
-	
-		return $objects;
-	}
-
-	public function updateCanvasCollection($data) {
-		$objects = false;
-		foreach ($data as $canvasObject) {
-			// save new objects
-			if ($canvasObject['type'] == 'ImageObject' && !(isset($canvasObject['id']))) {
-				$savedImage = $this->_saveCanvasImageObject($canvasObject);
-			}
-			if ($canvasObject['type'] == 'screenshot') {
-				$this->id = $this->screenshotId = $canvasObject['id'];
-				/**
-				 * @todo Update the screenshot
-				 */
-				//$savedImage = $this->_saveCanvasImageObject($canvasObject);
-			}
-			$objects[] = $canvasObject;
-		}
-		
-		$this->saveField('data', json_encode($objects), array('callbacks' => false));
-	}
-	
-	public function updateCanvasObjects($data) {
-		$added = false;
-		foreach ($data as $canvasObject) {
-			if (!(isset($canvasObject['id']))) {
-				if ($canvasObject['type'] == 'ImageObject') {
-					$added = $this->_saveCanvasImageObject($canvasObject);
-				} elseif ($canvasObject['type'] == 'TextObject') {
-					$added = $this->_saveCanvasTextObject($canvasObject);
-				}
-			}
-		}
-	
-		if ($added) {
-			return array('statusCode' => '200');
-		} else {
-			return array('statusCode' => '403');
-		}
-	}
-	
-	
-	/**
 	 * saves image file from image object to the file server
 	 *
 	 * @param array $data
 	 * @return array|boolean
 	 */
-	private function _saveCanvasImageObject($data) {
-		$added = false;
+	private function _saveCanvasImageObject($data, $id = false) {
+		
 		// make sure that this is (probably) safe to pass to fopen()
 		if (strpos($data['content'], 'data:') !== 0) {
 			return false;
 		}
+	
+		$added = false;
 	
 		$image = fopen($data['content'], 'r');
 		$metadata = stream_get_meta_data($image);
@@ -338,20 +311,15 @@ class Media extends MediaAppModel {
 		fclose($fopen);
 
 		if ($written) {
-			// clean up
-			// 			unset($data['cid']);
-			// 			unset($data['content']);
-	
 			// save record to database server
-			$this->create();
+			($id) ? $this->id = $id : $this->create();
 			$added = $this->save(array(
-					'Media' => array(
-							'filename' => array(
-									'name' => $uuid . '.' . $extension,
-									'tmp_name' => sys_get_temp_dir() . $uuid
-							),
-							// 						'data' => json_encode($data)
+				'Media' => array(
+					'filename' => array(
+						'name' => $uuid . '.' . $extension,
+						'tmp_name' => sys_get_temp_dir() . $uuid
 					)
+				)
 			));
 		}
 	
@@ -371,3 +339,4 @@ class Media extends MediaAppModel {
 	
 	
 }
+

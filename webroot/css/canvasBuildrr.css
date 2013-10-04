@@ -2,8 +2,6 @@ canvas {
 	background:	#fff;
 }
 
-.cb_close { cursor: pointer; }
-
 #cb_canvasWrapper {
 	box-shadow: 5px 5px  25px #999;
 	margin-bottom: 100px;
@@ -34,6 +32,11 @@ a#cb_cancel {
 	display: block;
 }
 
+#backgroundControls .simplecolorpicker,
+.simplecolorpicker span[role="button"] {
+	border: 1px solid #ccc;
+}
+
 /* input elements */
 .cb_addEditText,
 .cb_addEditImage {
@@ -47,22 +50,40 @@ a#cb_cancel {
 }
 
 /* addEditText elements */
-div.fontInputBox { /*subject dropdown*/
-		position: relative;
-		display: inline-block;
-		width: 125px;
+
+.editorActions {
+	box-shadow: 1px 1px 6px #ccc;
+	margin-left: 4px;
+	text-align: center;
+	width: 20px;
 }
-#font {
+.cb_close,
+.cb_up,
+.cb_down,
+.cb_remove,
+.cb_lock {
+	cursor: pointer;
+}
+.cb_close:hover,
+.cb_up:hover i,
+.cb_down:hover i,
+.cb_remove:hover i,
+.cb_lock:hover i {
+	border-radius: 5px;
+	background-color: #fff;
+}
+
+.cb_addEditText div.fontInputBox {
+	position: relative;
+	display: inline-block;
+	width: 125px;
+}
+.cb_addEditText #font {
 	width: 110px;
 	cursor: pointer;
 	background: #fff;
 }
-div.fontInputBox span.arrows {
-	position: absolute;
-	top: .45em;
-	right: .5em;
-}
-div.fontInputBox ul {
+.cb_addEditText div.fontInputBox ul {
 	display: none;
 	position: absolute;
 	z-index: 100;
@@ -74,26 +95,28 @@ div.fontInputBox ul {
 	margin: -30px 0 0 1em;
 	border-radius: 5px;
 }
-div.fontInputBox ul	li {
+.cb_addEditText div.fontInputBox ul	li {
 	cursor: pointer;
 	padding: .7em .75em;
 	font-size: .85em;
 	overflow: hidden;
 }
-div.fontInputBox ul	img {
+.cb_addEditText div.fontInputBox ul	img {
 	float: right;
 }
 
 .cb_addEditText .simplecolorpicker.icon {height: 28px;}
 
+
+/* placeholders */
 .cb_placeholder {
 	position: absolute;
-	cursor: move;
 	padding: 1px;
 }
-.cb_placeholder:hover {
+.cb_placeholderHover {
 	border: 1px dashed #ccc;
 	padding: 0px;
+	cursor: move;
 }
 .cb_ph_corner {
 	display: none;
@@ -101,7 +124,7 @@ div.fontInputBox ul	img {
 /*	height: 14px;
 	width: 14px;*/
 }
-.cb_placeholder:hover .cb_ph_corner {
+.cb_placeholderHover .cb_ph_corner {
 	background: #09f;
 	display: block;
 }
@@ -128,7 +151,7 @@ div.fontInputBox ul	img {
 	height: 27px;
 	width: 0px;
 }
-.cb_placeholder:hover .cb_ph_rotator,
+.cb_placeholderHover .cb_ph_rotator,
 .cb_ph_rotator:hover {
 	border: 1px dashed #666;
 }

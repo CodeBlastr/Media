@@ -3,16 +3,20 @@
  * @description Adds simple image and text manipulation to a canvas element.
  * @author Joel Byrnes <joel@buildrr.com>
  */
-var element = $("#canvas");
+
 
 /**
- * set up the necessary pointers
+ * set up the necessary pointers & variables
  */
+var element = $("#canvas");
 var canvas = document.getElementById(element.attr('id'));
 var context = canvas.getContext("2d");
-
 var click = {x: '', y: ''};
 
+
+/**
+ * The collection of our ImageObjects and TextObjects
+ */
 var CanvasObjects = Backbone.Collection.extend({
 	url: '/media/media/canvas/collection:true',
 	comparator: function(model) {
@@ -24,44 +28,76 @@ var CanvasObjects = Backbone.Collection.extend({
 	// wipes the canvas clean
 	clear: function() {
 		context.save();
-		context.fillStyle = 'rgb(255,255,255)';
+		context.fillStyle = (AppModel !== undefined) ? AppModel.get('backgroundColor') : '#ffffff';
 		context.fillRect(0, 0, canvas.width, canvas.height);
 		context.restore();
+		return this;
 	},
 	// redraws each object in the collection
 	refreshCanvas: function() {
 		console.log(this);
+		this.sort();
 		this.clear();
 		this.each(function( canvasObject ) {
-			console.log(canvasObject);
+			if ( canvasObject.get('type') === 'ImageObject' ) {
+				var isLoaded = canvasObject.get('loaded');
+				var i = 0;
+				while ( isLoaded === false ) {
+					console.log('waiting...');
+					isLoaded = canvasObject.get('loaded');
+					i++;
+					if (i > 100000) {
+						alert('Unable to load image.  Please refresh.');
+						return false;
+					}
+				}
+			}
 			canvasObject.draw();
 		});
-	},
-	sync: function( method, collection, options ) {
-		console.log('syncing CanvasObjectCollection');
-//		console.log(JSON.stringify(collection));
-		var options = {
-				success: function(models, resp, xhr) {
-//					console.log(jQuery.parseJSON(models));'
-					collection.reset();
-					this.reload(models);
-				}
-		};
-		if ( method == "update" ) {
-			// do not send old images up everytime we want to save
-			collectionClone = collection.clone();
-			collectionClone.each(function( clonedObject, index ) {
-				if ( clonedObject.get('type') === 'image' && clonedObject.get('id') ) {
-					clonedObject.set('content', '');
-					collectionClone[index] = clonedObject;
-				}
-			});
-			return Backbone.sync( method, collectionClone, options );
-		} else {
-			return Backbone.sync( method, collection, options );
-		}
-	},
+		return this;
+	}
+});
+
+
+/**
+ * A model to hold the collection, so that the collection can have attributes 
+ */
+var CollectionContainer = Backbone.Model.extend({
+	url: '/media/media/canvas/collection:true',
+    defaults: {
+    	collection: new CanvasObjects(),
+        backgroundColor: '#ffffff'
+    },
+    initialize: function() {
+    	console.log('CollectionContainer init');
+		this.on("change:backgroundColor", function(){
+			this.get('collection').refreshCanvas();
+		});
+    },
+    parse: function(response, options) {
+        // update the inner collection
+        this.get("collection").reset(response.AppModel);
+
+        // this mightn't be necessary
+        delete response.AppModel;
+
+        return response;
+    },
+    sync: function( method, model, options ) {
+    	
+    	// create a clone that does not have the JS Image Objects in it
+		AppModelClone = model.clone();
+		AppModelClone.get('collection').each(function( clonedObject, index ) {
+			if ( clonedObject.get('type') === 'ImageObject' || clonedObject.get('type') === 'screenshot' ) {
+				clonedObject.unset('image', {silent: true});
+				AppModelClone.get('collection').models[index] = clonedObject;
+			}
+		});
+		console.log(AppModelClone);
+    	return Backbone.sync( method, AppModelClone, options );
+    },
 	reload: function(models) {
+		console.log('reload');
 		
 		// config the save button
 		$("#saveCanvas").attr('data-saved', 'true');
@@ -69,26 +105,43 @@ var CanvasObjects = Backbone.Collection.extend({
 		// wipe the overlays
         $(".cb_placeholder").remove();
         
-        // import them to their models
         models = jQuery.parseJSON(models);
-        models.forEach(function(model, index){
-        	console.log(model);
+        AppModel = new CollectionContainer(models);
+        AppModel.set('collection', new CanvasObjects);
+        
+        // import the models
+        models.collection.forEach(function(model, index){
         	if (model.type === 'ImageObject' || model.type === 'screenshot') {
         		image = new ImageObject(model);
-        		CanvasObjectCollection.add(image);
+        		AppModel.get('collection').add(image);
         	}
         	if (model.type === 'TextObject') {
         		text = new TextObject(model);
-        		CanvasObjectCollection.add(text);
+        		AppModel.get('collection').add(text);
         	}
         });
         
         // render the models
-        this.refreshCanvas();
+        AppModel.get('collection').refreshCanvas();
+        
+        return this;
 	}
 });
-var CanvasObjectCollection = new CanvasObjects();
 
+var AppModel = new CollectionContainer();
+
+
+/**
+ * BACKGROUND CONTROLS
+ */
+$("select[name='bgColorpicker']").change(function(){
+	AppModel.set('backgroundColor', $(this).val());
+});
+
+
+/**
+ * SAVE BUTTON
+ */
 $("#saveCanvas").click(function(){
 	var options = {};
 	var method;
@@ -100,14 +153,13 @@ $("#saveCanvas").click(function(){
 
 	// update screenshot
 	var hasScreenshot = false;
-	console.log(CanvasObjectCollection);
-	CanvasObjectCollection.each(function( canvasObject, index ) {
+	AppModel.get('collection').each(function( canvasObject, index ) {
 		console.log( canvasObject );
 		if ( canvasObject.get('type') === 'screenshot' ) {
 			console.log(canvasObject);
 			hasScreenshot = true;
 			canvasObject.set('content', canvas.toDataURL());
-			CanvasObjectCollection[index] = canvasObject;
+			AppModel.get('collection')[index] = canvasObject;
 		}
 	});
 	if ( hasScreenshot === false ) {
@@ -115,9 +167,10 @@ $("#saveCanvas").click(function(){
 			'type': 'screenshot',
 			'content': canvas.toDataURL()
 			});
-		CanvasObjectCollection.add(image);
+		AppModel.get('collection').add(image);
 	}
 
-	CanvasObjectCollection.sync(method, CanvasObjectCollection, options);
+	AppModel.sync(method, AppModel, options);
 	$(this).attr('data-saved', 'true');
 });
+
