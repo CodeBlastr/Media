@@ -375,7 +375,7 @@ class _MediaController extends MediaAppController {
 				break;
 		}
 	}
-		
+	
 	
 	/**
 	 * Lazy Loader Function derives from imgsrc link.

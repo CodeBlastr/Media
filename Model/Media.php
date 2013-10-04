@@ -11,7 +11,6 @@ class Media extends MediaAppModel {
  */
 	public $supportedVideoExtensions = array('mpg', 'mov', 'wmv', 'rm', '3g2', '3gp', '3gp2', '3gpp', '3gpp2', 'avi', 'divx', 'dv', 'dv-avi', 'dvx', 'f4v', 'flv', 'h264', 'hdmov', 'm4v', 'mkv', 'mp4', 'mp4v', 'mpe', 'mpeg', 'mpeg4', 'mpg', 'nsv', 'qt', 'swf', 'xvid');
 
-
 /**
  * An array of audio types we accept to the media plugin.
  */
@@ -27,8 +26,6 @@ class Media extends MediaAppModel {
 			'foreignKey' => 'user_id'
 			)
 		);
-
-	public $screenshotId;
 	
 	public $fileExtension;
 
@@ -234,11 +231,19 @@ class Media extends MediaAppModel {
 	
 	public function updateCanvasObjects($data) {
 		$added = false;
+//		foreach ($data as $canvasObject) {
+//			if (!(isset($canvasObject['id']))) {
+//				if ($canvasObject['type'] == 'ImageObject') {
+//					$added = $this->_saveCanvasImageObject($canvasObject);
+//				}
+//			}
+//		}
+
 		foreach ($data as $canvasObject) {
-			if (!(isset($canvasObject['id']))) {
-				if ($canvasObject['type'] == 'ImageObject') {
-					$added = $this->_saveCanvasImageObject($canvasObject);
-				}
+			if ($canvasObject['type'] == 'screenshot') {
+				$savedImage = $this->_saveCanvasImageObject($canvasObject, $data['id']);
+				$canvasObject['id'] = $savedImage['Media']['id'];
+				$canvasObject['content'] = '/theme/Default/media/' . $savedImage['Media']['type'] . '/' .  $savedImage['Media']['filename'] . '.' . $savedImage['Media']['extension'];
 			}
 		}
 
@@ -265,7 +270,7 @@ class Media extends MediaAppModel {
 	 * @param array $data
 	 * @return array|boolean
 	 */
-	private function _saveCanvasImageObject($data) {
+	private function _saveCanvasImageObject($data, $id = false) {
 		
 		// make sure that this is (probably) safe to pass to fopen()
 		if (strpos($data['content'], 'data:') !== 0) {
@@ -307,7 +312,7 @@ class Media extends MediaAppModel {
 
 		if ($written) {
 			// save record to database server
-			$this->create();
+			($id) ? $this->id = $id : $this->create();
 			$added = $this->save(array(
 				'Media' => array(
 					'filename' => array(
@@ -334,3 +339,4 @@ class Media extends MediaAppModel {
 	
 	
 }
+
