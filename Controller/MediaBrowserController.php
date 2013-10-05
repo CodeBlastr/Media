@@ -73,8 +73,8 @@ class _MediaBrowserController extends MediaAppController {
 			$media = $this->Media->find('all', $conditions);
 			$this->request->data = array();
 			foreach($media as $m) {
-				//$m['Media']['type'] = $this->Media->mediaType($m['Media']['extension']);
-				//$m = $this->Media->save($m, array('callbacks' => false));
+				$m['Media']['type'] = $this->Media->mediaType($m['Media']['extension']);
+				$m = $this->Media->save($m, array('callbacks' => false));
 				$this->request->data[] = $m['Media'];
 			}
 			if($this->request->is('ajax')) {
