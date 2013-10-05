@@ -253,8 +253,6 @@ define([
     	var i = 0;
 		this.selectedCollection.forEach(function(model, index){
 			if(model.get('order') == false || model.get('order') != i) { model.set('order', i, { silent: true } ); };
-			console.log('model='+model.get('order'));
-			console.log('i='+i);
 			i++;
 			var view = new MediaItemView({model: model});
 			view.render();
