@@ -163,7 +163,6 @@ define([
     },
     
     closeUploadForm: function(e) {
-    	console.log(this.$el.find('#mediaUploadForm'));
     	this.$el.find('#mediaUploadForm').css('display', 'none');
     },
     

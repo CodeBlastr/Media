@@ -109,7 +109,6 @@ class _MediaBrowserController extends MediaAppController {
 	public function upload() {
 		$this->layout = false;
 		$this->autoRender = false;
-		debug($this->request->data);
 		if (!empty($this->request->data)) {
 		 try{
 			if(isset($this->request->data['MediaAttachment'])) {
