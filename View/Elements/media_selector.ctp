@@ -44,7 +44,7 @@
 	var selectable = true;
 	var wrapperclass = '<?php echo $wrapperclass; ?>';
 	var selecteditems = <?php echo $selecteditems; ?>;
-	var baseUrl = '<?php echo $this->Html->url(array('plugin' => 'media', 'controller' => 'media_browser', 'action' => 'media')); ?>';
+	var baseUrl = '/<?php echo $this->Html->url(array('plugin' => 'media', 'controller' => 'media_browser', 'action' => 'media')); ?>';
 	
 </script>
 
