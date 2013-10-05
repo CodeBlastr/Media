@@ -18,7 +18,7 @@
 
 <div id="MediaSelector">
 	<a data-toggle="modal" href="#mediaBrowserModal" class="btn btn-primary btn-lg">Select Media</a>
-	
+	<p>&nbsp;</p>
 	<div id="mediaSelected" class="clearfix">
 		
 	</div>
