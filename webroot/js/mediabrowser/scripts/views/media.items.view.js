@@ -5,10 +5,19 @@ define([
   'handlebars',
   'libs/text!templates/media_items.html',
   'collections/media.items',
+  'collections/media_selected',
   'views/media.item.view',
   'jqueryform',
   'libs/text!templates/media_selected.html',
-], function($, _, Backbone, Handlebars, MediaItemsTemplate, MediaItems, MediaItemView, jqueryForm, SelectedTemplate){
+], function($, _, Backbone, 
+		Handlebars, 
+		MediaItemsTemplate, 
+		MediaItems, 
+		SelectedMediaCollection, 
+		MediaItemView, 
+		jqueryForm, 
+		SelectedTemplate
+){
   var MediaItemsView = Backbone.View.extend({
 	  
 	//Default filter params
@@ -23,7 +32,7 @@ define([
 	selectedTemplate: Handlebars.compile(SelectedTemplate),
 	
 	collection: new MediaItems(),
-	selectedCollection: new MediaItems(),
+	selectedCollection: new SelectedMediaCollection(),
     
 	el: $('#mediaBrowser'),
 	  
@@ -33,6 +42,13 @@ define([
 		}else {
 			this.wrapperclass = '';
 		}
+		
+		Handlebars.registerHelper('if_gt', function(context, options) {
+	        if (context > options.hash.compare)
+	            return options.fn(this);
+	        return options.inverse(this);
+	    });
+		
 		this.showLoading();
 		//Setup Event Listeners
 		this.on('childCreation', this.render);
@@ -40,7 +56,10 @@ define([
 		this.on('renderEvent', this.hideLoading);
 		this.listenTo(Backbone, 'updateSelected', this.selectModel);
 		this.listenTo(Backbone, 'removeSelected', this.removeSelectModel);
-		this.listenTo(this.collection, 'change', this.renderSelected);
+		//this.listenTo(this.collection, 'change', this.filterIndex);
+		this.listenTo(this.selectedCollection, 'remove', this.renderSelected);
+		this.listenTo(this.selectedCollection, 'remove', this.filterIndex);
+		this.listenTo(this.selectedCollection, 'change', this.renderSelected);
 		//initialize the collection
 		if(typeof selecteditems != 'undefined') {
 			this.selectedCollection.add(selecteditems);
@@ -184,23 +203,72 @@ define([
     	this.selectedCollection.remove(model);
     },
     
-    removeSelectModelFromSelector: function(e) {
-    	console.log(e);
-    	//this.selectedCollection.remove($(e.currentTarget).data('cid'));
+    modifySelectModel: function(e) {
+    	var selel = $(e.currentTarget);
+    	var that = this;
+    	var model = this.selectedCollection.get(selel.parent().data('cid'));
+    	var order = selel.parent().data('order');
+    	if(selel.hasClass('removeSelected')) {
+    		that.selectedCollection.remove(model);
+    		model.set('selected', false);
+    	}
+    	if(selel.hasClass('orderup')) {
+    		console.log(order);
+    		that.selectedCollection.forEach(function(model, index){
+    			console.log(index);
+    			console.log(model.get('order'));
+    			if(index == order-1) {
+    				model.set('order', order, { silent: true } );
+    			}
+    			if(index == order) {
+    				model.set('order', order-1, { silent: true } );
+    			}
+    			console.log(model.get('order'));
+    			console.log('');
+    		});
+    		that.selectedCollection.sort();
+    		this.renderSelected();
+    	}
+    	if(selel.hasClass('orderdown')) {
+    		that.selectedCollection.forEach(function(model, index){
+    			if(index == order+1) {
+    				model.set('order', order, { silent: true } );
+    			}
+    			if(index == order) {
+    				model.set('order', order+1, { silent: true } );
+    			}
+    			console.log(model.get('order'));
+    		});
+    		console.log(that.selectedCollection);
+    		that.selectedCollection.sort();
+    		this.renderSelected();
+    	}
+    	
     },
     
     renderSelected: function() {
+    	$('#mediaSelected').html('');
     	var that = this;
     	var html = '';
+    	var i = 0;
 		this.selectedCollection.forEach(function(model, index){
+			if(model.get('order') == false || model.get('order') != i) { model.set('order', i, { silent: true } ); };
+			console.log('model='+model.get('order'));
+			console.log('i='+i);
+			i++;
 			var view = new MediaItemView({model: model});
 			view.render();
-			view.$el.find('.actions').html('');
+			view.$el.find('.actions').remove();
 			var innerhtml = view.$el.html();
-			var renderObj = ({model: model, innerhtml: innerhtml, wrapperclass: that.wrapperclass, index: index});
-			html += that.selectedTemplate(renderObj);
+			var renderObj = ({cid: model.cid, model: model.toJSON(), innerhtml: innerhtml, wrapperclass: that.wrapperclass, index: index});
+			html = $(that.selectedTemplate(renderObj));
+			html.find('.selected-actions').find('a').bind('click', function(e) {
+				e.preventDefault();
+				that.modifySelectModel(e);
+			});
+			$('#mediaSelected').append(html);
 		});
-		$('#mediaSelected').html(html);
+		
     }
     
   });

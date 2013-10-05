@@ -1,5 +1,13 @@
 <div class="media-selected {{wrapperclass}}">
+	<div class="selected-actions" data-cid="{{cid}}" data-order={{model.order}}>
+		{{#if_gt model.order compare=0}}
+		<a href="#" class="orderup"><span class="glyphicon glyphicon-circle-arrow-left"></span></a>
+		{{/if_gt}}
+		<a href="#" class="orderdown"><span class="glyphicon glyphicon-circle-arrow-right"></span></a>
+		<a href="#" class="removeSelected"><span class="glyphicon glyphicon-remove-circle"></span></a>
+	</div>
 	{{{innerhtml}}}
 	<input type="hidden" name="data[MediaAttachment][{{index}}][media_id]" value="{{model.id}}">
+	<input type="hidden" name="data[MediaAttachment][{{index}}][order]" value="{{model.order}}">
 	<div class="clear clearfix"></div>
 </div>

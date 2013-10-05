@@ -3,9 +3,12 @@ define([
   'backbone',
   'models/media'
 ], function(_, Backbone, MediaItem){
-  var MediaCollection = Backbone.Collection.extend({
+  var SelectedMediaCollection = Backbone.Collection.extend({
+	 
 	  model: MediaItem,
+  
+	  comparator: 'order'
   });
   
-  return MediaCollection;
+  return SelectedMediaCollection;
 });

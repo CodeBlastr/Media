@@ -11,6 +11,7 @@ define([
       filename: '',
       extension: '',
       data: '',
+      order: false,
       selected: false
     },
     

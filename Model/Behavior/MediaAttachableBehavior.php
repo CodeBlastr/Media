@@ -18,6 +18,7 @@ class MediaAttachableBehavior extends ModelBehavior {
 	                	'foreignKey' => 'foreign_key',
 	                	'associationForeignKey' => 'media_id',
 	                	'conditions' => array('MediaAttachment.model' => $Model->alias),
+	            		'order' => array('MediaAttachment.order')
 	            	)
 	    		)
 			), false);
