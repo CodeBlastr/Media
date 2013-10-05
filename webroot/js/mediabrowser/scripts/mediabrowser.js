@@ -9,8 +9,8 @@ require.config({
 	    underscore: 'libs/underscore/underscore.min',
 	    backbone: 'libs/backbone/backbone.min',
 	    handlebars: 'libs/handlebars',
-	    popover: '../bootstrap/js/popover',
-	    tooltip: '../bootstrap/js/tooltip',
+	    popover: 'libs/popover',
+	    tooltip: 'libs/tooltip',
 	    jqueryform: 'libs/jquery/jquery.form.min',
 	},
 	shim: {
