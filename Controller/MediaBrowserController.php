@@ -58,7 +58,7 @@ class _MediaBrowserController extends MediaAppController {
 			if(isset($this->request->query['limit'])) {
 				$conditions['limit'] = $this->request->query['limit'];
 			}
-			if(isset($this->request->query['type'])) {
+			if(isset($this->request->query['type']) && $this->request->query['type'] != 'all') {
 				$conditions['conditions']['type'] = $this->request->query['type'];
 			}
 			if(isset($this->request->query['order'])) {
