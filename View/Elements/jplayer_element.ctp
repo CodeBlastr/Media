@@ -4,7 +4,6 @@
 	 * Use this element for to play a video audio gallery on a a homepage
 	 */
 	
-	
 	if(isset($galleryId)) {
 		$media = $this->requestAction(array('plugin' => 'media', 'controller' => 'media_galleries', 'action' => 'getGalleryMedia', $galleryId ));
 	}

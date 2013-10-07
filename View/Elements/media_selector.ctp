@@ -4,6 +4,7 @@
 	$wrapperclass = isset($class) ? $class : 'col-md-3';
 	//Format the media regardless of how it sent
 	$selecteditems = array();
+	if(isset($media) && !empty($media)) {
 	foreach ($media as $m) {
 		if(isset($m['Media'])) {
 			$m['Media']['selected'] = true;
@@ -12,6 +13,7 @@
 			$m['selected'] = true;
 			$selecteditems[] = $m;
 		}
+	}
 	}
 	$selecteditems = json_encode($selecteditems);
 ?>
