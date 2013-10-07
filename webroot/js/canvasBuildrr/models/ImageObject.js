@@ -59,7 +59,6 @@ var ImageObject = Backbone.Model.extend({
 	refreshContent: function() {
 		var imageModel = this;
 		console.log(imageModel);
-		this.get('image').src = this.get('content');
 		this.get('image').onload = function() {
 			imageModel.set({
 				height: this.height,
@@ -71,6 +70,7 @@ var ImageObject = Backbone.Model.extend({
 			console.log('loaded');
 			imageModel.refresh();
 		};
+		this.get('image').src = this.get('content');
 	},
 	draw: function() {
 		var imageObject = this;

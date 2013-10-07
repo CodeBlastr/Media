@@ -26,7 +26,6 @@ var ImageEditView = Backbone.View.extend({
 	uploadImage: function( event ) {
 		console.log('uploadImage()');
 		$(".filePicker").attr('disabled', 'disabled');
-		$(".cb_addEditImage").fadeOut(3000);
 		var reader = new FileReader(), rFilter = /^image\/(?:bmp|cis\-cod|gif|ief|jpeg|pipeg|png|svg\+xml|tiff|x\-cmu\-raster|x\-cmx|x\-icon|x\-portable\-anymap|x\-portable\-bitmap|x\-portable\-graymap|x\-portable\-pixmap|x\-rgb|x\-xbitmap|x\-xpixmap|x\-xwindowdump)$/i;
 		var imageModel = this.model;
 		reader.onload = function( event ) {
@@ -37,7 +36,6 @@ var ImageEditView = Backbone.View.extend({
 			return;
 		}
 		reader.readAsDataURL(event.target.files[0]);
-		this.close();
 	},
 	falseHandler: function( event ) {
 		return false;
