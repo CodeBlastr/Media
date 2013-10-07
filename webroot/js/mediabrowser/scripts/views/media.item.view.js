@@ -92,10 +92,11 @@ define([
     		that.model.set('selected', true);
     		var event = new CustomEvent('mediaBrowserMediaSelected', {'detail': that.model});
     		document.dispatchEvent(event);
-		    console.log('mediaBrowserMediaSelected fired');
     	}else {
     		that.model.set('selected', false);
     		that.model.trigger('UnSelectModel');
+    		var event = new CustomEvent('mediaBrowserMediaUnSelected', {'detail': that.model});
+    		document.dispatchEvent(event);
     	}
     	return this;
     },
