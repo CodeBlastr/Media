@@ -1,6 +1,6 @@
 <div class="row">
 	<div class="span8">
-		<canvas id="canvas" width="425" height="550">Your browser does not support HTML5 Canvas.</canvas>
+		<canvas id="canvas" width="420" height="594">Your browser does not support HTML5 Canvas.</canvas>
 	</div>
 	<div class="span4">
 		<div>
