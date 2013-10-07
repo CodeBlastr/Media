@@ -5,8 +5,8 @@ define([
   'handlebars',
   'models/media',
   'popover',
-  'libs/text!templates/media_item_image.html',
-  'libs/text!templates/media_item_audio.html'
+  'text!templates/media_item_image.html',
+  'text!templates/media_item_audio.html'
 ], function($, 
 			_, 
 			Backbone, 

@@ -10,11 +10,16 @@ class _MediaGalleriesController extends MediaAppController {
 	public $uses = 'Media.MediaGallery';
 	
 	public $helpers = array('Media.Media');
-
+	
+	public $displayElements =  array(
+		'jplayer_element' => 'JPlayer',
+	);
+	
 	public function index() {
 		$galleries = $this->MediaGallery->find('all', array(
 			'conditions' => array()
 		));
+		$this->set('tagOptions', $this->displayElements);
 		$this->set('galleries', $galleries);
 	}
 

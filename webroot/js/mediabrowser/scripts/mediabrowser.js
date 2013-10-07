@@ -12,6 +12,7 @@ require.config({
 	    popover: 'libs/popover',
 	    tooltip: 'libs/tooltip',
 	    jqueryform: 'libs/jquery/jquery.form.min',
+	    text: 'libs/text',
 	},
 	shim: {
 	    'backbone': {
