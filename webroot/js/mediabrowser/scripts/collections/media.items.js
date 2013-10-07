@@ -5,7 +5,7 @@ define([
 ], function(_, Backbone, MediaItem){
   var MediaCollection = Backbone.Collection.extend({
 	  model: MediaItem,
-	  url: baseUrl+'/media',
+	  url: baseUrl,
 	  
   });
   
