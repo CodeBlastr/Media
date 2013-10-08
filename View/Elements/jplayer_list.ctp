@@ -85,14 +85,14 @@
 			  playlistOptions: {
 			    enableRemoveControls: false
 			  },
-			  swfPath: "<?php echo FULL_BASE_URL; ?>/js/plugins/jQuery.jPlayer.2.4.0/",
+			  swfPath: "http://www.jplayer.org/latest/js/Jplayer.swf",
 			  supplied: "mp3",
+			  wmode: "window",
 			  smoothPlayBar: true,
 			  keyEnabled: true,
 			  solution: "html, flash",
 			  audioFullScreen: false // Allows the audio poster to go full screen via keyboard
 			});
-		$('#jquery_jplayer').hide();
 	});   
 })(jQuery);
 
