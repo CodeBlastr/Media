@@ -132,6 +132,21 @@ var AppModel = new CollectionContainer();
 
 
 /**
+ * LISTEN FOR NEW IMAGES
+ */
+document.addEventListener('mediaBrowserMediaSelected', function (e) {
+	console.log('mediaBrowserMediaSelected caught');
+	var model = e.detail;
+	var image = new ImageObject({
+		'type': 'ImageObject',
+		'content': "/theme/default/media/images/" + model.attributes.filename + "." + model.attributes.extension
+	});
+	var collection = AppModel.get('collection');	
+	collection.add(image);
+}, false);
+
+
+/**
  * BACKGROUND CONTROLS
  */
 $("select[name='bgColorpicker']").change(function(){

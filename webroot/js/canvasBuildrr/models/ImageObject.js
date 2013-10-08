@@ -10,11 +10,13 @@ var ImageObject = Backbone.Model.extend({
 		aspectRatio: 1,
 		scale: [1,1],
 		order: 0,
-		image: new Image(),
+		image:  {},
 		loaded: false,
 		isEditable: true
 	},
+	
 	url: '/media/media/canvas',
+	
 	initialize: function() {
 		this
 			.on("change:x", this.refresh)
@@ -39,11 +41,12 @@ var ImageObject = Backbone.Model.extend({
 				.append( '<div class="cb_ph_corner cb_ph_topLeft btn btn-mini" title="Drag to Resize; Double-Click to Auto-Resize."><i class="icon-fullscreen"></i></div>' )
 				.append( '<div class="cb_ph_corner cb_ph_topRight btn btn-mini" title="Drag to Rotate; Double-Click to Reset."><i class="icon icon-repeat"></i></div>' );
 		$("#cb_canvasWrapper").append(placeholder);
-		
+
 		if ( this.get('content') !== '' ) {
-			this.refreshContent;
+			this.refreshContent();
 		}
 	},
+	
 	refresh: function() {
 		console.log('refreshing an ImageObject');
 		AppModel.get('collection').refreshCanvas();
@@ -56,10 +59,12 @@ var ImageObject = Backbone.Model.extend({
 				.css('centerX', this.get('width') / 2)
 				.css('centerY', this.get('height') / 2);
 	},
+	
 	refreshContent: function() {
+		console.log(this);
 		var imageModel = this;
-		console.log(imageModel);
-		this.get('image').onload = function() {
+		var imageobj = new Image();
+		imageobj.onload = function() {
 			imageModel.set({
 				height: this.height,
 				width: this.width,
@@ -70,9 +75,12 @@ var ImageObject = Backbone.Model.extend({
 			console.log('loaded');
 			imageModel.refresh();
 		};
-		this.get('image').src = this.get('content');
+		imageobj.src = this.get('content');
+		this.set('image', imageobj);
 	},
+	
 	draw: function() {
+		console.log(this);
 		var imageObject = this;
 		if ( imageObject.get('type') !== 'screenshot' ) {
 			console.log('ImageObject::draw() fired.');
@@ -116,6 +124,7 @@ var ImageObject = Backbone.Model.extend({
 			console.log('drawing image at: (' + imageObject.get('x') + ', ' + imageObject.get('y') + '), rotated ' + this.get('rotation') + 'deg');
 		}
 	},
+	
 	resize: function() {
 		console.log('resizing image');
 		var imageObject = this;
@@ -139,6 +148,7 @@ var ImageObject = Backbone.Model.extend({
 		});
 		return false;
 	},
+	
 	autoResize: function() {
 		console.log('auto resizing image');
 		if ( this.get('aspectRatio') > (canvas.width / canvas.height) ) {

@@ -9,22 +9,28 @@
 				<label>
 					Background color: 
 					<select name="bgColorpicker">
-						<option value="#ffffff">White</option>
 						<option value="#000000">Black</option>
-						<option value="#7bd148">Green</option>
+						<option value="#e1e1e1">Gray</option>
+						<option value="#ffffff">White</option>
 						<option value="#5484ed">Bold blue</option>
 						<option value="#a4bdfc">Blue</option>
 						<option value="#46d6db">Turquoise</option>
-						<option value="#7ae7bf">Light green</option>
+						<option value="#7ae7bf">Seafoam</option>
+						<option value="#7bd148">Green</option>
 						<option value="#51b749">Bold green</option>
 						<option value="#fbd75b">Yellow</option>
 						<option value="#ffb878">Orange</option>
 						<option value="#ff887c">Red</option>
 						<option value="#dc2127">Bold red</option>
-						<option value="#dbadff">Purple</option>
-						<option value="#e1e1e1">Gray</option>
+						<option value="#663399">Royal Purple</option>
+						<option value="#dbadff">Light Purple</option>
+						<option value="#ff0080">Hot Pink</option>
 					</select>
 				</label>
+			</div>
+			
+			<div>
+				<?php echo $this->Element('Media.media_selector') ?>
 			</div>
 
 			<div class="btn" id="saveCanvas" data-saved="false">Save progress</div>
@@ -54,7 +60,6 @@
 				<option value="#663399">Royal Purple</option>
 				<option value="#dbadff">Light Purple</option>
 				<option value="#ff0080">Hot Pink</option>
-				
 			</select>
 			<select name="fontsizepicker" class="input-small">
 				<option value="10">10px</option>
@@ -88,7 +93,7 @@
 		<div class="cb_close" title="Close">&times;</div>
 		<div class="cb_up" title="Move up"><i class="icon-arrow-up"></i></div>
 		<div class="cb_down" title="Move down"><i class="icon-arrow-down"></i></div>
-		<div class="cb_remove" title="Remove image"><i class="icon-trash"></i></div>
+		<div class="cb_remove" title="Remove this text"><i class="icon-trash"></i></div>
 		<div class="cb_lock" title="Lock layer"><i class="icon-ok-circle"></i></div>
 	</div>
 </div>
@@ -97,13 +102,13 @@
 <div class="cb_addEditImage" style="top: <%= top %>px; left: <%= left %>px;">
 	<div class="cb_imageToolbar">
 		<div class="pull-left">
-			<input type="file" class="filePicker" name="imageLoader"/>
+			
 		</div>
 		<div class="pull-right editorActions">
 			<div class="cb_close" title="Close">&times;</div>
 			<div class="cb_up" title="Move up"><i class="icon-arrow-up"></i></div>
 			<div class="cb_down" title="Move down"><i class="icon-arrow-down"></i></div>
-			<div class="cb_remove" title="Remove image"><i class="icon-trash"></i></div>
+			<div class="cb_remove" title="Remove this image"><i class="icon-trash"></i></div>
 		</div>
 	</div>
 </div>
@@ -119,7 +124,7 @@
 
 <script type="text/javascript" src="/media/js/canvasBuildrr/models/TextObject.js"></script>
 <script type="text/javascript" src="/media/js/canvasBuildrr/models/ImageObject.js"></script>
-<script type="text/javascript" src="/media/js/canvasBuildrr.js"></script>
+<script type="text/javascript" src="/media/js/canvasBuildrr/canvasBuildrr.js"></script>
 <script type="text/javascript" src="/media/js/canvasBuildrr/views/MainOverlay.js"></script>
 <script type="text/javascript" src="/media/js/canvasBuildrr/views/TextEdit.js"></script>
 <script type="text/javascript" src="/media/js/canvasBuildrr/views/ImageEdit.js"></script>
@@ -127,9 +132,6 @@
 <link rel="stylesheet" type="text/css" href="/media/css/canvasBuildrr.css" />
 
 <script type="text/javascript">
-	$(document).ready(function() {
-		//$("#canvas").canvasBuildrr();
-	});
 
 	$(function() {
 		var toggleList = $("#subject"),
@@ -138,8 +140,7 @@
 			subject = $("#subject");
 
 		toggleList.on("click", function(){
-			$(".arrows").toggleClass("is-active");
-			list.fadeToggle(); // hide list
+			list.fadeToggle();
 		});
 
 		item.on("click", function(){
@@ -152,7 +153,7 @@
 	});
 
 	$('select[name="bgColorpicker"]').simplecolorpicker({picker: true});
-	
+	Backbone.$ = $;
 </script>
 
 <?php if (!(empty($this->request->data))) : ?>
