@@ -3,8 +3,7 @@ var TextEditView = Backbone.View.extend({
 	initialize: function( attrs ) {
 		this.options = attrs;
 		this.render();
-		console.log(Backbone.$('select[name="colorpicker"]'));
-		Backbone.$('select[name="colorpicker"]').simplecolorpicker({picker: true});
+		$j('select[name="colorpicker"]').simplecolorpicker({picker: true});
 	},
 	
 	render: function() {
@@ -98,7 +97,7 @@ var TextEditView = Backbone.View.extend({
 				}
 			}
 		}
-		$('select[name="colorpicker"]').simplecolorpicker('destroy');
+		$j('select[name="colorpicker"]').simplecolorpicker('destroy');
 		this.$('.cb_addEditText').remove();
 	}
 });

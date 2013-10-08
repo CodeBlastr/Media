@@ -1,3 +1,7 @@
+<script>
+	var $j = $;
+</script>
+
 <div class="row">
 	<div class="span8">
 		<canvas id="canvas" width="420" height="594">Your browser does not support HTML5 Canvas.</canvas>
@@ -118,7 +122,6 @@
 <script type="text/javascript" src="/js/simplecolorpicker/simplecolorpicker.js"></script>
 <link rel="stylesheet" type="text/css" href="/css/simplecolorpicker/simplecolorpicker.css" />
 
-
 <script type="text/javascript" src="/js/underscore/underscore-1.5.1.js"></script>
 <script type="text/javascript" src="/js/backbone/backbone-1.0.0.js"></script>
 
@@ -132,8 +135,6 @@
 <link rel="stylesheet" type="text/css" href="/media/css/canvasBuildrr.css" />
 
 <script type="text/javascript">
-
-	$(function() {
 		var toggleList = $("#subject"),
 			list = $(".subject ul"),
 			item = list.find("li"),
@@ -150,10 +151,8 @@
 			item.removeClass("is-active");
 			$(this).addClass("is-active");
 		});
-	});
 
-	$('select[name="bgColorpicker"]').simplecolorpicker({picker: true});
-	Backbone.$ = $;
+	$j('select[name="bgColorpicker"]').simplecolorpicker({picker: true});
 </script>
 
 <?php if (!(empty($this->request->data))) : ?>

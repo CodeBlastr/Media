@@ -80,7 +80,6 @@ var ImageObject = Backbone.Model.extend({
 	},
 	
 	draw: function() {
-		console.log(this);
 		var imageObject = this;
 		if ( imageObject.get('type') !== 'screenshot' ) {
 			console.log('ImageObject::draw() fired.');
