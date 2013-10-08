@@ -2,7 +2,6 @@
 <script type="text/javascript" src="/js/plugins/jQuery.jPlayer.2.4.0/jquery.jplayer.min.js"></script>
 <script type="text/javascript" src="/js/plugins/jQuery.jPlayer.2.4.0/add-on/jplayer.playlist.min.js"></script>
 <div id="jplayerList" class="<?php echo $class; ?>">
-
 	<div id="jquery_jplayer" class="jp-jplayer"></div>
 			  <div id="jp_container_1" class="jp-audio">
 			    <div class="jp-type-single">
@@ -86,13 +85,14 @@
 			  playlistOptions: {
 			    enableRemoveControls: false
 			  },
-			  swfPath: "/js/plugins/jQuery.jPlayer.2.4.0/",
+			  swfPath: "http://www.jplayer.org/latest/js/Jplayer.swf",
 			  supplied: "mp3",
+			  wmode: "window",
 			  smoothPlayBar: true,
 			  keyEnabled: true,
+			  solution: "html, flash",
 			  audioFullScreen: false // Allows the audio poster to go full screen via keyboard
 			});
-		$('#jquery_jplayer').hide();
 	});   
 })(jQuery);
 

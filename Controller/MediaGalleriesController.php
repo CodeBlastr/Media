@@ -29,7 +29,7 @@ class _MediaGalleriesController extends MediaAppController {
 			$this->request->data['User']['id'] = $this->Auth->user('id');
 			if ( $this->MediaGallery->save($this->request->data) ) {
 				$this->Session->setFlash('Media Gallery created.');
-				$this->redirect(array('action' => 'my'));
+				$this->redirect(array('action' => 'index'));
 			} else {
 				$this->Session->setFlash('Unable to save this media gallery.');
 			}
