@@ -4,7 +4,7 @@
 
 <div class="row">
 	<div class="span8">
-		<canvas id="canvas" width="420" height="594">Your browser does not support HTML5 Canvas.</canvas>
+		<canvas id="canvas" width="420" height="594">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</canvas>
 	</div>
 	<div class="span4">
 		<div>

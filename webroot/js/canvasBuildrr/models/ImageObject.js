@@ -1,4 +1,5 @@
 var ImageObject = Backbone.Model.extend({
+	
 	defaults: {
 		type: 'ImageObject',
 		content: '',
@@ -51,9 +52,7 @@ var ImageObject = Backbone.Model.extend({
 	},
 	
 	refresh: function() {
-		console.log('refreshing an ImageObject');
 		AppModel.get('collection').refreshCanvas();
-		
 		if ( this.get('isEditable') === true ) {
 			// update the placeholder div
 			$("div[data-cid='"+this.cid+"']")
@@ -67,7 +66,6 @@ var ImageObject = Backbone.Model.extend({
 	},
 	
 	refreshContent: function() {
-		console.log(this);
 		var imageModel = this;
 		var imageobj = new Image();
 		imageobj.onload = function() {
@@ -88,8 +86,6 @@ var ImageObject = Backbone.Model.extend({
 	draw: function() {
 		var imageObject = this;
 		if ( imageObject.get('type') !== 'screenshot' ) {
-			console.log('ImageObject::draw() fired.');
-		
 			var width = ( imageObject.get('width') === '' ) ? null : imageObject.get('width');
 			var height = ( imageObject.get('height') === '' ) ? null : imageObject.get('height');
 			var dx;
@@ -131,11 +127,9 @@ var ImageObject = Backbone.Model.extend({
 	},
 	
 	resize: function() {
-		console.log('resizing image');
 		var imageObject = this;
 		var xPrev;
 		$("#cb_canvasWrapper").bind('mousemove', function(event) {
-			console.log('resizing');   
 	        if ( xPrev < event.pageX ) {
 	        	// mouse moving right
 	        	var newWidth = imageObject.get('width') + 1;
@@ -155,7 +149,6 @@ var ImageObject = Backbone.Model.extend({
 	},
 	
 	autoResize: function() {
-		console.log('auto resizing image');
 		if ( this.get('aspectRatio') > (canvas.width / canvas.height) ) {
 			this
 				.set('width', canvas.width)

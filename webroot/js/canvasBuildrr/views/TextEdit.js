@@ -32,10 +32,16 @@ var TextEditView = Backbone.View.extend({
 		"click .cb_up": "orderUp",
 		"click .cb_down": "orderDown",
 		"click .cb_lock": "toggleLock",
+		"click .cb_remove": "remove",
 		'click #font': 'toggleFonts',
 		'click #fontList li': 'selectFont',
 		'change select[name="colorpicker"]': 'updateColor',
 		'change select[name="fontsizepicker"]': 'updateFontsize',
+	},
+	
+	remove: function( event ) {
+		AppModel.get('collection').remove( this.model );
+		this.close();
 	},
 	
 	toggleLock: function( event ) {
@@ -56,7 +62,6 @@ var TextEditView = Backbone.View.extend({
 	},
 	
 	toggleFonts: function( event ) {
-		console.log('toggling font list');
 		$("#fontList").fadeToggle();
 	},
 	
@@ -70,7 +75,7 @@ var TextEditView = Backbone.View.extend({
 	},
 	
 	updateText: function( event ) {
-		console.log(this.model.cid);
+		console.log(this.model);
 		this.model.set('content', event.target.value);
 	},
 	
@@ -106,11 +111,8 @@ var textEditHandler = function( event, text ) {
 	if ( text === undefined ) {
 		text = new TextObject({x: click.x, y: click.y});
 		AppModel.get('collection').add(text);
-		//debug
-		console.log('text added to AppModel.collection at: ' + click.x + ', ' + click.y);
-	} else {
-		console.log('editing text object: ' + text.cid);
 	}
+	console.log(text);
 	var textEditor = new TextEditView({
 		model: text,
 		el: $("#cb_canvasWrapper").parent(),
