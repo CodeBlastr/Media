@@ -1,15 +1,17 @@
 // wrap the canvas
 element.wrap('<div id="cb_canvasWrapper" />');
 $("#cb_canvasWrapper").css('width', element.attr('width'));
-$("#cb_canvasWrapper").after('<div id="cb_circleMenu" />');
 
 // create our main action menu
+$("#cb_canvasWrapper").after('<div id="cb_circleMenu" />');
 $("#cb_circleMenu").append('<a id="cb_addText">Abc</a> <a id="cb_addImage">img</a>');
 $("#cb_circleMenu").append('<a id="cb_cancel">&times;</a>');
 
 var dragged;
 
 var mainMenuHandler = function( event ) {
+	// get rid of open editors
+	$(".cb_addEditImage, .cb_addEditText").remove();
 	// show the menu
 	$('#cb_circleMenu').css({'top': event.pageY - 50, 'left': event.pageX - 50});
 	$('#cb_circleMenu').show();
@@ -29,25 +31,24 @@ $("canvas#canvas").on('click', function( event ) {
  * Main menu click actions
  */
 $("#cb_addText").click(function( e ) {
-	$('#cb_circleMenu').hide();
+	$('#cb_circleMenu').fadeOut(150);
 	textEditHandler(e);
 	return false;
 });
 
 $("#cb_addImage").click(function( e ) {
-	$('#cb_circleMenu').hide();
+	$('#cb_circleMenu').fadeOut(150);
 	imageEditHandler(e);
-	console.log('#cb_addImage clicked');
 	return false;
 });
 
 $("#cb_cancel").click(function( e ) {
-	$('#cb_circleMenu').hide();
+	$('#cb_circleMenu').fadeOut(150);
 	return false;
 });
 
 
-$("#cb_canvasWrapper").parent()
+$("#cb_canvasWrapper").parent().parent()
 		.on({
 			mouseup: function(event) {
 				//console.log('mouseUp');
@@ -57,18 +58,25 @@ $("#cb_canvasWrapper").parent()
 		})
 		.on({
 			mouseenter: function(event) {
+				var clickedObject = AppModel.get('collection').get($(this).attr('data-cid'));
+				if ( clickedObject.get('isEditable') === true ) {
+					$(this).addClass('cb_placeholderHover');
+				}
 				return false;
 			},
 			mouseleave: function(event) {
+				$(this).removeClass('cb_placeholderHover');
 				return false;
 			},
 			click: function(event) {
 				console.log('.cb_placeholder click');
-				
+				var clickedObject = AppModel.get('collection').get($(this).attr('data-cid'));
+				if ( clickedObject.get('isEditable') === false ) {
+					return false;
+				}
 				if ( dragged === true ) {
 					dragged = false;
 				} else {
-					var clickedObject = CanvasObjectCollection.get($(this).attr('data-cid'));
 					if ( $(this).attr('data-model') === 'TextObject' ) {
 						textEditHandler(event, clickedObject);
 					}
@@ -79,8 +87,11 @@ $("#cb_canvasWrapper").parent()
 				return false;
 			},
 			mousedown: function(event) {
+				var clickedObject = AppModel.get('collection').get($(this).attr('data-cid'));
+				if ( clickedObject.get('isEditable') === false ) {
+					return false;
+				}
 				// attach binding for object movement
-				var clickedObject = CanvasObjectCollection.get($(this).attr('data-cid'));
 				var cursorPosition = {
 					originalX: $("#cb_canvasWrapper").offset().left - event.pageX,
 					originalY: $("#cb_canvasWrapper").offset().top - event.pageY
@@ -92,9 +103,10 @@ $("#cb_canvasWrapper").parent()
 				$("#cb_canvasWrapper").bind('mousemove', function(event) {
 					console.log('moving object');
 					dragged = true;
-					clickedObject
-						.set('x', objectPosition.originalX - (($("#cb_canvasWrapper").offset().left - event.pageX) - cursorPosition.originalX))
-						.set('y', objectPosition.originalY - (($("#cb_canvasWrapper").offset().top - event.pageY) - cursorPosition.originalY));
+					clickedObject.set({
+						x: objectPosition.originalX - (($("#cb_canvasWrapper").offset().left - event.pageX) - cursorPosition.originalX),
+						y: objectPosition.originalY - (($("#cb_canvasWrapper").offset().top - event.pageY) - cursorPosition.originalY)
+					});
 					return false;
 				});
 				return false;
@@ -105,21 +117,25 @@ $("#cb_canvasWrapper").parent()
 /**
  * corner clicks
  */
-$("#cb_canvasWrapper").parent()
+$("#cb_canvasWrapper").parent().parent()
 		.on({
 			click: function(event) {
 				return false;
 			},
 			dblclick: function(event) {
+				var clickedObject = AppModel.get('collection').get($(this).parent().attr('data-cid'));
 				if ( $(this).hasClass("cb_ph_topLeft") ) {
-					var clickedObject = CanvasObjectCollection.get($(this).parent().attr('data-cid'));
 					if ( clickedObject.get('type') === 'ImageObject' ) {
 						clickedObject.autoResize();
 					}
 				}
+				if ( $(this).hasClass("cb_ph_topRight") ) {
+					clickedObject.set('rotation', 0);
+				}
+				return false;
 			},
 			mousedown: function(event) {
-				var clickedObject = CanvasObjectCollection.get($(this).parent().attr('data-cid'));
+				var clickedObject = AppModel.get('collection').get($(this).parent().attr('data-cid'));
 				
 				if ( $(this).hasClass("cb_ph_topRight") ) {
 					console.log('rotate tool');
@@ -134,9 +150,8 @@ $("#cb_canvasWrapper").parent()
 				        	var newRotation = clickedObject.get('rotation') - 2;
 				        }
 				        xPrev = event.pageX;
-						clickedObject.set('rotation', newRotation );
+						clickedObject.set('rotation', newRotation);
 					});
-					return false;
 				}
 				
 				if ( $(this).hasClass("cb_ph_topLeft") ) {
@@ -149,13 +164,11 @@ $("#cb_canvasWrapper").parent()
 				if ( $(this).hasClass("cb_ph_bottomLeft") ) {
 					console.log('flip horizontal tool');
 					clickedObject.set('scale', [clickedObject.get('scale')[0] * -1, 1]);
-					return false;
 				}
 				
 				if ( $(this).hasClass("cb_ph_bottomRight") ) {
 					console.log('flip vertical tool');
 					clickedObject.set('scale', [1, clickedObject.get('scale')[1] * -1]);
-					return false;
 				}
 				
 				return false;

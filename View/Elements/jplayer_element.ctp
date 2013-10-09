@@ -1,7 +1,26 @@
+<?php 
+	
+	/**
+	 * Use this element for to play a video audio gallery on a a homepage
+	 */
+	
+	if(isset($galleryId)) {
+		$media = $this->requestAction(array('plugin' => 'media', 'controller' => 'media_galleries', 'action' => 'getGalleryMedia', $galleryId ));
+	}
+	
+	
+?>
+
+
+
 <link rel="stylesheet" type="text/css" href="/js/plugins/jQuery.jPlayer.2.4.0/blue.monday/jplayer.blue.monday.css">
 <script type="text/javascript" src="/js/plugins/jQuery.jPlayer.2.4.0/jquery.jplayer.min.js"></script>
 <script type="text/javascript" src="/js/plugins/jQuery.jPlayer.2.4.0/add-on/jplayer.playlist.min.js"></script>
+
+<div id="mediaPlayer">
+
 <div id="jplayerList" class="<?php echo $class; ?>">
+
 	<div id="jquery_jplayer" class="jp-jplayer"></div>
 			  <div id="jp_container_1" class="jp-audio">
 			    <div class="jp-type-single">
@@ -55,7 +74,19 @@
 
 (function($) {
 	$(document).ready(function() {
-		var tracks = <?php echo $tracks ?>;
+		var media = <?php echo $media ?>;
+		media.path = "/theme/default/media/audio/";
+		console.log(media.Media.length);
+		var tracks = [];
+		for(i = 0 ; i < media.Media.length ; i++) {
+			console.log(media.Media[i].filename);
+			tracks.push({
+					    title:"track "+i,
+					    mp3: '<?php echo FULL_BASE_URL; ?>' + media.path + media.Media[i].filename + '.' + media.Media[i].extension
+					  });
+					
+		}
+		console.log(tracks);
 		var myPlaylist = new jPlayerPlaylist({
 			  jPlayer: "#jquery_jplayer",
 			  cssSelectorAncestor: "#jp_container_1",
@@ -85,16 +116,30 @@
 			  playlistOptions: {
 			    enableRemoveControls: false
 			  },
-			  swfPath: "http://www.jplayer.org/latest/js/Jplayer.swf",
+			  swfPath: "/js/plugins/jQuery.jPlayer.2.4.0/",
 			  supplied: "mp3",
-			  wmode: "window",
 			  smoothPlayBar: true,
 			  keyEnabled: true,
-			  solution: "html, flash",
 			  audioFullScreen: false // Allows the audio poster to go full screen via keyboard
 			});
+
+
+		$('a[href="/users/users/login"]').hover(function(e) {
+			playtrack();
+		});
+
+		$('#logo').click(function(e) {
+			e.preventDefault();
+			playtrack();
+		});
+
+		function playtrack() {
+			var num = Math.floor(Math.random() * media.Media.length) + 1;
+			myPlaylist.play(num);
+		}
 	});   
 })(jQuery);
 
 </script>
 
+</div>

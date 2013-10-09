@@ -342,27 +342,15 @@ class _MediaController extends MediaAppController {
 // 		$this->Canvas = new Canvas;
 		switch ($this->request->method()) {
 			case ('POST'):
-				if (isset($this->request->params['named']['collection'])) {
-					$response = $this->Media->addCanvasCollection($this->request->data);
-				} else {
-					$response = $this->Media->addCanvasObjects($this->request->data);
-				}
+				$response = $this->Media->addCanvasObjects($this->request->data);
 				$this->__returnJsonResponse($response);
 				break;
 			case ('PUT'):
-				if (isset($this->request->params['named']['collection'])) {
-					$response = $this->Media->updateCanvasCollection($this->request->data);
-				} else {
-					$response = $this->Media->updateCanvasObjects($this->request->data);
-				}
+				$response = $this->Media->updateCanvasObjects($this->request->data);
 				$this->__returnJsonResponse($response);
 				break;
 			case ('DELETE'):
-				if (isset($this->request->params['named']['collection'])) {
-					$response = $this->Media->deleteCanvasCollection($this->request->data);
-				} else {
-					$response = $this->Media->deleteCanvasObjects($this->request->data);
-				}
+				$response = $this->Media->deleteCanvasObjects($this->request->data);
 				$this->__returnJsonResponse($response);
 				break;
 			case ('GET'):
@@ -373,6 +361,10 @@ class _MediaController extends MediaAppController {
 									'Media.id' => $id
 							)
 					));
+					$this->request->data['Media']['data'] = json_decode($this->request->data['Media']['data']);
+					$this->request->data['Media']['data']->id = $id;
+					$this->request->data['Media']['data'] = json_encode($this->request->data['Media']['data']);
+
 // 					if ($this->request->isAjax()) {
 // 							$this->__returnJsonResponse(array(
 // 								'statusCode' => '200',
@@ -383,7 +375,7 @@ class _MediaController extends MediaAppController {
 				break;
 		}
 	}
-		
+	
 	
 	/**
 	 * Lazy Loader Function derives from imgsrc link.

@@ -10,11 +10,16 @@ class _MediaGalleriesController extends MediaAppController {
 	public $uses = 'Media.MediaGallery';
 	
 	public $helpers = array('Media.Media');
-
+	
+	public $displayElements =  array(
+		'jplayer_element' => 'JPlayer',
+	);
+	
 	public function index() {
 		$galleries = $this->MediaGallery->find('all', array(
 			'conditions' => array()
 		));
+		$this->set('tagOptions', $this->displayElements);
 		$this->set('galleries', $galleries);
 	}
 
@@ -24,7 +29,7 @@ class _MediaGalleriesController extends MediaAppController {
 			$this->request->data['User']['id'] = $this->Auth->user('id');
 			if ( $this->MediaGallery->save($this->request->data) ) {
 				$this->Session->setFlash('Media Gallery created.');
-				$this->redirect(array('action' => 'my'));
+				$this->redirect(array('action' => 'index'));
 			} else {
 				$this->Session->setFlash('Unable to save this media gallery.');
 			}
