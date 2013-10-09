@@ -27,9 +27,11 @@ var ImageObject = Backbone.Model.extend({
 			.on("change:height", this.refresh)
 			.on("change:content", this.refreshContent)
 			.on("change:rotation", this.refresh);
-		// create a placeholder div for this new object on the canvas
-		var placeholder = $('<div class="cb_placeholder" />');
-		placeholder
+			
+		if ( this.get('isEditable') === true ) {
+			// create a placeholder div for this new object on the canvas
+			var placeholder = $('<div class="cb_placeholder" />');
+			placeholder
 				.attr('data-model', 'ImageObject')
 				.attr('data-cid', this.cid)
 				.css('top', this.get('y'))
@@ -40,8 +42,9 @@ var ImageObject = Backbone.Model.extend({
 				.append( '<div class="cb_ph_corner cb_ph_bottomRight btn btn-mini" title="Click to Flip Vertically."><i class="icon icon-resize-vertical"></i></div>' )
 				.append( '<div class="cb_ph_corner cb_ph_topLeft btn btn-mini" title="Drag to Resize; Double-Click to Auto-Resize."><i class="icon-fullscreen"></i></div>' )
 				.append( '<div class="cb_ph_corner cb_ph_topRight btn btn-mini" title="Drag to Rotate; Double-Click to Reset."><i class="icon icon-repeat"></i></div>' );
-		$("#cb_canvasWrapper").append(placeholder);
-
+			$("#cb_canvasWrapper").append(placeholder);
+		}
+		
 		if ( this.get('content') !== '' ) {
 			this.refreshContent();
 		}
@@ -50,14 +53,17 @@ var ImageObject = Backbone.Model.extend({
 	refresh: function() {
 		console.log('refreshing an ImageObject');
 		AppModel.get('collection').refreshCanvas();
-		// update the placeholder div
-		$("div[data-cid='"+this.cid+"']")
+		
+		if ( this.get('isEditable') === true ) {
+			// update the placeholder div
+			$("div[data-cid='"+this.cid+"']")
 				.css('top', this.get('y'))
 				.css('left', this.get('x'))
 				.css('width', this.get('width'))
 				.css('height', this.get('height'))
 				.css('centerX', this.get('width') / 2)
 				.css('centerY', this.get('height') / 2);
+		}
 	},
 	
 	refreshContent: function() {

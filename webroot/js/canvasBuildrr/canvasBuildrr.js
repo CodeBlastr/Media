@@ -180,7 +180,8 @@ $("#saveCanvas").click(function(){
 	if ( hasScreenshot === false ) {
 		image = new ImageObject({
 			'type': 'screenshot',
-			'content': canvas.toDataURL()
+			'content': canvas.toDataURL(),
+			'isEditable': false
 			});
 		AppModel.get('collection').add(image);
 	}
