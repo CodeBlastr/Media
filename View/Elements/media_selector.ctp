@@ -26,7 +26,8 @@
 	</div>
 
 </div>
-<div class="modal fade" id="mediaBrowserModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<script type="template/javascript" id="mediaModalTemplate">
+	<div class="modal fade" id="mediaBrowserModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -38,11 +39,14 @@
       </div>
       <div class="modal-footer">
       </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+    </div>
+ 	 </div>
+	</div>
+</script>
+
 
 <script type="text/javascript">
+	$($('#mediaModalTemplate').html()).appendTo('body');
 	var selectable = true;
 	var wrapperclass = '<?php echo $wrapperclass; ?>';
 	var selecteditems = <?php echo $selecteditems; ?>;
