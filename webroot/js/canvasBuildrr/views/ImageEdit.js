@@ -1,8 +1,10 @@
 var ImageEditView = Backbone.View.extend({
+	
 	initialize: function( attrs ) {
 		this.options = attrs;
 		this.render();
 	},
+	
 	render: function() {
 		var template = _.template($("#template-imageEdit").html(), this.options);
 		this.$el.append(template);
@@ -11,20 +13,23 @@ var ImageEditView = Backbone.View.extend({
 
 		return this;
 	},
+	
 	events: {
 		"change input.filePicker": 'uploadImage',
 		"click .cb_up": "orderUp",
 		"click .cb_down": "orderDown",
 		"click .cb_close": 'close'
 	},
+	
 	orderUp: function( event ) {
 		this.model.set('order', this.model.get('order') + 1);
 	},
+	
 	orderDown: function( event ) {
 		this.model.set('order', this.model.get('order') - 1);
 	},
+	
 	uploadImage: function( event ) {
-		console.log('uploadImage()');
 		$(".filePicker").attr('disabled', 'disabled');
 		var reader = new FileReader(), rFilter = /^image\/(?:bmp|cis\-cod|gif|ief|jpeg|pipeg|png|svg\+xml|tiff|x\-cmu\-raster|x\-cmx|x\-icon|x\-portable\-anymap|x\-portable\-bitmap|x\-portable\-graymap|x\-portable\-pixmap|x\-rgb|x\-xbitmap|x\-xpixmap|x\-xwindowdump)$/i;
 		var imageModel = this.model;
@@ -37,9 +42,11 @@ var ImageEditView = Backbone.View.extend({
 		}
 		reader.readAsDataURL(event.target.files[0]);
 	},
+	
 	falseHandler: function( event ) {
 		return false;
 	},
+	
 	close: function( event ) {
 		if ( this.model.get('content') === '' ) {
 			this.model.destroy();
@@ -59,8 +66,6 @@ var imageEditHandler = function( event, image ) {
 	if ( image === undefined ) {
 		image = new ImageObject({x: click.x, y: click.y});
 		AppModel.get('collection').add(image);
-		//debug
-		console.log('image added to AppModel.collection at: ' + click.x + ', ' + click.y);
 	}
 	var imageEditor = new ImageEditView({
 		model: image,

@@ -18,8 +18,6 @@ var mainMenuHandler = function( event ) {
 	// save the coords of the initial click, where canvas top-left is 0,0
 	click.x = event.pageX - $("#cb_canvasWrapper").offset().left;
 	click.y = event.pageY - $("#cb_canvasWrapper").offset().top;
-	//debug
-	console.log('wrapper clicked at: ' + click.x + ', ' + click.y);
 };
 
 $("canvas#canvas").on('click', function( event ) {
@@ -51,7 +49,6 @@ $("#cb_cancel").click(function( e ) {
 $("#cb_canvasWrapper").parent().parent()
 		.on({
 			mouseup: function(event) {
-				//console.log('mouseUp');
 				$("#cb_canvasWrapper").unbind('mousemove');
 				return false;
 			}
@@ -69,7 +66,6 @@ $("#cb_canvasWrapper").parent().parent()
 				return false;
 			},
 			click: function(event) {
-				console.log('.cb_placeholder click');
 				var clickedObject = AppModel.get('collection').get($(this).attr('data-cid'));
 				if ( clickedObject.get('isEditable') === false ) {
 					return false;
@@ -101,7 +97,6 @@ $("#cb_canvasWrapper").parent().parent()
 					originalY: clickedObject.get('y')
 				};
 				$("#cb_canvasWrapper").bind('mousemove', function(event) {
-					console.log('moving object');
 					dragged = true;
 					clickedObject.set({
 						x: objectPosition.originalX - (($("#cb_canvasWrapper").offset().left - event.pageX) - cursorPosition.originalX),
@@ -138,7 +133,6 @@ $("#cb_canvasWrapper").parent().parent()
 				var clickedObject = AppModel.get('collection').get($(this).parent().attr('data-cid'));
 				
 				if ( $(this).hasClass("cb_ph_topRight") ) {
-					console.log('rotate tool');
 					var xPrev;
 					$("#cb_canvasWrapper").bind('mousemove', function(event) {
 						console.log('rotating');
@@ -155,19 +149,16 @@ $("#cb_canvasWrapper").parent().parent()
 				}
 				
 				if ( $(this).hasClass("cb_ph_topLeft") ) {
-					console.log('resize tool');
 					if ( clickedObject.get('type') === 'ImageObject' ) {
 						clickedObject.resize();
 					}
 				}
 				
 				if ( $(this).hasClass("cb_ph_bottomLeft") ) {
-					console.log('flip horizontal tool');
 					clickedObject.set('scale', [clickedObject.get('scale')[0] * -1, 1]);
 				}
 				
 				if ( $(this).hasClass("cb_ph_bottomRight") ) {
-					console.log('flip vertical tool');
 					clickedObject.set('scale', [1, clickedObject.get('scale')[1] * -1]);
 				}
 				

@@ -1,4 +1,5 @@
 var TextObject = Backbone.Model.extend({
+	
 	defaults: {
 		type: 'TextObject',
 		content: '',
@@ -13,7 +14,9 @@ var TextObject = Backbone.Model.extend({
 		order: 0,
 		isEditable: true
 	},
+	
 	url: '/media/media/canvas',
+	
 	initialize: function() {
 		// init event listeners
 		this.on("change:content", this.refresh)
@@ -33,10 +36,10 @@ var TextObject = Backbone.Model.extend({
 				.css('left', this.get('x'))
 				.css('width', this.get('width'))
 				.css('height', this.get('fontSize'))
-				// .attr('title', 'Click to Edit Text; Drag to Move Text.')
 				.append( '<div class="cb_ph_corner cb_ph_topRight btn btn-mini" title="Drag to Rotate; Double-Click to Reset."><i class="icon icon-refresh"></i></div>' );
 		$("#cb_canvasWrapper").append(placeholder);
 	},
+	
 	refresh: function() {
 		AppModel.get('collection').refreshCanvas();
 		// update the placeholder div
@@ -48,9 +51,8 @@ var TextObject = Backbone.Model.extend({
 				.css('height', this.get('fontSize'))
 				.attr('title', phTitle);
 	},
+	
 	draw: function() {
-		console.log('TextObject::draw() fired.');
-
 		context.save();
 
 		// set options
@@ -66,7 +68,6 @@ var TextObject = Backbone.Model.extend({
 			this.get('x') + (this.get('width') / 2),
 			this.get('y') - (this.get('fontSize') / 2)
 		);
-		//console.log('Rotating around: ' + (this.get('x') + (this.get('width') / 2)) + ', ' + (this.get('y') - (this.get('fontSize') / 2)) );
 		context.rotate(this.get('rotation') * Math.PI / 180);
 
 		// rotate the overlay container
