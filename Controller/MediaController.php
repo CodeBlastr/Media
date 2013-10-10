@@ -346,6 +346,7 @@ class _MediaController extends MediaAppController {
 				$this->__returnJsonResponse($response);
 				break;
 			case ('PUT'):
+				debug($this->request);
 				$response = $this->Media->updateCanvasObjects($this->request->data);
 				$this->__returnJsonResponse($response);
 				break;

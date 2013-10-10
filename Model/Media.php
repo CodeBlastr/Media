@@ -231,16 +231,12 @@ class Media extends MediaAppModel {
 
 	
 	public function updateCanvasObjects($data) {
-		$added = false;
-//		foreach ($data as $canvasObject) {
-//			if (!(isset($canvasObject['id']))) {
-//				if ($canvasObject['type'] == 'ImageObject') {
-//					$added = $this->_saveCanvasImageObject($canvasObject);
-//				}
-//			}
-//		}
+		
+		debug($data);
+		break;
 
-		foreach ($data as $canvasObject) {
+		$data = json_decode($data, true);
+		foreach ($data['collection'] as &$canvasObject) {
 			if ($canvasObject['type'] == 'screenshot') {
 				$savedImage = $this->_saveCanvasImageObject($canvasObject, $data['id']);
 				$canvasObject['id'] = $savedImage['Media']['id'];

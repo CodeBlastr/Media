@@ -29,16 +29,33 @@ define([
 		},
 		
 		sync: function( method, model, options ) {
+			var requestType;
+			if ( method === 'update' ) {
+				requestType = 'PUT';
+			}
+			if ( method === 'create' ) {
+				requestType = 'POST';
+			}
+			if ( method === 'read' ) {
+				requestType = 'GET';
+			}
+			if ( method === 'delete' ) {
+				requestType = 'DELETE';
+			}
 			// create a clone that does not have the JS Image Objects in it
-			console.log(model);
 			model.attributes.collection.models.forEach(function( aModel, index ) {
 				model.attributes.collection.models[index].attributes.image = null;
 			});
-			var modelData = JSON.stringify(model.toJSON());
-			$.post(this.url, {data: modelData})
-					.done(function( data ) {
-						return false;
-					});
+			var modelData = JSON.stringify( model.toJSON() );
+			$.post({
+				type: requestType,
+				url: this.url,
+				data: modelData,
+				contentType: 'json'
+			})
+				.done(function( data ) {
+					return false;
+				});
 		},
 		
 		reload: function( models ) {
