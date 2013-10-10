@@ -1,15 +1,19 @@
 // Filename: app.js
 define([
-  'jquery',
-  'underscore',
-  'backbone',
-  'views/media.items.view'
-], function($, _, Backbone, MediaItemsView){
-  var initialize = function(){
-     var mv = new MediaItemsView();
-  };
+	'jquery',
+	'underscore',
+	'backbone',
+	'views/media.items.view',
+	'views/Canvas',
+	'simplecolorpicker'
+], function( $, _, Backbone, MediaItemsView, CanvasView ) {
 
-  return {
-    initialize: initialize
-  };
+	var initialize = function() {
+		var mv = new MediaItemsView();
+		var cv = new CanvasView();
+	};
+
+	return {
+		initialize: initialize
+	};
 });

@@ -2,9 +2,8 @@
 define([
   'jquery',
   'underscore',
-  'backbone',
-  'text!templates/edit_image.html'
-], function($, _, Backbone, editImage){
+  'backbone'
+], function($, _, Backbone ){
 		
 	var ImageEditView = Backbone.View.extend({
 		

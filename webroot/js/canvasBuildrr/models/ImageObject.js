@@ -2,8 +2,9 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone'
-], function($, _, Backbone){
+	'backbone',
+	'models/CollectionContainer'
+], function($, _, Backbone, AppModel ){
 	
 	var ImageObject = Backbone.Model.extend({
 	
@@ -83,7 +84,6 @@ define([
 					image: this,
 					loaded: true
 					}, {silent:true});
-				console.log('loaded');
 				imageModel.refresh();
 			};
 			imageobj.src = this.get('content');
@@ -98,14 +98,14 @@ define([
 				var dx;
 				var dy;
 				
-				context.save();
+				Backbone.context.save();
 				
 				// rotate the canvas
-				context.translate(
+				Backbone.context.translate(
 					imageObject.get('x') + (width / 2),
 					imageObject.get('y') + (height / 2)
 				);
-				context.rotate(imageObject.get('rotation') * Math.PI / 180);
+				Backbone.context.rotate(imageObject.get('rotation') * Math.PI / 180);
 				
 				// rotate the overlay container
 				$("div[data-cid='"+imageObject.cid+"']").css('transform', 'rotate('+imageObject.get('rotation')+'deg)');
@@ -113,20 +113,20 @@ define([
 				dx = -(width / 2);
 				dy = -(height / 2);
 	
-				if (imageObject.get('scale')[0] == -1) {
+				if (imageObject.get('scale')[0] === -1) {
 					// flipped horizontally
 					dx = -dx;
 					width = -width;
 				}
-				if (imageObject.get('scale')[1] == -1) {
+				if (imageObject.get('scale')[1] === -1) {
 					// flipped vertically
 					dy = -dy;
 					height = -height;
 				}
-				context.scale(imageObject.get('scale')[0], imageObject.get('scale')[1]); // to flip vertically, ctx.scale(1,-1);
+				Backbone.context.scale(imageObject.get('scale')[0], imageObject.get('scale')[1]); // to flip vertically, ctx.scale(1,-1);
 				
-				context.drawImage(imageObject.get('image'), dx, dy, width, height);
-				context.restore();
+				Backbone.context.drawImage(imageObject.get('image'), dx, dy, width, height);
+				Backbone.context.restore();
 				
 				//debug
 				console.log('drawing image at: (' + imageObject.get('x') + ', ' + imageObject.get('y') + '), rotated ' + this.get('rotation') + 'deg');
