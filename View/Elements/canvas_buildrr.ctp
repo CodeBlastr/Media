@@ -173,6 +173,7 @@
 	var wrapperclass = '<?php echo $wrapperclass; ?>';
 	var selecteditems = <?php echo $selecteditems; ?>;
 	var baseUrl = '<?php echo $this->Html->url(array('plugin' => 'media', 'controller' => 'media_browser', 'action' => 'media')); ?>';
+	var canvasData = <?php echo json_encode($this->request->data['Media']['data']); ?>;
 </script>
 <script data-main="/Media/js/canvasBuildrr/canvasBuildrr.js" src="/Media/js/canvasBuildrr/require.js"></script>
 
@@ -186,14 +187,3 @@
 <link rel="stylesheet" type="text/css" href="/css/google-webfonts.css" />
 <link rel="stylesheet" type="text/css" href="/css/simplecolorpicker/simplecolorpicker.css" />
 
-
-
-<?php if (!(empty($this->request->data))) : ?>
-<script>
-//console.log(AppModel);
-//console.log(AppModel.get('collection'));
-
-AppModel.get('collection').reset();
-AppModel.reload(<?php echo json_encode($this->request->data['Media']['data']); ?>);
-</script>
-<?php endif; ?>

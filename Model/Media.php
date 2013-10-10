@@ -205,6 +205,7 @@ class Media extends MediaAppModel {
 	 * @return array
 	 */
 	public function addCanvasObjects($data) {
+		$data = json_decode($data, true);
 		foreach ($data['collection'] as &$canvasObject) {
 			// save the screenshot file.
 			if ($canvasObject['type'] == 'screenshot') {
@@ -213,7 +214,7 @@ class Media extends MediaAppModel {
 				$canvasObject['content'] = '/theme/Default/media/' . $savedImage['Media']['type'] . '/' .  $savedImage['Media']['filename'] . '.' . $savedImage['Media']['extension'];
 			}
 		}
-	
+
 		// save all data to our screenshot/parent row
 		$addedObjects = $this->saveField('data', json_encode($data), array('callbacks' => false));
 		

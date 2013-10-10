@@ -92,6 +92,11 @@ define([
 				$(e.currentTarget).attr('data-saved', 'true');
 			});
 
+			if ( canvasData !== '' ) {
+				Backbone.AppModel.get('collection').reset();
+				Backbone.AppModel.reload( canvasData );
+			}
+
 		},
 		
 		render: function() {

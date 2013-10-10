@@ -3,8 +3,10 @@ define([
 	'jquery',
 	'underscore',
 	'backbone',
-	'collections/CanvasObjects'
-], function( $, _, Backbone, CanvasObjects ) {
+	'collections/CanvasObjects',
+	'models/TextObject',
+	'models/ImageObject'
+], function( $, _, Backbone, CanvasObjects, TextObject, ImageObject ) {
 	/**
 	 * A model to hold the collection, so that the collection can have attributes 
 	 */
@@ -33,10 +35,8 @@ define([
 				model.attributes.collection.models[index].attributes.image = null;
 			});
 			var modelData = JSON.stringify(model.toJSON());
-			console.log(modelData);
-			$.post(this.url, modelData)
+			$.post(this.url, {data: modelData})
 					.done(function( data ) {
-						console.log(data);
 						return false;
 					});
 		},
@@ -52,21 +52,19 @@ define([
 
 			// import the models
 			models = jQuery.parseJSON(models);
-			AppModel = new CollectionContainer(models);
-			AppModel.set('collection', new CanvasObjects);
+			Backbone.AppModel = new CollectionContainer(models);
+			Backbone.AppModel.set('collection', new CanvasObjects);
 			models.collection.forEach(function( model, index ) {
 				if ( model.type === 'ImageObject' || model.type === 'screenshot' ) {
 					image = new ImageObject(model);
-					AppModel.get('collection').add(image);
+					Backbone.AppModel.get('collection').add(image);
 				}
 				if ( model.type === 'TextObject' ) {
 					text = new TextObject(model);
-					AppModel.get('collection').add(text);
+					Backbone.AppModel.get('collection').add(text);
 				}
 			});
 
-			// render the models
-			AppModel.get('collection').refreshCanvas();
 		}
 	});
 
