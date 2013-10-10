@@ -2,9 +2,8 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'models/CollectionContainer'
-], function($, _, Backbone, AppModel ){
+	'backbone'
+], function($, _, Backbone ){
 	
 	var ImageObject = Backbone.Model.extend({
 	
@@ -60,7 +59,7 @@ define([
 		},
 		
 		refresh: function() {
-			AppModel.get('collection').refreshCanvas();
+			Backbone.AppModel.get('collection').refreshCanvas();
 			if ( this.get('isEditable') === true ) {
 				// update the placeholder div
 				$("div[data-cid='"+this.cid+"']")

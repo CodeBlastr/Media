@@ -48,7 +48,7 @@ define([
 		},
 		
 		refresh: function() {
-			AppModel.get('collection').refreshCanvas();
+			Backbone.AppModel.get('collection').refreshCanvas();
 			// update the placeholder div
 			var phTitle = ( this.get('isEditable') === true ) ? 'Click to Edit Text; Drag to Move Text.' : '';
 			$("div[data-cid='"+this.cid+"']")
@@ -60,36 +60,35 @@ define([
 		},
 		
 		draw: function() {
-			context.save();
+			Backbone.context.save();
 	
 			// set options
-			context.lineWidth = 1;
-			context.fillStyle = this.get('fontColor');
-			context.lineStyle = this.get('fontColor');
-			context.font = this.get('fontSize') + 'px ' + this.get('fontFamily');
+			Backbone.context.lineWidth = 1;
+			Backbone.context.fillStyle = this.get('fontColor');
+			Backbone.context.lineStyle = this.get('fontColor');
+			Backbone.context.font = this.get('fontSize') + 'px ' + this.get('fontFamily');
 	
 			// measure width
-			this.set({width: context.measureText(this.get('content')).width}, {silent:true});
+			this.set({width: Backbone.context.measureText(this.get('content')).width}, {silent:true});
 	
-			context.translate(
+			Backbone.context.translate(
 				this.get('x') + (this.get('width') / 2),
 				this.get('y') - (this.get('fontSize') / 2)
 			);
-			context.rotate(this.get('rotation') * Math.PI / 180);
+			Backbone.context.rotate(this.get('rotation') * Math.PI / 180);
 	
 			// rotate the overlay container
 			$("div[data-cid='"+this.cid+"']").css('transform', 'rotate('+this.get('rotation')+'deg)');
 	
 			// draw out
-			context.fillText(
+			Backbone.context.fillText(
 				this.get('content'),
 				0 - this.get('width') / 2,
 				this.get('fontSize') / 2
 			);
 			console.log('Writing, "'+this.get('content')+'", at: (' + (0 - this.get('width') / 2) + ', ' + (this.get('fontSize') / 2) + '), rotated ' + this.get('rotation') + 'deg');
 	
-			context.restore();	
-			//return true;	
+			Backbone.context.restore();	
 		}
 	});
 	

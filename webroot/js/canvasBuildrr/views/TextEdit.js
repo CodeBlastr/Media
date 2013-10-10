@@ -47,7 +47,7 @@ define([
 			'change select[name="fontsizepicker"]': 'updateFontsize',
 		},
 		remove: function( event ) {
-			AppModel.get('collection').remove(this.model);
+			Backbone.AppModel.get('collection').remove(this.model);
 			this.close();
 		},
 		toggleLock: function( event ) {
@@ -98,7 +98,7 @@ define([
 					}
 				}
 			}
-			$j('select[name="colorpicker"]').simplecolorpicker('destroy');
+			$('select[name="colorpicker"]').simplecolorpicker('destroy');
 			this.$('.cb_addEditText').remove();
 		}
 	});

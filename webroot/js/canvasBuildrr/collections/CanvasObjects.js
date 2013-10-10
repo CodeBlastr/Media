@@ -1,37 +1,42 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'models/CollectionContainer'
-], function( $, _, Backbone, AppModel ) {
+	'backbone'
+], function( $, _, Backbone ) {
 	/**
 	 * The collection of our ImageObjects and TextObjects
 	 */
 	var CanvasObjects = Backbone.Collection.extend({
+		
 		url: '/media/media/canvas/collection:true',
+		
 		comparator: function( model ) {
 			return model.get("order");
 		},
+		
 		initialize: function() {
 			console.log('CO init');
 			this.on("reset", this.afterReset);
 			this.bind("remove", this.onModelRemoved, this);
 		},
+		
 		onModelRemoved: function( model, collection, options ) {
 			$("div[data-cid='" + model.cid + "']").remove();
 			this.refreshCanvas();
 		},
+		
 		sync: function() {
 		},
+		
 		// wipes the canvas clean
 		clear: function() {
-			console.log(AppModel);// undefined after a bgColor change..
 			Backbone.context.save();
-			Backbone.context.fillStyle = ( AppModel !== undefined ) ? AppModel.get('backgroundColor') : '#ffffff';
+			Backbone.context.fillStyle = ( Backbone.AppModel !== undefined ) ? Backbone.AppModel.get('backgroundColor') : '#ffffff';
 			Backbone.context.fillRect(0, 0, Backbone.canvas.width, Backbone.canvas.height);
 			Backbone.context.restore();
 			return this;
 		},
+		
 		// redraws each object in the collection
 		refreshCanvas: function() {
 			this.sort();

@@ -9,11 +9,14 @@ define([
 	 * A model to hold the collection, so that the collection can have attributes 
 	 */
 	var CollectionContainer = Backbone.Model.extend({
+		
 		url: '/media/media/canvas/collection:true',
+		
 		defaults: {
 			collection: new CanvasObjects(),
 			backgroundColor: '#ffffff'
 		},
+		
 		initialize: function() {
 			this.on("change:backgroundColor", function() {
 				console.log('bgColor changed');
@@ -22,6 +25,7 @@ define([
 
 			console.log('CC init');
 		},
+		
 		sync: function( method, model, options ) {
 			// create a clone that does not have the JS Image Objects in it
 			console.log(model);
@@ -32,10 +36,11 @@ define([
 			console.log(modelData);
 			$.post(this.url, modelData)
 					.done(function( data ) {
-				console.log(data);
-				return false;
-			});
+						console.log(data);
+						return false;
+					});
 		},
+		
 		reload: function( models ) {
 			console.log('reload');
 
@@ -62,11 +67,8 @@ define([
 
 			// render the models
 			AppModel.get('collection').refreshCanvas();
-
-			return this;
 		}
 	});
 
-	var AppModel = new CollectionContainer();
-	return AppModel;
+	return CollectionContainer;
 });

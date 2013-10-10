@@ -1,6 +1,6 @@
 
 <div class="span8 canvasBuildrr">
-
+	<!-- canvasBuildrr app goes here -->
 </div>
 <div class="span4">
 	<div>
@@ -64,24 +64,23 @@
 
 <script type="template/javascript" id="mediaModalTemplate">
 	<div class="modal fade" id="mediaBrowserModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display:none">
-	<div class="modal-dialog">
-    <div class="modal-content">
-	<div class="modal-header">
-	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-	<h4 class="modal-title">Browse Files</h4>
-	</div>
-	<div class="modal-body">
-	<div id="mediaBrowser"></div>
-	</div>
-	<div class="modal-footer">
-	</div>
-    </div>
-	</div>
+		<div class="modal-dialog">
+		    <div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">Browse Files</h4>
+				</div>
+				<div class="modal-body">
+					<div id="mediaBrowser"></div>
+				</div>
+				<div class="modal-footer"></div>
+		    </div>
+		</div>
 	</div>
 </script>
 
 <script type="text/html" id="template-canvas">
-		<div id="cb_canvasWrapper" style="width: 420px;">
+	<div id="cb_canvasWrapper" style="width: 420px;">
 		<canvas id="canvas" width="420" height="594">
 			You are using an outdated browser.
 			<a href="http://browsehappy.com/">Upgrade your browser today</a>
@@ -175,58 +174,19 @@
 	var selecteditems = <?php echo $selecteditems; ?>;
 	var baseUrl = '<?php echo $this->Html->url(array('plugin' => 'media', 'controller' => 'media_browser', 'action' => 'media')); ?>';
 </script>
-
 <script data-main="/Media/js/canvasBuildrr/canvasBuildrr.js" src="/Media/js/canvasBuildrr/require.js"></script>
 
+<!-- CSS -->
 <style>
 	.modal-footer {
 		border: none;
 	}
 </style>
-
-
 <link rel="stylesheet" type="text/css" href="/media/css/canvasBuildrr.css" />
 <link rel="stylesheet" type="text/css" href="/css/google-webfonts.css" />
 <link rel="stylesheet" type="text/css" href="/css/simplecolorpicker/simplecolorpicker.css" />
 
-<script type="text/javascript">
 
-
-/**
- * SAVE BUTTON
- */
-$("#saveCanvas").click(function(){
-	var options = {};
-	var method;
-	if ( $(this).attr('data-saved') === 'false' ) {
-		method = 'create';
-	} else {
-		method = 'update';
-	}
-
-	// update screenshot
-	var hasScreenshot = false;
-	AppModel.get('collection').each(function( canvasObject, index ) {
-		if ( canvasObject.get('type') === 'screenshot' ) {
-			hasScreenshot = true;
-			canvasObject.set('content', canvas.toDataURL());
-			AppModel.get('collection')[index] = canvasObject;
-		}
-	});
-	if ( hasScreenshot === false ) {
-		image = new ImageObject({
-			'type': 'screenshot',
-			'content': canvas.toDataURL(),
-			'isEditable': false
-			});
-		AppModel.get('collection').add(image);
-	}
-
-	AppModel.sync(method, AppModel, options);
-	$(this).attr('data-saved', 'true');
-});
-
-</script>
 
 <?php if (!(empty($this->request->data))) : ?>
 <script>

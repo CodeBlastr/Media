@@ -3,27 +3,29 @@ define([
 	'jquery',
 	'underscore',
 	'backbone',
-	'models/CollectionContainer',
 	'models/ImageObject',
 	'models/TextObject',
+	'views/TextEdit',
 	'simplecolorpicker'
-], function( $, _, Backbone, AppModel, ImageObject, TextObject ) {
+], function( $, _, Backbone, ImageObject, TextObject, TextEditView ) {
 
 	var CanvasView = Backbone.View.extend({
+		
+		el: '.canvasBuildrr',
 		
 		initialize: function( attrs ) {
 			console.log('CV init');
 			this.options = attrs;
 			this.render();
 			
-			// not sure if I should be tying to Backbone here, but did so as a last resort.
-			var element = $("#canvas");
+			// setup global pointers to the canvas
+			var element = this.$el.find("#canvas");
 			Backbone.canvas = document.getElementById(element.attr('id'));
 			Backbone.context = Backbone.canvas.getContext('2d');
+			
 			Backbone.click = {x: '', y: ''};
 			Backbone.dragged = false;
-	
-	
+
 			/**
 			 * LISTEN FOR SELECTED IMAGES
 			 */
@@ -33,7 +35,7 @@ define([
 					'type': 'ImageObject',
 					'content': "/theme/default/media/images/" + model.attributes.filename + "." + model.attributes.extension
 				});
-				var collection = AppModel.get('collection');	
+				var collection = Backbone.AppModel.get('collection');	
 				collection.add(image);
 			}, false);
 
@@ -42,7 +44,7 @@ define([
 			 */
 			document.addEventListener('mediaBrowserMediaUnSelected', function (e) {
 				var model = e.detail;
-				var collection = AppModel.get('collection');
+				var collection = Backbone.AppModel.get('collection');
 				var relativeFilePath = "/theme/default/media/images/" + model.attributes.filename + "." + model.attributes.extension;
 				var deselectedObject = collection.findWhere({content: relativeFilePath});
 				collection.remove( deselectedObject );
@@ -51,11 +53,43 @@ define([
 			/**
 			 * BACKGROUND CONTROLS
 			 */
-			$(function() {
-				$('select[name="bgColorpicker"]').simplecolorpicker({picker: true});
-				$("select[name='bgColorpicker']").change(function() {
-					AppModel.set('backgroundColor', $(this).val());
+			$('select[name="bgColorpicker"]').simplecolorpicker({picker: true});
+			$("select[name='bgColorpicker']").change(function() {
+				Backbone.AppModel.set('backgroundColor', $(this).val());
+			});
+			
+			/**
+			 * SAVE BUTTON
+			 */
+			this.$el.parent().find("#saveCanvas").click(function(e){
+				var options = {};
+				var method;
+				if ( $(e.currentTarget).attr('data-saved') === 'false' ) {
+					method = 'create';
+				} else {
+					method = 'update';
+				}
+			
+				// update screenshot
+				var hasScreenshot = false;
+				Backbone.AppModel.get('collection').each(function( canvasObject, index ) {
+					if ( canvasObject.get('type') === 'screenshot' ) {
+						hasScreenshot = true;
+						canvasObject.set('content', Backbone.canvas.toDataURL());
+						Backbone.AppModel.get('collection')[index] = canvasObject;
+					}
 				});
+				if ( hasScreenshot === false ) {
+					image = new ImageObject({
+						'type': 'screenshot',
+						'content': canvas.toDataURL(),
+						'isEditable': false
+						});
+					Backbone.AppModel.get('collection').add(image);
+				}
+			
+				Backbone.AppModel.sync(method, Backbone.AppModel, options);
+				$(e.currentTarget).attr('data-saved', 'true');
 			});
 
 		},
@@ -80,12 +114,11 @@ define([
 		},
 		
 		textEditHandler: function( event, text ) {
-			console.log('clicked'); // not firing at all....
 			Backbone.click.x = event.pageX - $("#cb_canvasWrapper").offset().left;
 			Backbone.click.y = event.pageY - $("#cb_canvasWrapper").offset().top;
 			if ( text === undefined ) {
 				text = new TextObject({x: Backbone.click.x, y: Backbone.click.y});
-				AppModel.get('collection').add(text);
+				Backbone.AppModel.get('collection').add(text);
 			}
 			var textEditor = new TextEditView({
 				model: text,
@@ -94,46 +127,47 @@ define([
 				left: text.get('x') + $("#cb_canvasWrapper").offset().left,
 				content: text.get('content')
 			});
+			this.delegateEvents();
 		},
-				
+		
 		placeholderMouseUp: function( e ) {
 			$("#cb_canvasWrapper").unbind('mousemove');
 			return false;
 		},
-				
+		
 		placeholderMouseEnter: function( e ) {
-			var clickedObject = AppModel.get('collection').get($(this).attr('data-cid'));
+			var clickedObject = Backbone.AppModel.get('collection').get($(e.currentTarget).attr('data-cid'));
 			if ( clickedObject.get('isEditable') === true ) {
-				$(this).addClass('cb_placeholderHover');
+				$(e.currentTarget).addClass('cb_placeholderHover');
 			}
 			return false;
 		},
-				
+		
 		placeholderMouseLeave: function( e ) {
-			$(this).removeClass('cb_placeholderHover');
+			$(e.currentTarget).removeClass('cb_placeholderHover');
 			return false;
 		},
-				
+		
 		placeholderClick: function( e ) {
-			var clickedObject = AppModel.get('collection').get($(this).attr('data-cid'));
+			var clickedObject = Backbone.AppModel.get('collection').get($(e.currentTarget).attr('data-cid'));
 			if ( clickedObject.get('isEditable') === false ) {
 				return false;
 			}
 			if ( this.dragged === true ) {
 				this.dragged = false;
 			} else {
-				if ( $(this).attr('data-model') === 'TextObject' ) {
-					textEditHandler(e, clickedObject);
+				if ( $(e.currentTarget).attr('data-model') === 'TextObject' ) {
+					this.textEditHandler(e, clickedObject);
 				}
-				if ( $(this).attr('data-model') === 'ImageObject' ) {
-					imageEditHandler(e, clickedObject);
+				if ( $(e.currentTarget).attr('data-model') === 'ImageObject' ) {
+					this.imageEditHandler(e, clickedObject);
 				}
 			}
 			return false;
 		},
 				
 		placeholderMouseDown: function( e ) {
-			var clickedObject = AppModel.get('collection').get($(this).attr('data-cid'));
+			var clickedObject = Backbone.AppModel.get('collection').get($(e.currentTarget).attr('data-cid'));
 			if ( clickedObject.get('isEditable') === false ) {
 				return false;
 			}
@@ -162,22 +196,22 @@ define([
 		},
 				
 		cornerDblClick: function( e ) {
-			var clickedObject = AppModel.get('collection').get($(this).parent().attr('data-cid'));
-			if ( $(this).hasClass("cb_ph_topLeft") ) {
+			var clickedObject = Backbone.AppModel.get('collection').get($(e.currentTarget).parent().attr('data-cid'));
+			if ( $(e.currentTarget).hasClass("cb_ph_topLeft") ) {
 				if ( clickedObject.get('type') === 'ImageObject' ) {
 					clickedObject.autoResize();
 				}
 			}
-			if ( $(this).hasClass("cb_ph_topRight") ) {
+			if ( $(e.currentTarget).hasClass("cb_ph_topRight") ) {
 				clickedObject.set('rotation', 0);
 			}
 			return false;
 		},
 		
 		cornerMouseDown: function( e ) {
-			var clickedObject = AppModel.get('collection').get($(this).parent().attr('data-cid'));
+			var clickedObject = Backbone.AppModel.get('collection').get($(e.currentTarget).parent().attr('data-cid'));
 
-			if ( $(this).hasClass("cb_ph_topRight") ) {
+			if ( $(e.currentTarget).hasClass("cb_ph_topRight") ) {
 				var xPrev;
 				$("#cb_canvasWrapper").bind('mousemove', function( event ) {
 					if ( xPrev < event.pageX ) {
@@ -192,17 +226,17 @@ define([
 				});
 			}
 
-			if ( $(this).hasClass("cb_ph_topLeft") ) {
+			if ( $(e.currentTarget).hasClass("cb_ph_topLeft") ) {
 				if ( clickedObject.get('type') === 'ImageObject' ) {
 					clickedObject.resize();
 				}
 			}
 
-			if ( $(this).hasClass("cb_ph_bottomLeft") ) {
+			if ( $(e.currentTarget).hasClass("cb_ph_bottomLeft") ) {
 				clickedObject.set('scale', [ clickedObject.get('scale')[0] * -1, 1 ]);
 			}
 
-			if ( $(this).hasClass("cb_ph_bottomRight") ) {
+			if ( $(e.currentTarget).hasClass("cb_ph_bottomRight") ) {
 				clickedObject.set('scale', [ 1, clickedObject.get('scale')[1] * -1 ]);
 			}
 
