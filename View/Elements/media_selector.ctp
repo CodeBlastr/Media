@@ -54,7 +54,7 @@
 	
 </script>
 
-<script data-main="/Media/js/mediabrowser/scripts/mediabrowser.js" src="/Media/js/mediabrowser/scripts/require.js"></script>
+<script data-main="/Media/js/mediabrowser/build/media-min.js" src="/Media/js/mediabrowser/scripts/require.js"></script>
 
 
 
