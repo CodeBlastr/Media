@@ -115,7 +115,7 @@ define([
 			"click .cb_ph_corner": 'cornerClick',
 			"dblclick .cb_ph_corner": 'cornerDblClick',
 			"mousedown .cb_ph_corner": 'cornerMouseDown',
-			"mouseup .cb_ph_corner": 'cornerMouseUp'
+			"mouseup": 'cornerMouseUp'
 		},
 		
 		textEditHandler: function( event, text ) {
@@ -158,8 +158,8 @@ define([
 			if ( clickedObject.get('isEditable') === false ) {
 				return false;
 			}
-			if ( this.dragged === true ) {
-				this.dragged = false;
+			if ( Backbone.dragged === true ) {
+				Backbone.dragged = false;
 			} else {
 				if ( $(e.currentTarget).attr('data-model') === 'TextObject' ) {
 					this.textEditHandler(e, clickedObject);
@@ -186,7 +186,7 @@ define([
 				originalY: clickedObject.get('y')
 			};
 			$("#cb_canvasWrapper").bind('mousemove', function( event ) {
-				this.dragged = true;
+				Backbone.dragged = true;
 				clickedObject.set({
 					x: objectPosition.originalX - ( ( $("#cb_canvasWrapper").offset().left - event.pageX ) - cursorPosition.originalX ),
 					y: objectPosition.originalY - ( ( $("#cb_canvasWrapper").offset().top - event.pageY ) - cursorPosition.originalY )
