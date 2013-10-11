@@ -338,42 +338,21 @@ class _MediaController extends MediaAppController {
 
 
 	public function canvas($id = null) {
-// 		App::uses('Canvas', 'Media.Model');
-// 		$this->Canvas = new Canvas;
-		switch ($this->request->method()) {
-			case ('POST'):
-				$response = $this->Media->addCanvasObjects($this->request->data);
-				$this->__returnJsonResponse($response);
-				break;
-			case ('PUT'):
-				debug($this->request);
-				$response = $this->Media->updateCanvasObjects($this->request->data);
-				$this->__returnJsonResponse($response);
-				break;
-			case ('DELETE'):
-				$response = $this->Media->deleteCanvasObjects($this->request->data);
-				$this->__returnJsonResponse($response);
-				break;
-			case ('GET'):
-			default:
-				if ($id) {
-					$this->request->data = $this->Media->find('first', array(
-							'conditions' => array(
-									'Media.id' => $id
-							)
-					));
-					$this->request->data['Media']['data'] = json_decode($this->request->data['Media']['data']);
-					$this->request->data['Media']['data']->id = $id;
-					$this->request->data['Media']['data'] = json_encode($this->request->data['Media']['data']);
-
-// 					if ($this->request->isAjax()) {
-// 							$this->__returnJsonResponse(array(
-// 								'statusCode' => '200',
-// 								'body' => $this->request->data
-// 							));
-// 					}
-				}
-				break;
+		if ($this->request->isAjax()) {
+			$response = $this->Media->updateCanvasObjects($this->request->data);
+			$this->__returnJsonResponse($response);
+		} else {
+			if ($id) {
+				$this->request->data = $this->Media->find('first', array(
+						'conditions' => array(
+								'Media.id' => $id
+						)
+				));
+				// add the `id` into the data field, as this is the data used by the JavaScript..
+				$this->request->data['Media']['data'] = json_decode($this->request->data['Media']['data']);
+				$this->request->data['Media']['data']->id = $id;
+				$this->request->data['Media']['data'] = json_encode($this->request->data['Media']['data']);
+			}
 		}
 	}
 	

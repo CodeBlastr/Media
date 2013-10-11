@@ -12,7 +12,7 @@ define([
 	 */
 	var CollectionContainer = Backbone.Model.extend({
 		
-		url: '/media/media/canvas/collection:true',
+		url: '/media/media/canvas/',
 		
 		defaults: {
 			collection: new CanvasObjects(),
@@ -21,7 +21,6 @@ define([
 		
 		initialize: function() {
 			this.on("change:backgroundColor", function() {
-				console.log('bgColor changed');
 				this.get('collection').refreshCanvas();
 			});
 
@@ -29,30 +28,12 @@ define([
 		},
 		
 		sync: function( method, model, options ) {
-			var requestType;
-			if ( method === 'update' ) {
-				requestType = 'PUT';
-			}
-			if ( method === 'create' ) {
-				requestType = 'POST';
-			}
-			if ( method === 'read' ) {
-				requestType = 'GET';
-			}
-			if ( method === 'delete' ) {
-				requestType = 'DELETE';
-			}
-			// create a clone that does not have the JS Image Objects in it
+			// remove the Image DOM Objects
 			model.attributes.collection.models.forEach(function( aModel, index ) {
 				model.attributes.collection.models[index].attributes.image = null;
 			});
 			var modelData = JSON.stringify( model.toJSON() );
-			$.post({
-				type: requestType,
-				url: this.url,
-				data: modelData,
-				contentType: 'json'
-			})
+			$.post(model.url, {data: modelData})
 				.done(function( data ) {
 					return false;
 				});

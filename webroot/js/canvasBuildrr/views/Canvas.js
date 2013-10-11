@@ -92,7 +92,7 @@ define([
 				$(e.currentTarget).attr('data-saved', 'true');
 			});
 
-			if ( canvasData !== '' ) {
+			if ( canvasData !== null ) {
 				Backbone.AppModel.get('collection').reset();
 				Backbone.AppModel.reload( canvasData );
 			}

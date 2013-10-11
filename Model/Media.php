@@ -204,8 +204,13 @@ class Media extends MediaAppModel {
 	 * @param array $data An entire model from the canvasBuildrr {model:collection:{models}}
 	 * @return array
 	 */
-	public function addCanvasObjects($data) {
-		$data = json_decode($data, true);
+	public function updateCanvasObjects($data) {
+		$data = json_decode( $data, true);
+
+		if ($data['id']) {
+			$this->id = $data['id'];
+		}
+		
 		foreach ($data['collection'] as &$canvasObject) {
 			// save the screenshot file.
 			if ($canvasObject['type'] == 'screenshot') {
@@ -227,38 +232,6 @@ class Media extends MediaAppModel {
 			return array('statusCode' => '403');
 		}
 	}
-
-
-	
-	public function updateCanvasObjects($data) {
-		
-		debug($data);
-		break;
-
-		$data = json_decode($data, true);
-		foreach ($data['collection'] as &$canvasObject) {
-			if ($canvasObject['type'] == 'screenshot') {
-				$savedImage = $this->_saveCanvasImageObject($canvasObject, $data['id']);
-				$canvasObject['id'] = $savedImage['Media']['id'];
-				$canvasObject['content'] = '/theme/Default/media/' . $savedImage['Media']['type'] . '/' .  $savedImage['Media']['filename'] . '.' . $savedImage['Media']['extension'];
-			}
-		}
-
-		$this->id = $data['id'];
-		unset($data['id']);
-	
-		// save all data to our screenshot/parent row
-		$addedObjects = $this->saveField('data', json_encode($data), array('callbacks' => false));
-		
-		if ($addedObjects) {
-			return array(
-					'statusCode' => '200',
-					'body' => json_encode($addedObjects)
-			);
-		} else {
-			return array('statusCode' => '403');
-		}
-	}
 	
 	
 	/**
@@ -267,7 +240,7 @@ class Media extends MediaAppModel {
 	 * @param array $data
 	 * @return array|boolean
 	 */
-	private function _saveCanvasImageObject($data, $id = false) {
+	private function _saveCanvasImageObject($data) {
 		
 		// make sure that this is (probably) safe to pass to fopen()
 		if (strpos($data['content'], 'data:') !== 0) {
@@ -309,7 +282,9 @@ class Media extends MediaAppModel {
 
 		if ($written) {
 			// save record to database server
-			($id) ? $this->id = $id : $this->create();
+			if (!$this->id) {
+				$this->create();
+			}
 			$added = $this->save(array(
 				'Media' => array(
 					'filename' => array(
@@ -323,17 +298,5 @@ class Media extends MediaAppModel {
 		return $added;
 	
 	}
-	
-	
-	public function deleteCanvasObject($data) {
-		$added = false;
-		if ($added) {
-			return array('statusCode' => '200');
-		} else {
-			return array('statusCode' => '403');
-		}
-	}
-	
-	
-}
 
+}
