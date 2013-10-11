@@ -26,9 +26,7 @@
 					<option value="#ff0080">Hot Pink</option>
 				</select>
 			</label>
-		</div>
 
-		<div>
 			<?php
 			//Setting the $selected variable on element call will control how many items can be selected
 			$multiple = isset($multiple) && is_bool($multiple) ? $multiple : false;
@@ -50,7 +48,8 @@
 			?>
 
 			<div id="MediaSelector">
-				<a data-toggle="modal" href="#mediaBrowserModal" class="btn btn-primary btn-lg">Select Media</a>
+				Upload Foreground Image
+				<a data-toggle="modal" href="#mediaBrowserModal" class="btn btn-primary btn-lg">Browse</a>
 				<p>&nbsp;</p>
 				<div id="mediaSelected" class="clearfix"></div>
 			</div>

@@ -1,95 +1,101 @@
 <div class="navbar">
-<div class="input">
-<label>Page Limit   </label><select class="filter-select" data-filter="limit">
-  <option value="10">10</option>
-  <option value="25">25</option>
-  <option value="50">50</option>
-  <option value="100">100</option>
-  <option value="500">All</option>
-</select>
-</div>
-<div class="input">
-<label>Media Type   </label><select class="filter-select" data-filter="type">
-  <option value="all">All</option>
-  <option value="images">Image</option>
-  <option value="audio">Audio</option>
-  <option value="video">Video</option>
-  <option value="docs">Documents</option>
-</select>
-</div>
-<div class="input">
-<a href="#" class="upload btn btn-success">Upload</a>
-	<div id="mediaUploadForm" style="display:none;">
-		<form accept-charset="utf-8" method="post" id="MediaAddForm" controller="media_browser" plugin="media" action="/media/media_browser/upload">
-			<input type="hidden" value="POST" name="_method">
-			<input type="file" id="MediaFiles" multiple="multiple" name="data[Media][files][]">
-			<input type="submit" value="Submit">
-		</form>
+	<div class="input">
+		<label>Page Limit </label>
+		<select class="filter-select" data-filter="limit">
+			<option value="10">10</option>
+			<option value="25">25</option>
+			<option value="50">50</option>
+			<option value="100">100</option>
+			<option value="500">All</option>
+		</select>
 	</div>
-</div>
+	<div class="input">
+		<label>Media Type </label>
+		<select class="filter-select" data-filter="type">
+			<option value="all">All</option>
+			<option value="images">Image</option>
+			<option value="audio">Audio</option>
+			<option value="video">Video</option>
+			<option value="docs">Documents</option>
+		</select>
+	</div>
+	<div class="input">
+		<a href="#" class="upload btn btn-success">Upload</a>
+		<div id="mediaUploadForm" style="display:none;">
+			<form accept-charset="utf-8" method="post" id="MediaAddForm" controller="media_browser" plugin="media" action="/media/media_browser/upload">
+				<input type="hidden" value="POST" name="_method">
+				<input type="file" id="MediaFiles" multiple="multiple" name="data[Media][files][]">
+				<input type="submit" value="Submit">
+			</form>
+		</div>
+	</div>
+	<div class="clearfix"></div>
 </div>
 <div class="media-container">
 
 </div>
 
 <style type="text/css">
-	
-	.navbar {
+	#mediaBrowser .navbar {
 		padding: 5px;
 		background: #eee;
 		border: 1px solid #ccc;
 	}
-	
-	.navbar div.input {
-		float:left;
-		margin: 0 5px;
-	}
-	.navbar div.input label {
-		padding: 0px 3px;
-		}
-		
-	#mediaUploadForm input {
-		float:left;
-		margin: 0 5px;
-	}
-	
-	#mediaUploadForm {
-		float: right;
-    	padding: 5px;
-	}
-	
-</style>
 
-<style type="text/css">	
-  		.media-item {
-  			float:left;
-  			width: 150px;
-  			height: 150px;
-  			padding: 10px;
-  			border: 1px #eee solid;
-  			border-radius: 10px;
-  			overflow: hidden;
-  			margin: 10px;	
-  		}
-  		
-  		.media-item .title {
-  			padding: 3px;
-  			border-top: 1px #eee solid;
-  			border-bottom: 1px #eee solid;
-  		}
-  		
-  		.media-item .content {
-  			border: 1px #eee solid;
-  			padding: 2px;
-  			width:100%;
-  			height:70%;
-  			overflow:hidden;
-  			text-align: center;
-  		}
-  		
-  		.media-item .content img {
-  			height: 100%;
-  			margin: 0 auto;
-  		}
-  		
-  	</style>
+	#mediaBrowser .navbar div.input {
+		float: left;
+		margin: 0 5px;
+	}
+	#mediaBrowser .navbar div.input label {
+		padding: 0px 3px;
+	}
+
+	#mediaUploadForm input {
+		float: left;
+		margin: 0 5px;
+	}
+
+	#mediaUploadForm {
+		padding: 5px;
+	}
+	
+	#MediaFiles {
+		width: 50%;
+	}
+	
+	#MediaAddForm {
+		margin: 0;
+	}
+
+	.media-item {
+		float: left;
+		width: 150px;
+		height: 150px;
+		padding: 10px;
+		border: 1px #eee solid;
+		border-radius: 10px;
+		overflow: hidden;
+		margin: 10px;
+	}
+
+	.media-item .title {
+		padding: 3px;
+		border-top: 1px #eee solid;
+		border-bottom: 1px #eee solid;
+	}
+
+	.media-item .content {
+		border: 1px #eee solid;
+		padding: 2px;
+		width: 100%;
+		height: 70%;
+		overflow: hidden;
+		text-align: center;
+	}
+
+	.media-item .content img {
+		height: 100%;
+		margin: 0 auto;
+	}
+
+</style>
