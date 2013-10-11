@@ -92,6 +92,11 @@ define([
 		draw: function() {
 			var imageObject = this;
 			if ( imageObject.get('type') !== 'screenshot' ) {
+				
+				if ( imageObject.get('image') === null ) {
+					this.refreshContent();
+				}
+				
 				var width = ( imageObject.get('width') === '' ) ? null : imageObject.get('width');
 				var height = ( imageObject.get('height') === '' ) ? null : imageObject.get('height');
 				var dx;

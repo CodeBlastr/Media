@@ -1,3 +1,13 @@
+<!-- CSS -->
+<style>
+	.modal-footer {
+		border: none;
+	}
+</style>
+<link rel="stylesheet" type="text/css" href="/media/css/canvasBuildrr.css" />
+<link rel="stylesheet" type="text/css" href="/css/google-webfonts.css" />
+<link rel="stylesheet" type="text/css" href="/css/simplecolorpicker/simplecolorpicker.css" />
+
 
 <div class="span8 canvasBuildrr">
 	<!-- canvasBuildrr app goes here -->
@@ -175,14 +185,4 @@
 	var canvasData = <?php echo json_encode($this->request->data['Media']['data']); ?>;
 </script>
 <script data-main="/Media/js/canvasBuildrr/canvasBuildrr.js" src="/Media/js/canvasBuildrr/require.js"></script>
-
-<!-- CSS -->
-<style>
-	.modal-footer {
-		border: none;
-	}
-</style>
-<link rel="stylesheet" type="text/css" href="/media/css/canvasBuildrr.css" />
-<link rel="stylesheet" type="text/css" href="/css/google-webfonts.css" />
-<link rel="stylesheet" type="text/css" href="/css/simplecolorpicker/simplecolorpicker.css" />
 

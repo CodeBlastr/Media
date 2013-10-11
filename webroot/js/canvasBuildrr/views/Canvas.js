@@ -62,7 +62,7 @@ define([
 			 * SAVE BUTTON
 			 */
 			this.$el.parent().find("#saveCanvas").click(function(e){
-				var options = {};
+				var options = {silent: true};
 				var method;
 				if ( $(e.currentTarget).attr('data-saved') === 'false' ) {
 					method = 'create';
