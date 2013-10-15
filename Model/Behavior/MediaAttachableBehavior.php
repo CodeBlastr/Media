@@ -137,7 +137,9 @@ class MediaAttachableBehavior extends ModelBehavior {
 	 */
 	
 	
-	public function beforeFind(Model $model, $query) {
+	public function beforeFind(Model $Model, $query) {
+		$query['contain'][] = 'Media';
+		
 		return $query;
 	}
 	
