@@ -12,15 +12,14 @@ class _MediaController extends MediaAppController {
 	public $uses = 'Media.Media';
 	public $allowedActions = array('index', 'view', 'notification', 'stream', 'my', 'add', 'edit', 'sorted', 'record');
 	public $helpers = array('Media.Media');
-	
-	
+
+
 /**
  * kinda expects URL to be: /media/media/index/(audio|video)
  * shows media of the type passed in the request
  */
 	public function index() {
-		#debug($this->request->pass);
-		if(isset($this->request->pass[0])) {
+		if (isset($this->request->pass[0])) {
 			$mediaType = $this->request->pass[0];
 		}
 		$allMedia = $this->Media->find('all', array(
@@ -31,25 +30,25 @@ class _MediaController extends MediaAppController {
 				)
 			));
 		$this->set('media', $allMedia);
-	}//index()
+	}
 
 
 	public function add() {
 		if (!empty($this->request->data)) {
-			if(isset($this->request->data['MediaAttachment'])) {
+			if (isset($this->request->data['MediaAttachment'])) {
 				$this->loadModel('Media.MediaAttachment');
 			}
-			
+
             $this->request->data['User']['id'] = $this->Auth->user('id');
 			$mediaarray = array();
-			foreach($this->request->data['Media']['files'] as $file) {
+			foreach ($this->request->data['Media']['files'] as $file) {
 				$media['Media'] = array(
 					'user_id' => $this->Auth->user('id'),
 					'filename' => $file
 				);
 				$this->Media->create();
 				$media = $this->Media->save($media);
-				if(isset($this->request->data['MediaAttachment'])) {
+				if (isset($this->request->data['MediaAttachment'])) {
 					$attachedmedia = array(
 						'MediaAttachment' => array(
 							'media_id' => $media['Media']['id'],
@@ -59,12 +58,12 @@ class _MediaController extends MediaAppController {
 					$this->MediaAttachment->create();
 					$media = $this->MediaAttachment->save($attachedmedia);
 				}
-				
-				if($media) {
+
+				if ($media) {
 					$mediaarray[] = $media;
 				}
 			}
-			if(!empty($mediaarray)) {
+			if (!empty($mediaarray)) {
 				$this->Session->setFlash('Media saved.');
 				if ($this->request->isAjax()) {
 					$this->set('media', $mediaarray);
@@ -73,13 +72,13 @@ class _MediaController extends MediaAppController {
 				} else {
 					$this->redirect(array('action' => 'my'));
 				}
-			}else {
+			} else {
 				$this->Session->setFlash('Upload failed, check directory permissions');
 			}
-			
+
 		}
 
-	}//upload()
+	}
 
 
 /**
@@ -125,17 +124,17 @@ class _MediaController extends MediaAppController {
 		}catch(Exception $e) {
 			$this->Session->setFlash($e->getMessage());
 		}
-		
+
 		$this->redirect($this->referer());
 	}
-	
+
 
 /**
  *
  * @param char $mediaID The UUID of the media in question.
  */
 	public function view($mediaID = null) {
-		if($mediaID) {
+		if ($mediaID) {
             // Increase the Views by 1
             $this->Media->updateAll(array('Media.views'=>'Media.views+1'), array('Media.id'=>$mediaID));
 
@@ -152,12 +151,12 @@ class _MediaController extends MediaAppController {
 			$this->pageTitle = $theMedia['Media']['title'];
 			$this->set('theMedia', $theMedia);
 		}
-	}//view()
+	}
 
 
 	public function my() {
 		$userID = ($this->Auth->user('id')) ? $this->Auth->user('id') : false;
-		if($userID) {
+		if ($userID) {
 			$allMedia = $this->Media->find('all', array(
 				'conditions' => array(
 					'Media.user_id' => $userID,
@@ -168,7 +167,7 @@ class _MediaController extends MediaAppController {
 		} else {
 			$this->redirect('/');
 		}
-	}//my()
+	}
 
 
 /**
@@ -178,46 +177,43 @@ class _MediaController extends MediaAppController {
  * @param string $requestedFormat The filetype of the media expected.
  */
 	function stream($mediaID = null, $requestedFormat = FALSE) {
-		#debug($this->request->params);break;
-		if($mediaID && $requestedFormat) {
+		if ($mediaID && $requestedFormat) {
 
 			// find the filetype
 			$theMedia = $this->Media->findById($mediaID);
 
 			foreach($theMedia['Media']['ext'] as $outputExtension) {
-				if($outputExtension == $requestedFormat) $outputTypeFound = true;
+				if ($outputExtension == $requestedFormat) {
+					$outputTypeFound = true;
+				}
 			}
 
-			if($outputTypeFound) {
+			if ($outputTypeFound) {
 				// yes, we should have this media in the requested format
 
-				if(!empty($theMedia['Media']['type'])) {
+				if (!empty($theMedia['Media']['type'])) {
 					// determine what data to send to the browser
-
-					if($theMedia['Media']['type'] == 'audio') {
-
-						switch($requestedFormat) {
+					if ($theMedia['Media']['type'] == 'audio') {
+						switch ($requestedFormat) {
 							case ('mp3'):
 								$filetype = array('extension' => 'mp3', 'mimeType' => array('mp3' => 'audio/mp3'));
 								break;
 							case ('ogg'):
 								$filetype = array('extension' => 'ogg', 'mimeType' => array('ogg' => 'audio/ogg'));
 								break;
-						}//switch()
-					} elseif($theMedia['Media']['type'] == 'video') {
-
-						switch($requestedFormat) {
+						}
+					} elseif ($theMedia['Media']['type'] == 'video') {
+						switch ($requestedFormat) {
 							case ('mp4'):
 								$filetype = array('extension' => 'mp4', 'mimeType' => array('mp4' => 'video/mp4'));
 								break;
 							case ('webm'):
 								$filetype = array('extension' => 'webm', 'mimeType' => array('mp4' => 'video/webm'));
 								break;
-						}//switch()
+						}
+					}
 
-					}// audio/video
-
-					if(isset($filetype)) { /** @todo break up to stream & to download & do download data updating **/
+					if (isset($filetype)) { /** @todo break up to stream & to download & do download data updating **/
 						// send the file to the browser
 						$this->viewClass = 'Media'; // <-- magic!
 						$params = array(
@@ -228,19 +224,16 @@ class _MediaController extends MediaAppController {
 							'mimeType' => $filetype['mimeType'],
 							'path' => ROOT.DS.SITE_DIR.DS.'Locale'.DS.'View'.DS.WEBROOT_DIR . DS . 'media' . DS . 'streams' . DS . $theMedia['Media']['type'] . DS
                            );
-
 						$this->set($params);
-
 					}
-				}//if(Media.type)
+				}
 
 			} else {
                 /** 404 **/
 			}
 
-		}//if($mediaID && $requestedFormat)
-
-	}//stream()
+		}
+	}
 
 
 	/**
@@ -296,11 +289,11 @@ class _MediaController extends MediaAppController {
 		$this->set('page_title_for_layout', __('Media Files'));
 	}
 
-	
+
 	/**
 	 * Filebrowser Action
 	 * Supports Ajax
-	 * 
+	 *
 	 * @param $uid - The user to show the images for
 	 * @param $multiple - Allow the user to select more that one Item
 	 */
@@ -308,14 +301,14 @@ class _MediaController extends MediaAppController {
 		if($uid == null && $this->Session->read('Auth.User.id') != 1) {
 			$uid = $this->userId;
 		}
-		
+
 		$galleryid = isset($this->request->query['galleryid']) ? $this->request->query['galleryid'] : array();
 		if(!empty($galleryid)) {
 			$this->set('galleryid', $galleryid);
 		}
 		$this->loadModel('Media.MediaGallery');
 		$this->set('galleries', $this->MediaGallery->find('list'));
-		
+
 		if(!empty($galleryid)) {
 			$media = $this->MediaGallery->find('first', array('contain' => 'Media', 'conditions' => array('id' => $galleryid)));
 			$media = $media['Media'];
@@ -327,64 +320,44 @@ class _MediaController extends MediaAppController {
 				$media = $this->Media->find('all', array('conditions' => array('creator_id' => $uid)));
 			}
 		}
-		
+
 		$this->set(compact('media', 'multiple'));
-		
+
 		if($this->request->isAjax()) {
 			$this->layout = null;
 		}
-		
+
 	}
 
 
 	public function canvas($id = null) {
-// 		App::uses('Canvas', 'Media.Model');
-// 		$this->Canvas = new Canvas;
-		switch ($this->request->method()) {
-			case ('POST'):
-				$response = $this->Media->addCanvasObjects($this->request->data);
-				$this->__returnJsonResponse($response);
-				break;
-			case ('PUT'):
-				$response = $this->Media->updateCanvasObjects($this->request->data);
-				$this->__returnJsonResponse($response);
-				break;
-			case ('DELETE'):
-				$response = $this->Media->deleteCanvasObjects($this->request->data);
-				$this->__returnJsonResponse($response);
-				break;
-			case ('GET'):
-			default:
-				if ($id) {
-					$this->request->data = $this->Media->find('first', array(
-							'conditions' => array(
-									'Media.id' => $id
-							)
-					));
-					$this->request->data['Media']['data'] = json_decode($this->request->data['Media']['data']);
-					$this->request->data['Media']['data']->id = $id;
-					$this->request->data['Media']['data'] = json_encode($this->request->data['Media']['data']);
-
-// 					if ($this->request->isAjax()) {
-// 							$this->__returnJsonResponse(array(
-// 								'statusCode' => '200',
-// 								'body' => $this->request->data
-// 							));
-// 					}
-				}
-				break;
+		if ($this->request->isAjax()) {
+			$response = $this->Media->updateCanvasObjects($this->request->data);
+			$this->__returnJsonResponse($response);
+		} else {
+			if ($id) {
+				$this->request->data = $this->Media->find('first', array(
+						'conditions' => array(
+								'Media.id' => $id
+						)
+				));
+				// add the `id` into the data field, as this is the data used by the JavaScript..
+				$this->request->data['Media']['data'] = json_decode($this->request->data['Media']['data']);
+				$this->request->data['Media']['data']->id = $id;
+				$this->request->data['Media']['data'] = json_encode($this->request->data['Media']['data']);
+			}
 		}
 	}
-	
-	
+
+
 	/**
 	 * Lazy Loader Function derives from imgsrc link.
 	 * Breaks up the link and uses the filename.
-	 * 
+	 *
 	 * @param $imglink  The url of the image
 	 * @return string rendered filename
 	 */
-	
+
 	public function lazyLoad($id) {
 		if(!$this->request->is('json')) {
 			throw new Exception('Method Not allowed');
@@ -397,39 +370,39 @@ class _MediaController extends MediaAppController {
 					case 'imgwidth':
 						$param['newWidth'] = $p;
 						break;
-					
+
 					case 'imgheight':
 						$param['newHeight'] = $p;
 						break;
-						
+
 					case 'quality':
 						$param['quality'] = $p;
 						break;
-						
+
 					case 'method':
 						if( $p == 'resize' |  $p == 'resizeCrop' | $p == 'crop') {
 							$param['cType'] = $p;
 						}
 						break;
-					
+
 					default:
-						
+
 						break;
 				}
 			}
 		}
-		
+
 		$filename = $this->_resizeImage($id, $params);
 		debug($filename);
-		
+
 	}
-	
+
 	/**
 	 * Image Resize Handling.
 	 * @TODO This probably should be a componenet
-	 * (might need to be a "lib" if you want to use it globally) ^JB 
+	 * (might need to be a "lib" if you want to use it globally) ^JB
 	 */
-	 
+
 	 public $resizeDefaults = array(
 	 	'cType' => 'resize',
 		'imgFolder' => false,
@@ -439,7 +412,7 @@ class _MediaController extends MediaAppController {
 		'quality' => 75,
 		'bgcolor' => false
 	);
-	
+
 	/**
 	 * Resize Image function - uses GD Library
 	 * @param $id = Media ID
@@ -452,19 +425,19 @@ class _MediaController extends MediaAppController {
 	 * 				'quality' => { new image quality 0-100 },
 	 * 				'bgcolor => { New Backround Color }
 	 * 			)
-	 * 	
+	 *
 	 * @return bool
 	 */
-	 
+
     protected function _resizeImage($id = null, $params = array()) {
     	if(empty($id)) {
     		return false;
     	}else {
     		$media = $this->Media->read(array('filename', 'extension', $id));
     	}
-		
+
     	$params = array_merge($this->resizeDefaults, $params);
-        
+
 		if (file_exists($img)) {
 	        list($oldWidth, $oldHeight, $type) = getimagesize($img);
 	        $ext = $this->image_type_to_extension($type);
@@ -609,7 +582,7 @@ class _MediaController extends MediaAppController {
 	                    $newColor = ImageColorAllocate($newImage, $red, $green, $blue);
 	                    imagefill($newImage,0,0,$newColor);
 					};
-	                
+
                     // preserve transparency
                     if($ext == 'gif' || $ext == 'png'){
                         imagecolortransparent($newImage, imagecolorallocatealpha($newImage, 0, 0, 0, 127));

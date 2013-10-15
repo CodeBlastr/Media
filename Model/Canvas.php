@@ -1,37 +1,38 @@
 <?php
-/**
- * @todo Move all the canvas stuff that's in the Media model to here.
- * @author Joel Byrnes
- *
- */
 App::uses('MediaAppModel', 'Media.Model');
+/**
+ * Canvas Model
+ * 
+ * @todo Move all the canvas stuff that's in the Media model to here.
+ */
+
 class Canvas extends MediaAppModel {
 	public $name = 'Canvas';
 	
 	public $useTable = 'media';
 	
 	public $belongsTo = array(
-			'User' => array(
-					'className' => 'Users.User',
-					'foreignKey' => 'user_id'
+		'User' => array(
+			'className' => 'Users.User',
+			'foreignKey' => 'user_id'
 			)
-	);
+		);
 	
-	/**
-	 * Convienence variable so we don't clutter our object arrays
-	 * @var string
-	 */
+/**
+ * Convienence variable so we don't clutter our object arrays
+ * @var string
+ */
 	public $screenshotId;
 	
-	/**
-	 * This function needs to do the following things:
-	 *  - save the metadata of each image
-	 *  - save the entire models of TextObjects
-	 *  - (maybe) either return the entire collection so we can .reset() or just the collection's id
-	 *
-	 * @param array $data
-	 * @return array
-	 */
+/**
+ * This function needs to do the following things:
+ *  - save the metadata of each image
+ *  - save the entire models of TextObjects
+ *  - (maybe) either return the entire collection so we can .reset() or just the collection's id
+ *
+ * @param array $data
+ * @return array
+ */
 	public function addCanvasCollection($data) {
 	
 		// save all image objects as rows in `media`
@@ -52,11 +53,11 @@ class Canvas extends MediaAppModel {
 	}
 	
 	
-	/**
-	 *
-	 * @param array $data
-	 * @return array|boolean
-	 */
+/**
+ *
+ * @param array $data
+ * @return array|boolean
+ */
 	public function addCanvasObjects($data) {
 		$objects = false;
 		foreach ($data as $canvasObject) {
@@ -95,12 +96,12 @@ class Canvas extends MediaAppModel {
 	}
 	
 	
-	/**
-	 * saves image file from image object to the file server
-	 *
-	 * @param array $data
-	 * @return array|boolean
-	 */
+/**
+ * saves image file from image object to the file server
+ *
+ * @param array $data
+ * @return array|boolean
+ */
 	private function _saveCanvasImageObject($data) {
 		$added = false;
 		// make sure that this is (probably) safe to pass to fopen()

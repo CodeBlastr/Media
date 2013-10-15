@@ -17,7 +17,7 @@ class Media extends MediaAppModel {
 	public $supportedAudioExtensions = array('aif', 'mid', 'midi', 'mka', 'mp1', 'mp2', 'mp3', 'mpa', 'wav', 'aac', 'flac', 'ogg', 'ra', 'raw', 'wma');
 
 	public $supportedImageExtensions = array('jpg', 'png', 'gif', 'bmp', 'jpeg');
-	
+
 	public $name = 'Media';
 
 	public $belongsTo = array(
@@ -26,7 +26,7 @@ class Media extends MediaAppModel {
 			'foreignKey' => 'user_id'
 			)
 		);
-	
+
 	public $fileExtension;
 
 	public function __construct($id = false, $table = null, $ds = null) {
@@ -53,7 +53,7 @@ class Media extends MediaAppModel {
 		return $this->processFile();
 	}
 
-	
+
 	public function processFile() {
 		$this->data['Media']['type'] = $this->mediaType($this->fileExtension);
 		if($this->data['Media']['type']) {
@@ -62,7 +62,7 @@ class Media extends MediaAppModel {
 		}
 		return false;
 	}
-	
+
 	public function mediaType($ext) {
 		if(in_array($ext, $this->supportedFileExtensions)) {
 			return 'docs';
@@ -77,14 +77,14 @@ class Media extends MediaAppModel {
 			// an unsupported file type
 			return false;
 		}
-		
+
 	}
 
     /**
      *
      * @param type $results
      * @param type $primary
-     * @return array 
+     * @return array
      */
     public function afterFind($results, $primary = false) {
 
@@ -93,7 +93,7 @@ class Media extends MediaAppModel {
 
 				# what formats did we receive from the encoder?
 				$outputs = json_decode($val['Media']['filename'], true);
-				
+
 				# audio files have 1 output currently.. arrays are not the same.. make them so.
 				/** @todo this part is kinda hacky.. **/
 				if($val['Media']['type'] == 'audio') {
@@ -101,7 +101,7 @@ class Media extends MediaAppModel {
 					$outputs = null;
 					$outputs['outputs'][0] = $temp['outputs'];
 				}
-			
+
 				if($val['Media']['type'] == 'videos') {
 					$outputArray = $extensionArray = null;
 					if (!empty($outputs)) {
@@ -145,7 +145,7 @@ class Media extends MediaAppModel {
 			throw new Exception(__d('media', 'File Upload of ' . $data['Media']['filename']['name'] . ' to ' . $newFile . '  Failed'));
 		}
 	}
-	
+
 
 /**
  * Recordings were saved to the recording server, and now we need to move them to the local server.
@@ -177,19 +177,24 @@ class Media extends MediaAppModel {
 		return $data;
 	}
 
+	/**
+	 * I beleive that this one was used to save images created with the LiterallyCanvas script
+	 * @param type $data
+	 * @return int
+	 */
 	private function _handleCanvasImages($data) {
 		if ( !empty($data['Media']['canvasImageData']) ) {
-			
+
 			$canvasImageData = str_replace('data:image/png;base64,', '', $data['Media']['canvasImageData']);
 			$decodedImage = base64_decode($canvasImageData);
-			
+
 			$filename = preg_replace("/[^\w\s\d\-_~,;:\[\]\(\]]|[\.]{2,}/", '', $data['Media']['title'].'_'.uniqid());
 			$saveName = $this->themeDirectory . $this->plugin . DS . 'images' . DS . $filename.'.png';
-			
+
 			$fopen = fopen($saveName, 'wb');
 			fwrite($fopen, $decodedImage);
 			fclose($fopen);
-			
+
 			$data['Media']['filename']['name'] = $filename.'.png';
 			$data['Media']['filename']['type'] = 'image/png';
 			$data['Media']['filename']['tmp_name'] = $saveName;
@@ -197,14 +202,20 @@ class Media extends MediaAppModel {
 		}
 		return $data;
 	}
-	
-	
+
+
 	/**
 	 *
 	 * @param array $data An entire model from the canvasBuildrr {model:collection:{models}}
 	 * @return array
 	 */
-	public function addCanvasObjects($data) {
+	public function updateCanvasObjects($data) {
+		$data = json_decode( $data, true);
+
+		if ($data['id']) {
+			$this->id = $data['id'];
+		}
+
 		foreach ($data['collection'] as &$canvasObject) {
 			// save the screenshot file.
 			if ($canvasObject['type'] == 'screenshot') {
@@ -213,10 +224,10 @@ class Media extends MediaAppModel {
 				$canvasObject['content'] = '/theme/Default/media/' . $savedImage['Media']['type'] . '/' .  $savedImage['Media']['filename'] . '.' . $savedImage['Media']['extension'];
 			}
 		}
-	
+
 		// save all data to our screenshot/parent row
 		$addedObjects = $this->saveField('data', json_encode($data), array('callbacks' => false));
-		
+
 		if ($addedObjects) {
 			return array(
 					'statusCode' => '200',
@@ -228,57 +239,21 @@ class Media extends MediaAppModel {
 	}
 
 
-	
-	public function updateCanvasObjects($data) {
-		$added = false;
-//		foreach ($data as $canvasObject) {
-//			if (!(isset($canvasObject['id']))) {
-//				if ($canvasObject['type'] == 'ImageObject') {
-//					$added = $this->_saveCanvasImageObject($canvasObject);
-//				}
-//			}
-//		}
-
-		foreach ($data as $canvasObject) {
-			if ($canvasObject['type'] == 'screenshot') {
-				$savedImage = $this->_saveCanvasImageObject($canvasObject, $data['id']);
-				$canvasObject['id'] = $savedImage['Media']['id'];
-				$canvasObject['content'] = '/theme/Default/media/' . $savedImage['Media']['type'] . '/' .  $savedImage['Media']['filename'] . '.' . $savedImage['Media']['extension'];
-			}
-		}
-
-		$this->id = $data['id'];
-		unset($data['id']);
-	
-		// save all data to our screenshot/parent row
-		$addedObjects = $this->saveField('data', json_encode($data), array('callbacks' => false));
-		
-		if ($addedObjects) {
-			return array(
-					'statusCode' => '200',
-					'body' => json_encode($addedObjects)
-			);
-		} else {
-			return array('statusCode' => '403');
-		}
-	}
-	
-	
 	/**
 	 * saves image file from image object to the file server
 	 *
 	 * @param array $data
 	 * @return array|boolean
 	 */
-	private function _saveCanvasImageObject($data, $id = false) {
-		
+	private function _saveCanvasImageObject($data) {
+
 		// make sure that this is (probably) safe to pass to fopen()
 		if (strpos($data['content'], 'data:') !== 0) {
 			return false;
 		}
-	
+
 		$added = false;
-	
+
 		$image = fopen($data['content'], 'r');
 		$metadata = stream_get_meta_data($image);
 
@@ -299,10 +274,10 @@ class Media extends MediaAppModel {
 				return false;
 				break;
 		}
-	
+
 		// set temp filename
 		$uuid = $this->__uuid().uniqid();
-	
+
 		// write image to disk
 		$imageString = str_replace('data:'.$metadata['mediatype'].';base64,', '', $data['content']);
 		$imageString = base64_decode($imageString);
@@ -312,7 +287,9 @@ class Media extends MediaAppModel {
 
 		if ($written) {
 			// save record to database server
-			($id) ? $this->id = $id : $this->create();
+			if (!$this->id) {
+				$this->create();
+			}
 			$added = $this->save(array(
 				'Media' => array(
 					'filename' => array(
@@ -322,21 +299,9 @@ class Media extends MediaAppModel {
 				)
 			));
 		}
-	
-		return $added;
-	
-	}
-	
-	
-	public function deleteCanvasObject($data) {
-		$added = false;
-		if ($added) {
-			return array('statusCode' => '200');
-		} else {
-			return array('statusCode' => '403');
-		}
-	}
-	
-	
-}
 
+		return $added;
+
+	}
+
+}
