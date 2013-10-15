@@ -22,7 +22,7 @@ define([
 			isEditable: true
 		},
 		
-		url: '/media/media/canvas',
+		url: '/media/mediaGalleries/canvas',
 		
 		initialize: function() {
 			// init event listeners

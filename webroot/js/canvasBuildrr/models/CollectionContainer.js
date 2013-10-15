@@ -12,7 +12,7 @@ define([
 	 */
 	var CollectionContainer = Backbone.Model.extend({
 		
-		url: '/media/media/canvas/',
+		url: '/media/mediaGalleries/canvas/',
 		
 		defaults: {
 			collection: new CanvasObjects(),

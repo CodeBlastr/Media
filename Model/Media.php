@@ -26,6 +26,13 @@ class Media extends MediaAppModel {
 			'foreignKey' => 'user_id'
 			)
 		);
+		
+	public $hasMany = array(
+		'MediaAttachment' => array(
+			'className' => 'Media.MediaAttachment',
+			'foreignKey' => 'media_id'
+		)
+	);
 
 	public $fileExtension;
 
@@ -209,7 +216,7 @@ class Media extends MediaAppModel {
 	 * @param array $data An entire model from the canvasBuildrr {model:collection:{models}}
 	 * @return array
 	 */
-	public function updateCanvasObjects($data) {
+	public function updateCanvasObjects($data, $galleryId = false) {
 		$data = json_decode( $data, true);
 
 		if ($data['id']) {
@@ -219,7 +226,7 @@ class Media extends MediaAppModel {
 		foreach ($data['collection'] as &$canvasObject) {
 			// save the screenshot file.
 			if ($canvasObject['type'] == 'screenshot') {
-				$savedImage = $this->_saveCanvasImageObject($canvasObject);
+				$savedImage = $this->_saveCanvasImageObject($canvasObject, $galleryId);
 				$canvasObject['id'] = $savedImage['Media']['id'];
 				$canvasObject['content'] = '/theme/Default/media/' . $savedImage['Media']['type'] . '/' .  $savedImage['Media']['filename'] . '.' . $savedImage['Media']['extension'];
 			}
@@ -245,7 +252,7 @@ class Media extends MediaAppModel {
 	 * @param array $data
 	 * @return array|boolean
 	 */
-	private function _saveCanvasImageObject($data) {
+	private function _saveCanvasImageObject($data, $galleryId = false) {
 
 		// make sure that this is (probably) safe to pass to fopen()
 		if (strpos($data['content'], 'data:') !== 0) {
@@ -290,6 +297,9 @@ class Media extends MediaAppModel {
 			if (!$this->id) {
 				$this->create();
 			}
+			if ($galleryId === false) {
+				$this->Behaviors->disable('MediaAttachment');
+			}
 			$added = $this->save(array(
 				'Media' => array(
 					'filename' => array(
@@ -298,6 +308,16 @@ class Media extends MediaAppModel {
 					)
 				)
 			));
+			
+			if ($added) {
+				$mediaAttachment = array(
+					'media_id' => $this->id,
+					'model' => 'MediaGallery',
+					'foreign_key' => $galleryId
+				);
+				$this->MediaAttachment->save($mediaAttachment);
+			}
+			
 		}
 
 		return $added;

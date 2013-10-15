@@ -330,26 +330,6 @@ class _MediaController extends MediaAppController {
 	}
 
 
-	public function canvas($id = null) {
-		if ($this->request->isAjax()) {
-			$response = $this->Media->updateCanvasObjects($this->request->data);
-			$this->__returnJsonResponse($response);
-		} else {
-			if ($id) {
-				$this->request->data = $this->Media->find('first', array(
-						'conditions' => array(
-								'Media.id' => $id
-						)
-				));
-				// add the `id` into the data field, as this is the data used by the JavaScript..
-				$this->request->data['Media']['data'] = json_decode($this->request->data['Media']['data']);
-				$this->request->data['Media']['data']->id = $id;
-				$this->request->data['Media']['data'] = json_encode($this->request->data['Media']['data']);
-			}
-		}
-	}
-
-
 	/**
 	 * Lazy Loader Function derives from imgsrc link.
 	 * Breaks up the link and uses the filename.

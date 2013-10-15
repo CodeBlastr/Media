@@ -110,12 +110,74 @@ class _MediaGalleriesController extends MediaAppController {
 		return json_encode($this->request->data);
 	}
 
-}
 
-if ( !isset($refuseInit) ) {
-
-	class MediaGalleriesController extends _MediaGalleriesController {
-		
+/**
+ * action that handles the canvasBuildrr
+ * @etymology Late Middle English: from Old Northern French canevas, based on Latin cannabis ‘hemp,’ from Greek kannabis.
+ */
+	public function canvas($galleryId = null, $mediaId = null) {
+		if ($this->request->isAjax()) {
+			// handle presses of the canvas' save button
+			$response = $this->MediaGallery->Media->updateCanvasObjects($this->request->data, $galleryId);
+			$this->__returnJsonResponse($response);
+		} else {
+			// This is a brand new freeform canvas gallery.
+			if (!($galleryId) && !($mediaId)) {
+				// create gallery
+				$newGallery = $this->MediaGallery->create(array(
+					'title' => 'Untitled'
+				));
+				$this->MediaGallery->save($newGallery);
+				$this->redirect(array('action' => 'canvas', $this->MediaGallery->id));
+			}
+			if ($mediaId) {
+				$this->request->data = $this->MediaGallery->find('first', array(
+						'conditions' => array(
+								'MediaGallery.id' => $galleryId
+						),
+						'contain' => array('Media')
+				));
+				if (!empty($this->request->data['Media'])) {
+					foreach ($this->request->data['Media'] as &$media) {
+						if ($media['id'] === $this->passedArgs[1]) {
+							// add the `id` into the data field, as this is the data used by the JavaScript..
+							$media['data'] = json_decode($media['data']);
+							$media['data']->id = $mediaId;
+							$media['data'] = json_encode($media['data']);
+						}
+					}
+				}
+			} else {
+				// $galleryId provided & $mediaId not provided.
+				$this->request->data = $this->MediaGallery->find('first', array(
+						'conditions' => array(
+								'MediaGallery.id' => $galleryId
+						),
+						'contain' => array('Media')
+				));
+				// check to see if they are trying to add more than the Media per Gallery limit (4)
+				$mediaPerGalleryLimit = 4;
+				if (count($this->request->data['Media']) >= $mediaPerGalleryLimit) {
+					// redirect them to their current page 4
+					$this->Session->setFlash('You have reached the maximum of '.$mediaPerGalleryLimit.' pages');
+					$this->redirect(array('action' => 'canvas', $galleryId, $this->request->data['Media'][3]['id']));
+				}
+			}
+		}
+	}
+	
+	public function duplicateGallery($id) {
+		try {
+			$myGalleryId = $this->MediaGallery->duplicate($id);
+			$this->redirect(array('action' => 'canvas', $myGalleryId));
+		} catch (Exception $e) {
+			$this->Session->setFlash($e->getMessage());
+			$this->redirect($this->referer());
+		}
 	}
 
+}
+
+if (!isset($refuseInit)) {
+	class MediaGalleriesController extends _MediaGalleriesController {}
 }
