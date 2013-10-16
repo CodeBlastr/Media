@@ -7,7 +7,7 @@
  * 
  */
 
-class MediaGallery extends MediaAppModel {
+class _MediaGallery extends MediaAppModel {
 		
 	public $name = 'MediaGallery';
 	public $actsAs = array('Media.MediaAttachable');
@@ -69,4 +69,8 @@ class MediaGallery extends MediaAppModel {
 		return $this->id;
 	}
 	
+}
+
+if (!isset($refuseInit)) {
+	class MediaGallery extends _MediaGallery {}
 }
