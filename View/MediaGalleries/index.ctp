@@ -22,7 +22,7 @@
     	<tbody>
     		<?php foreach ($galleries as $gallery): ?>
     		<tr>
-	    		<td><?php echo $this->Html->link($gallery['MediaGallery']['title'], array('plugin'=>'users','controller'=>'user_groups' , 'action'=>'view' , $gallery['MediaGallery']['id'])); ?>&nbsp;</td>
+	    		<td><?php echo $this->Html->link($gallery['MediaGallery']['title'], array('action'=>'view' , $gallery['MediaGallery']['id'])); ?>&nbsp;</td>
 				<td><?php echo $gallery['MediaGallery']['description']; ?>&nbsp;</td>
 				<td><?php echo $this->Form->select(null, $tagOptions, array('data-id' => $gallery['MediaGallery']['id'], 'class' => 'tag-selector') ); ?>
 				<td class="actions" style="padding: 5px;">
