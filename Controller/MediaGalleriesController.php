@@ -128,7 +128,28 @@ class _MediaGalleriesController extends MediaAppController {
 					'title' => 'Untitled'
 				));
 				$this->MediaGallery->save($newGallery);
-				$this->redirect(array('action' => 'canvas', $this->MediaGallery->id));
+				for ($i=0; $i < 4; $i++) {
+					$this->MediaGallery->Media->create();
+					$this->MediaGallery->Media->save(array(
+						'Media' => array(
+							'filename' => '',
+							'model' => 'Media'
+						)
+					), array('callbacks' => false));
+					if ($i === 0) {
+						$firstMediaId = $this->MediaGallery->Media->id;
+					}
+					$this->MediaGallery->Media->MediaAttachment->create();
+					$this->MediaGallery->Media->MediaAttachment->save(array(
+						'MediaAttachment' => array(
+							'model' => 'MediaGallery',
+							'foreign_key' => $this->MediaGallery->id,
+							'media_id' => $this->MediaGallery->Media->id
+						)
+					), array('callbacks' => false));
+				}
+				
+				$this->redirect(array('action' => 'canvas', $this->MediaGallery->id, $firstMediaId));
 			}
 			if ($mediaId) {
 				$this->request->data = $this->MediaGallery->find('first', array(
