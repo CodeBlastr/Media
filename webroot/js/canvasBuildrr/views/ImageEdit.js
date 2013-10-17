@@ -25,7 +25,23 @@ define([
 			"change input.filePicker": 'uploadImage',
 			"click .cb_up": "orderUp",
 			"click .cb_down": "orderDown",
+			"click .cb_remove": "remove",
+			"click .cb_lock": "toggleLock",
 			"click .cb_close": 'close'
+		},
+		
+		remove: function( event ) {
+			Backbone.AppModel.get('collection').remove(this.model);
+			this.close();
+		},
+		
+		toggleLock: function( event ) {
+			this.model.set('isEditable', !this.model.get('isEditable'));
+			if ( this.model.get('isEditable') === false ) {
+				this.$('.cb_lock i').attr('class', 'icon-ban-circle');
+			} else {
+				this.$('.cb_lock i').attr('class', 'icon-ok-circle');
+			}
 		},
 		
 		orderUp: function( event ) {
@@ -72,17 +88,3 @@ define([
 	// Our module now returns our view
 	return ImageEditView;
 });
-
-var imageEditHandler = function( event, image ) {
-	if ( image === undefined ) {
-		image = new ImageObject({x: click.x, y: click.y});
-		AppModel.get('collection').add(image);
-	}
-	var imageEditor = new ImageEditView({
-		model: image,
-		el: $("#cb_canvasWrapper").parent(),
-		top: image.get('y') + $("#cb_canvasWrapper").offset().top + 10,
-		left: image.get('x') + $("#cb_canvasWrapper").offset().left,
-		content: image.get('content')
-	});
-};

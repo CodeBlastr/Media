@@ -135,6 +135,21 @@ define([
 			this.delegateEvents();
 		},
 		
+		imageEditHandler: function( event, image ) {
+			if ( image === undefined ) {
+				image = new ImageObject();
+				Backbone.AppModel.get('collection').add(image);
+			}
+			var imageEditor = new ImageEditView({
+				model: image,
+				el: $("#cb_canvasWrapper").parent(),
+				top: image.get('y') + $("#cb_canvasWrapper").offset().top + 10,
+				left: image.get('x') + $("#cb_canvasWrapper").offset().left,
+				content: image.get('content')
+			});
+			this.delegateEvents();
+		},
+		
 		placeholderMouseUp: function( e ) {
 			$("#cb_canvasWrapper").unbind('mousemove');
 			return false;
