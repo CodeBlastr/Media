@@ -1,10 +1,4 @@
-<?PHP
-/* @var $this View */
-
-
-#debug($theMedia);
-
-
+<?php
 //default image
 $thumbnailImage = !empty($theMedia['Media']['thumbnail']) ? '/theme/default/media/'.strtolower(ZuhaInflector::pluginize($theMedia['Media']['model'])).'/images/thumbs/'.$theMedia['Media']['id'].'_000'.$theMedia['Media']['thumbnail'].'.jpg' : '/img/noImage.jpg';
 
@@ -34,7 +28,6 @@ echo $this->Html->css('/ratings/css/jquery.ui.stars.min');
         </div><!-- #mediaView_titleInfo -->
         <div id="mediaView_ratingBox">
             <?php
-            #debug($theMedia['Media']['rating']);
             echo $this->Rating->display(array(
                 'item' => $theMedia['Media']['id'],
                 'type' => 'radio',
