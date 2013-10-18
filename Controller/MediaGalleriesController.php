@@ -187,6 +187,10 @@ class _MediaGalleriesController extends MediaAppController {
 		}
 	}
 	
+/**
+ * Creates a duplicate Gallety for the current user.
+ * Does not duplicate the Media itself. The Media remains owned by it original owner.
+ */
 	public function duplicateGallery($id) {
 		try {
 			$myGalleryId = $this->MediaGallery->duplicate($id);
