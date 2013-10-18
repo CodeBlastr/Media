@@ -144,7 +144,8 @@ class _MediaGalleriesController extends MediaAppController {
 						'MediaAttachment' => array(
 							'model' => 'MediaGallery',
 							'foreign_key' => $this->MediaGallery->id,
-							'media_id' => $this->MediaGallery->Media->id
+							'media_id' => $this->MediaGallery->Media->id,
+							'order' => $i
 						)
 					), array('callbacks' => false));
 				}
