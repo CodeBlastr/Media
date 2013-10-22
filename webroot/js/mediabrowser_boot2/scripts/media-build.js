@@ -1,4 +1,4 @@
-require.config({
+({
 	name: "mediabrowser",
     include: ["mediabrowser"],
     out: "../build/media-min.js",
@@ -34,8 +34,4 @@ require.config({
 	    }
 	}
 
-});
-
-require([ 'app'], function(App){
-  App.initialize();
-});
+})

@@ -1,0 +1,21 @@
+<div class="media-selected {{wrapperclass}}">
+	<div class="selected-actions" data-cid="{{cid}}" data-order={{model.order}}>
+		{{#if_gt model.order compare=0}}
+		<a href="#" class="orderup"><i class="icon-circle-arrow-left"></i></a>
+		{{/if_gt}}
+		<a href="#" class="orderdown"><i class="icon-circle-arrow-right"></i></a>
+		<a href="#" class="removeSelected"><i class="icon-remove-circle"></i></a>
+		<a href="#" class="makethumbnail"><i class="icon-ok-circle"></i></a>
+	</div>
+	<div class="content">
+	{{#if model.audio }}
+		<img title="{{model.title}}" src="/Media/img/audio-icon.jpg" />
+	{{/if}}
+	{{#if model.image }}
+  		<img alt="{{model.title}}" src="/theme/default/media/images/{{model.filename}}.{{model.extension}}" />
+	{{/if}}
+	</div>
+	<input type="hidden" name="data[MediaAttachment][{{index}}][media_id]" value="{{model.id}}">
+	<input type="hidden" name="data[MediaAttachment][{{index}}][order]" value="{{model.order}}">
+	<div class="clear clearfix"></div>
+</div>

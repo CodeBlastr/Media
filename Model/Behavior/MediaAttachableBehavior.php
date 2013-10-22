@@ -17,10 +17,21 @@ class MediaAttachableBehavior extends ModelBehavior {
 	                	'joinTable' => 'media_attachments',
 	                	'foreignKey' => 'foreign_key',
 	                	'associationForeignKey' => 'media_id',
-	                	'conditions' => array('MediaAttachment.model' => $Model->alias),
+	                	'conditions' => array(
+	                		'MediaAttachment.model' => $Model->alias,
+							'MediaAttachment.primary' => false,	
+	                		),
 	            		'order' => array('MediaAttachment.order')
-	            	)
-	    		)
+	            	),
+	        	'MediaThumbnail' =>
+	        		array(
+	        				'className' => 'Media.Media',
+	        				'joinTable' => 'media_attachments',
+	        				'foreignKey' => 'foreign_key',
+	        				'associationForeignKey' => 'media_id',
+	        				'conditions' => array('MediaAttachment.model' => $Model->alias, 'MediaAttachment.primary' => true),
+	        		)
+	        	)
 			), false);
 	}
 	
@@ -139,6 +150,7 @@ class MediaAttachableBehavior extends ModelBehavior {
 	
 	public function beforeFind(Model $Model, $query) {
 		$query['contain'][] = 'Media';
+		$query['contain'][] = 'MediaThumbnail';
 		
 		return $query;
 	}

@@ -15,10 +15,17 @@
 		}
 	}
 	}
+	$thumbnail = isset($this->request->data['MediaThumbnail'][0]) ? json_encode($this->request->data['MediaThumbnail'][0]) : false;
 	$selecteditems = json_encode($selecteditems);
 ?>
 
 <div id="MediaSelector">
+	<div class="row">
+		<div class="col-md-4 well clearfix">
+		<div id="mediaThumbnail">No Thumbnail Selected</div>	
+		</div>
+	</div>
+	
 	<a data-toggle="modal" href="#mediaBrowserModal" class="btn btn-primary btn-lg">Select Media</a>
 	<p>&nbsp;</p>
 	<div id="mediaSelected" class="clearfix">
@@ -47,6 +54,8 @@
 
 <script type="text/javascript">
 	$($('#mediaModalTemplate').html()).appendTo('body');
+	var thumbnail = <?php $thumbnail ? $thumbnail : 'false' ?>;
+	console.log(thumbnail);
 	var selectable = true;
 	var wrapperclass = '<?php echo $wrapperclass; ?>';
 	var selecteditems = <?php echo $selecteditems; ?>;

@@ -1,0 +1,21 @@
+<div class="media-item">
+  <div class="actions">
+	<a 
+		href="#" 
+		class="edit" 
+		data-toggle="popover"
+		data-html=true 
+		title="" 
+		data-content="<form class='editor'><label>title</label><input class='title-input' value='{{model.title}}' type='text'/><label>Description</label><textarea class='description-input' type='text'>{{model.description}}</textarea><button type='submit' class='btn btn-success'>Save</button></form>" 
+		data-original-title="edit {{model.title}}"><i class="icon-edit"></i></a>
+		<a href="#" class="delete"><i class="icon-remove-circle"></i></a>
+		<a href="#" class="makethumbnail"><i class="icon-ok-circle"></i></a>
+		{{#if selectable}}
+			<input class="selected" type="checkbox" {{#if model.selected}}checked="checked"{{/if}} name="mediaSelected" value=1 style="float:right;">
+		{{/if}}
+  </div>
+  <div class="content">
+  	<img alt="{{model.title}}" src="/theme/default/media/images/{{model.filename}}.{{model.extension}}" />
+  </div>
+  <div class="title">{{model.title}}</div>
+</div>
