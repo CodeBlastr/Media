@@ -9,6 +9,7 @@
 		data-content="<form class='editor'><label>title</label><input class='title-input' value='{{model.title}}' type='text'/><label>Description</label><textarea class='description-input' type='text'>{{model.description}}</textarea><button type='submit' class='btn btn-success'>Save</button></form>" 
 		data-original-title="edit {{model.title}}"><span class="glyphicon glyphicon-edit"></span></a>
 		<a href="#" class="delete"><span class="glyphicon glyphicon-remove-circle"></span></a>
+		<a href="#" class="makethumbnail"><span class="glyphicon glyphicon-ok-circle"></span></a>
 		{{#if selectable}}
 			<input class="selected" type="checkbox" {{#if model.selected}}checked="checked"{{/if}} name="mediaSelected" value=1 style="float:right;">
 		{{/if}}

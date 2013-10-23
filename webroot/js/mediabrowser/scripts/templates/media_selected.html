@@ -5,8 +5,18 @@
 		{{/if_gt}}
 		<a href="#" class="orderdown"><span class="glyphicon glyphicon-circle-arrow-right"></span></a>
 		<a href="#" class="removeSelected"><span class="glyphicon glyphicon-remove-circle"></span></a>
+		<a href="#" class="makethumbnail"><span class="glyphicon glyphicon-ok-circle"></span></a>
 	</div>
-	{{{innerhtml}}}
+	<div class="content">
+	{{#if model.audio }}
+		<img title="{{model.title}}" src="/Media/img/audio-icon.jpg" />
+		<p>{{model.title}}</p>
+	{{/if}}
+	{{#if model.image }}
+  		<img alt="{{model.title}}" src="/theme/default/media/images/{{model.filename}}.{{model.extension}}" />
+		<p>{{model.title}}</p>
+	{{/if}}
+	</div>
 	<input type="hidden" name="data[MediaAttachment][{{index}}][media_id]" value="{{model.id}}">
 	<input type="hidden" name="data[MediaAttachment][{{index}}][order]" value="{{model.order}}">
 	<div class="clear clearfix"></div>

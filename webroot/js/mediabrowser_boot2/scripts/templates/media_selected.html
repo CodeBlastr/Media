@@ -10,9 +10,11 @@
 	<div class="content">
 	{{#if model.audio }}
 		<img title="{{model.title}}" src="/Media/img/audio-icon.jpg" />
+		<p>{{model.title}}</p>
 	{{/if}}
 	{{#if model.image }}
   		<img alt="{{model.title}}" src="/theme/default/media/images/{{model.filename}}.{{model.extension}}" />
+		<p>{{model.title}}</p>
 	{{/if}}
 	</div>
 	<input type="hidden" name="data[MediaAttachment][{{index}}][media_id]" value="{{model.id}}">
