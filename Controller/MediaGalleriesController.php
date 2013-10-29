@@ -159,7 +159,6 @@ class _MediaGalleriesController extends MediaAppController {
 			if ($mediaId) {
 				$this->request->data = $this->MediaGallery->find('first', array(
 						'conditions' => array('MediaGallery.id' => $galleryId),
-						'contain' => array('Media')
 				));
 				if (!empty($this->request->data['Media'])) {
 					foreach ($this->request->data['Media'] as &$media) {
@@ -175,8 +174,8 @@ class _MediaGalleriesController extends MediaAppController {
 				// $galleryId provided & $mediaId not provided.
 				$this->request->data = $this->MediaGallery->find('first', array(
 						'conditions' => array('MediaGallery.id' => $galleryId),
-						'contain' => array('Media')
 				));
+				
 				// check to see if they are trying to add more than the Media per Gallery limit (4)
 				$mediaPerGalleryLimit = 4;
 				if (count($this->request->data['Media']) >= $mediaPerGalleryLimit) {
