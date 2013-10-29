@@ -152,6 +152,10 @@ class MediaAttachableBehavior extends ModelBehavior {
 	
 	
 	public function beforeFind(Model $Model, $query) {
+		//Allows us to pass $query['media'] = false to not contain media
+		if(isset($query['media']) && !$query['media']) {
+			return $query;
+		}
 		$query['contain'][] = 'Media';
 		$query['contain'][] = 'MediaThumbnail';
 		
