@@ -70,10 +70,12 @@ define([
 			this.selectedCollection.add(selecteditems);
 			//this.renderSelected();
 		}
-		if(thumbnail) {
-			thumbnail = new Media(thumbnail);
-			args = {model: thumbnail};
-			this.addThumbnail(args);
+		if(typeof thumbnail != 'undefined') {
+			if(thumbnail) {
+				thumbnail = new Media(thumbnail);
+				args = {model: thumbnail};
+				this.addThumbnail(args);
+			}
 		}
 		
 		this.filterIndex();
