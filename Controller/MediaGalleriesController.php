@@ -105,7 +105,7 @@ class _MediaGalleriesController extends MediaAppController {
 					'contain' => array('Media' => array('fields' => array('Media.extension', 'Media.filename', 'Media.id'), 'limit' => $limit, 'order' => 'RAND()')),
 			));
 		}
-		//debug($this->request->data);break;
+
 		$this->request->data = array('path' => $this->MediaGallery->Media->mediaUrl.'images/', 'Media' => $this->request->data[0]['Media']);
 		return json_encode($this->request->data);
 	}
@@ -161,6 +161,7 @@ class _MediaGalleriesController extends MediaAppController {
 						'conditions' => array('MediaGallery.id' => $galleryId),
 						'contain' => array('Media')
 				));
+
 				if (!empty($this->request->data['Media'])) {
 					foreach ($this->request->data['Media'] as &$media) {
 						if ($media['id'] === $this->passedArgs[1]) {
