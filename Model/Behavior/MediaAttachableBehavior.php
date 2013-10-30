@@ -19,7 +19,10 @@ class MediaAttachableBehavior extends ModelBehavior {
 	                	'associationForeignKey' => 'media_id',
 	                	'conditions' => array(
 	                		'MediaAttachment.model' => $Model->alias,
-							'MediaAttachment.primary' => false,	
+	                		'OR' => array(
+	                				'MediaAttachment.primary' => 0,
+	                				'MediaAttachment.primary' => null,
+	                			)
 	                		),
 	            		'order' => array('MediaAttachment.order')
 	            	),
@@ -146,9 +149,13 @@ class MediaAttachableBehavior extends ModelBehavior {
 	 * @param boolean $primary Whether this model is being queried directly (vs. being queried as an association)
 	 * @return mixed An array value will replace the value of $results - any other value will be ignored.
 	 */
-	
+
 	
 	public function beforeFind(Model $Model, $query) {
+		//Allows us to pass $query['media'] = false to not contain media
+		if(isset($query['media']) && !$query['media']) {
+			return $query;
+		}
 		$query['contain'][] = 'Media';
 		$query['contain'][] = 'MediaThumbnail';
 		

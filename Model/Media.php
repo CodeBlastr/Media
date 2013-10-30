@@ -219,9 +219,7 @@ class Media extends MediaAppModel {
 	public function updateCanvasObjects($data, $galleryId = false) {
 		$data = json_decode( $data, true);
 
-		if ($data['id']) {
-			$this->id = $data['id'];
-		}
+		$this->id = ($data['id']) ? $data['id'] : null;
 
 		foreach ($data['collection'] as &$canvasObject) {
 			// save the screenshot file.
@@ -248,7 +246,9 @@ class Media extends MediaAppModel {
 
 	/**
 	 * saves image file from image object to the file server
-	 *
+	 * 
+	 * @todo Would like to delete the old "screenshot" when a new one is created
+	 * 
 	 * @param array $data
 	 * @return array|boolean
 	 */
@@ -309,15 +309,15 @@ class Media extends MediaAppModel {
 				)
 			));
 			
-			if ($added) {
-				$mediaAttachment = array(
-					'media_id' => $this->id,
-					'model' => 'MediaGallery',
-					'foreign_key' => $galleryId
-				);
-				$this->MediaAttachment->save($mediaAttachment);
-			}
-			
+			/** this was commented out since the canvasBuildrr is currently running off of 4 pre-attached media **/
+			// if ($added) {
+				// $mediaAttachment = array(
+					// 'media_id' => $this->id,
+					// 'model' => 'MediaGallery',
+					// 'foreign_key' => $galleryId
+				// );
+				// $this->MediaAttachment->save($mediaAttachment);
+			// }
 		}
 
 		return $added;

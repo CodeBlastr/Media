@@ -54,8 +54,7 @@
 
 <script type="text/javascript">
 	$($('#mediaModalTemplate').html()).appendTo('body');
-	var thumbnail = <?php $thumbnail ? $thumbnail : 'false' ?>;
-	console.log(thumbnail);
+	var thumbnail = <?php echo $thumbnail ? $thumbnail : 'false' ?>;
 	var selectable = true;
 	var wrapperclass = '<?php echo $wrapperclass; ?>';
 	var selecteditems = <?php echo $selecteditems; ?>;

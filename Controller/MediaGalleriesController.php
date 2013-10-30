@@ -105,7 +105,7 @@ class _MediaGalleriesController extends MediaAppController {
 					'contain' => array('Media' => array('fields' => array('Media.extension', 'Media.filename', 'Media.id'), 'limit' => $limit, 'order' => 'RAND()')),
 			));
 		}
-		//debug($this->request->data);break;
+
 		$this->request->data = array('path' => $this->MediaGallery->Media->mediaUrl.'images/', 'Media' => $this->request->data[0]['Media']);
 		return json_encode($this->request->data);
 	}
@@ -128,6 +128,7 @@ class _MediaGalleriesController extends MediaAppController {
 					'title' => 'Untitled'
 				));
 				$this->MediaGallery->save($newGallery);
+				// create a Media row foreach page
 				for ($i=0; $i < 4; $i++) {
 					$this->MediaGallery->Media->create();
 					$this->MediaGallery->Media->save(array(
@@ -137,6 +138,7 @@ class _MediaGalleriesController extends MediaAppController {
 						)
 					), array('callbacks' => false));
 					if ($i === 0) {
+						// store the first page's id (Media.order), so we can redirect them later
 						$firstMediaId = $this->MediaGallery->Media->id;
 					}
 					$this->MediaGallery->Media->MediaAttachment->create();
@@ -145,20 +147,20 @@ class _MediaGalleriesController extends MediaAppController {
 							'model' => 'MediaGallery',
 							'foreign_key' => $this->MediaGallery->id,
 							'media_id' => $this->MediaGallery->Media->id,
+							'creator_id' => $this->userId,
+							'modifier_id' => $this->userId,
 							'order' => $i
 						)
 					), array('callbacks' => false));
 				}
-				
+				// redirect them to this galleries first page editor
 				$this->redirect(array('action' => 'canvas', $this->MediaGallery->id, $firstMediaId));
 			}
 			if ($mediaId) {
 				$this->request->data = $this->MediaGallery->find('first', array(
-						'conditions' => array(
-								'MediaGallery.id' => $galleryId
-						),
-						'contain' => array('Media')
+						'conditions' => array('MediaGallery.id' => $galleryId),
 				));
+
 				if (!empty($this->request->data['Media'])) {
 					foreach ($this->request->data['Media'] as &$media) {
 						if ($media['id'] === $this->passedArgs[1]) {
@@ -172,11 +174,9 @@ class _MediaGalleriesController extends MediaAppController {
 			} else {
 				// $galleryId provided & $mediaId not provided.
 				$this->request->data = $this->MediaGallery->find('first', array(
-						'conditions' => array(
-								'MediaGallery.id' => $galleryId
-						),
-						'contain' => array('Media')
+						'conditions' => array('MediaGallery.id' => $galleryId),
 				));
+				
 				// check to see if they are trying to add more than the Media per Gallery limit (4)
 				$mediaPerGalleryLimit = 4;
 				if (count($this->request->data['Media']) >= $mediaPerGalleryLimit) {
