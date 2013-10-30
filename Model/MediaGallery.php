@@ -73,6 +73,46 @@ class _MediaGallery extends MediaAppModel {
 		}
 		return $this->id;
 	}
+
+/**
+ * Generates a MediaGallery with $options['Media'] number of attached media
+ */
+	public function generate($options) {
+		// create gallery
+		$newGallery = $this->create(array(
+			'title' => 'Untitled'
+		));
+		$this->save($newGallery);
+		
+		// create a Media row foreach page
+		$mediaToGenerate = $options['Media'];
+		for ($i=0; $i < $mediaToGenerate; $i++) {
+			$this->Media->create();
+			$this->Media->save(array(
+				'Media' => array(
+					'filename' => '',
+					'model' => 'Media'
+				)
+			), array('callbacks' => false));
+			if ($i === 0) {
+				// store the first page's id (Media.order), so we can redirect them later
+				$firstMediaId = $this->Media->id;
+			}
+			$this->Media->MediaAttachment->create();
+			$this->Media->MediaAttachment->save(array(
+				'MediaAttachment' => array(
+					'model' => 'MediaGallery',
+					'foreign_key' => $this->id,
+					'media_id' => $this->Media->id,
+					'creator_id' => $this->userId,
+					'modifier_id' => $this->userId,
+					'order' => $i
+				)
+			), array('callbacks' => false));
+		}
+		
+		return $firstMediaId;
+	}
 	
 }
 

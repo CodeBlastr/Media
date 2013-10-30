@@ -217,16 +217,16 @@ class Media extends MediaAppModel {
 	 * @return array
 	 */
 	public function updateCanvasObjects($data, $galleryId = false) {
-		$data = json_decode( $data, true);
+		$data = json_decode($data, true);
 
 		$this->id = ($data['id']) ? $data['id'] : null;
 
+		// save the screenshot file.
 		foreach ($data['collection'] as &$canvasObject) {
-			// save the screenshot file.
 			if ($canvasObject['type'] == 'screenshot') {
 				$savedImage = $this->_saveCanvasImageObject($canvasObject, $galleryId);
 				$canvasObject['id'] = $savedImage['Media']['id'];
-				$canvasObject['content'] = '/theme/Default/media/' . $savedImage['Media']['type'] . '/' .  $savedImage['Media']['filename'] . '.' . $savedImage['Media']['extension'];
+				$canvasObject['content'] = $this->mediaUrl . $savedImage['Media']['type'] . '/' .  $savedImage['Media']['filename'] . '.' . $savedImage['Media']['extension'];
 			}
 		}
 
@@ -288,7 +288,7 @@ class Media extends MediaAppModel {
 		// write image to disk
 		$imageString = str_replace('data:'.$metadata['mediatype'].';base64,', '', $data['content']);
 		$imageString = base64_decode($imageString);
-		$fopen = fopen(sys_get_temp_dir() . $uuid, 'wb');
+		$fopen = fopen(sys_get_temp_dir() . DS . $uuid, 'wb');
 		$written = fwrite($fopen, $imageString);
 		fclose($fopen);
 
@@ -304,7 +304,7 @@ class Media extends MediaAppModel {
 				'Media' => array(
 					'filename' => array(
 						'name' => $uuid . '.' . $extension,
-						'tmp_name' => sys_get_temp_dir() . $uuid
+						'tmp_name' => sys_get_temp_dir() . DS . $uuid
 					)
 				)
 			));

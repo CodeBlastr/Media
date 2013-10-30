@@ -81,7 +81,8 @@ class _MediaGalleriesController extends MediaAppController {
 			$this->request->data = $this->MediaGallery->find('all', array(
 				'conditions' => array(
 					'MediaGallery.modifier_id' => $userID,
-				)
+				),
+				'order' => array('MediaGallery.created' => 'DESC')
 			));
 			
 		} else {
@@ -113,7 +114,10 @@ class _MediaGalleriesController extends MediaAppController {
 
 /**
  * action that handles the canvasBuildrr
+ * 
  * @etymology Late Middle English: from Old Northern French canevas, based on Latin cannabis ‘hemp,’ from Greek kannabis.
+ * @param char $galleryId
+ * @param char $mediaId
  */
 	public function canvas($galleryId = null, $mediaId = null) {
 		if ($this->request->isAjax()) {
@@ -121,46 +125,20 @@ class _MediaGalleriesController extends MediaAppController {
 			$response = $this->MediaGallery->Media->updateCanvasObjects($this->request->data, $galleryId);
 			$this->__returnJsonResponse($response);
 		} else {
-			// This is a brand new freeform canvas gallery.
+			// No parameters passed. This is a brand new freeform canvas gallery.
 			if (!($galleryId) && !($mediaId)) {
-				// create gallery
-				$newGallery = $this->MediaGallery->create(array(
-					'title' => 'Untitled'
-				));
-				$this->MediaGallery->save($newGallery);
-				// create a Media row foreach page
-				for ($i=0; $i < 4; $i++) {
-					$this->MediaGallery->Media->create();
-					$this->MediaGallery->Media->save(array(
-						'Media' => array(
-							'filename' => '',
-							'model' => 'Media'
-						)
-					), array('callbacks' => false));
-					if ($i === 0) {
-						// store the first page's id (Media.order), so we can redirect them later
-						$firstMediaId = $this->MediaGallery->Media->id;
-					}
-					$this->MediaGallery->Media->MediaAttachment->create();
-					$this->MediaGallery->Media->MediaAttachment->save(array(
-						'MediaAttachment' => array(
-							'model' => 'MediaGallery',
-							'foreign_key' => $this->MediaGallery->id,
-							'media_id' => $this->MediaGallery->Media->id,
-							'creator_id' => $this->userId,
-							'modifier_id' => $this->userId,
-							'order' => $i
-						)
-					), array('callbacks' => false));
-				}
-				// redirect them to this galleries first page editor
+				// generate a gallery w/ 4 attached Media
+				$firstMediaId = $this->MediaGallery->generate(array('Media' => 4));
+				// redirect them to this gallery's first page editor
 				$this->redirect(array('action' => 'canvas', $this->MediaGallery->id, $firstMediaId));
 			}
+			
+			// A mediaId was specified.  Find it and return it's data.
 			if ($mediaId) {
 				$this->request->data = $this->MediaGallery->find('first', array(
-						'conditions' => array('MediaGallery.id' => $galleryId),
+					'conditions' => array('MediaGallery.id' => $galleryId)
 				));
-
+				#dirty
 				if (!empty($this->request->data['Media'])) {
 					foreach ($this->request->data['Media'] as &$media) {
 						if ($media['id'] === $this->passedArgs[1]) {
@@ -172,18 +150,11 @@ class _MediaGalleriesController extends MediaAppController {
 					}
 				}
 			} else {
-				// $galleryId provided & $mediaId not provided.
+				// $galleryId provided & $mediaId not provided.  Redirect them to their page 1 editor.
 				$this->request->data = $this->MediaGallery->find('first', array(
-						'conditions' => array('MediaGallery.id' => $galleryId),
+					'conditions' => array('MediaGallery.id' => $galleryId)
 				));
-				
-				// check to see if they are trying to add more than the Media per Gallery limit (4)
-				$mediaPerGalleryLimit = 4;
-				if (count($this->request->data['Media']) >= $mediaPerGalleryLimit) {
-					// redirect them to their current page 4
-					$this->Session->setFlash('You have reached the maximum of '.$mediaPerGalleryLimit.' pages');
-					$this->redirect(array('action' => 'canvas', $galleryId, $this->request->data['Media'][3]['id']));
-				}
+				$this->redirect(array('action' => 'canvas', $galleryId, $this->request->data['Media'][0]['id']));
 			}
 		}
 	}
