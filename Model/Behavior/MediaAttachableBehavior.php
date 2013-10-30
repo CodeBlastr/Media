@@ -20,8 +20,8 @@ class MediaAttachableBehavior extends ModelBehavior {
 	                	'conditions' => array(
 	                		'MediaAttachment.model' => $Model->alias,
 	                		'OR' => array(
-	                				'MediaAttachment.primary' => 0,
-	                				'MediaAttachment.primary' => null,
+	                				array('MediaAttachment.primary' => 0),
+	                				array('MediaAttachment.primary' => null)
 	                			)
 	                		),
 	            		'order' => array('MediaAttachment.order')
