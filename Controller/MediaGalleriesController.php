@@ -2,9 +2,9 @@
 
 /**
  * To Extend use code
- * $refuseInit = true; require_once(ROOT.DS.'app'.DS.'Plugin'.DS.'Courses'.DS.'Controller'.DS.'MediaController.php');
+ * $refuseInit = true; require_once(ROOT.DS.'app'.DS.'Plugin'.DS.'Media'.DS.'Controller'.DS.'MediaGalleriesController.php');
  */
-class _MediaGalleriesController extends MediaAppController {
+class AppMediaGalleriesController extends MediaAppController {
 
 	public $name = 'MediaGalleries';
 	public $uses = 'Media.MediaGallery';
@@ -158,6 +158,14 @@ class _MediaGalleriesController extends MediaAppController {
 			}
 		}
 	}
+
+
+	public function printCanvas($id) {
+		$this->request->data = $this->MediaGallery->find('first', array(
+			'conditions' => array('MediaGallery.id' => $galleryId)
+		));
+	}
+
 	
 /**
  * Creates a duplicate Gallety for the current user.
@@ -176,5 +184,5 @@ class _MediaGalleriesController extends MediaAppController {
 }
 
 if (!isset($refuseInit)) {
-	class MediaGalleriesController extends _MediaGalleriesController {}
+	class MediaGalleriesController extends AppMediaGalleriesController {}
 }
