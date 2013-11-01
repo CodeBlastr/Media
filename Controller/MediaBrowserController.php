@@ -12,7 +12,7 @@
  */
 
 
-class _MediaBrowserController extends MediaAppController {
+class AppMediaBrowserController extends MediaAppController {
 
 	public $name = 'Media';
 	public $uses = array('Media.Media', 'Media.MediaGallery');
@@ -159,5 +159,5 @@ class _MediaBrowserController extends MediaAppController {
 }
 
 if (!isset($refuseInit)) {
-	class MediaBrowserController extends _MediaBrowserController{}
+	class MediaBrowserController extends AppMediaBrowserController{}
 }

@@ -50,7 +50,7 @@ class MediaAttachableBehavior extends ModelBehavior {
 	 * @param Model $Model Model using this behavior
 	 * @return mixed False if the operation should abort. Any other result will continue.
 	 */
-	public function beforeSave(Model $Model) {
+	public function beforeSave(Model $Model, $options = array()) {
 		//doing it this way to protect against saveAll
 		if(isset($Model->data['MediaAttachment'])) {
 			$this->data['MediaAttachment'] = $Model->data['MediaAttachment'];
@@ -61,15 +61,15 @@ class MediaAttachableBehavior extends ModelBehavior {
 	
 	
 		
-	/**
-	 * afterSave is called after a model is saved.
-	 * We use this to save the attachement after the $Model is saved
-	 *
-	 * @param Model $Model Model using this behavior
-	 * @param boolean $created True if this save created a new record
-	 * @return boolean
-	 */
-	public function afterSave(Model $Model, $created) {
+/**
+ * afterSave is called after a model is saved.
+ * We use this to save the attachement after the $Model is saved
+ *
+ * @param Model $Model Model using this behavior
+ * @param boolean $created True if this save created a new record
+ * @return boolean
+ */
+	public function afterSave(Model $Model, $created, $options = array()) {
 		if(isset($this->data['MediaAttachment'])) {
 			$MediaAttachment = new MediaAttachment;
 		
@@ -94,9 +94,8 @@ class MediaAttachableBehavior extends ModelBehavior {
 			
 			$MediaAttachment->create();
 			$MediaAttachment->saveMany($this->data['MediaAttachment']);	
-			}
-			
-			return true;
+		}
+		return true;
 	}
 	
 	/**

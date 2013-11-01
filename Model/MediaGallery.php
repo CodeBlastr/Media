@@ -8,7 +8,7 @@ App::uses('MediaAppModel', 'Media.Model');
  * 
  */
 
-class _MediaGallery extends MediaAppModel {
+class AppMediaGallery extends MediaAppModel {
 		
 	public $name = 'MediaGallery';
 	public $actsAs = array('Media.MediaAttachable');
@@ -117,5 +117,5 @@ class _MediaGallery extends MediaAppModel {
 }
 
 if (!isset($refuseInit)) {
-	class MediaGallery extends _MediaGallery {}
+	class MediaGallery extends AppMediaGallery {}
 }

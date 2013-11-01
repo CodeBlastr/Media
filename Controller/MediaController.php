@@ -6,7 +6,7 @@
  */
 
 
-class _MediaController extends MediaAppController {
+class AppMediaController extends MediaAppController {
 
 	public $name = 'Media';
 	public $uses = 'Media.Media';
@@ -638,5 +638,5 @@ class _MediaController extends MediaAppController {
 }
 
 if (!isset($refuseInit)) {
-	class MediaController extends _MediaController{}
+	class MediaController extends AppMediaController{}
 }
