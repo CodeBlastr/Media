@@ -164,12 +164,12 @@ class AppMediaGalleriesController extends MediaAppController {
 		$this->request->data = $this->MediaGallery->find('first', array(
 			'conditions' => array('MediaGallery.id' => $id)
 		));
+		$this->layout = false;
 	}
 
 	
 /**
- * Creates a duplicate Gallety for the current user.
- * Does not duplicate the Media itself. The Media remains owned by it original owner.
+ * Creates a duplicate Gallery for the current user.
  */
 	public function duplicateGallery($id) {
 		try {
