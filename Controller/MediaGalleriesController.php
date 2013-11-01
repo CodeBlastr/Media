@@ -162,7 +162,7 @@ class AppMediaGalleriesController extends MediaAppController {
 
 	public function printCanvas($id) {
 		$this->request->data = $this->MediaGallery->find('first', array(
-			'conditions' => array('MediaGallery.id' => $galleryId)
+			'conditions' => array('MediaGallery.id' => $id)
 		));
 	}
 
