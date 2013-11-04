@@ -39,6 +39,13 @@ class MediaHelper extends AppHelper {
 		}
 	}
 	
+/**
+ * Carousel method
+ */
+	public function carousel($type = 'default', $options = array()) {
+		return $this->_View->element('Media.carousels/' . $type, $options);
+	}
+	
 
 	public function imagesMedia ($item) {
 		$imagePath = $this->mediaUrl.$this->type.'/'.$item['filename'].'.'.$item['extension'];
@@ -56,7 +63,7 @@ class MediaHelper extends AppHelper {
 			'caller' => 'Media'
 		));
 
-		return $this->_View->Element('Media.image_display', 
+		return $this->_View->element('Media.image_display', 
 			array(
 				'image' => $image,
 				'class' => $this->options['class'],
@@ -72,7 +79,7 @@ class MediaHelper extends AppHelper {
 	
 	public function audioMedia ($item) {
 		$track = array($item['extension'] => $this->mediaUrl.$this->type.'/'.$item['filename'].'.'.$item['extension']);
-		return $this->_View->Element('Media.audio_display', 
+		return $this->_View->element('Media.audio_display', 
 			array(
 				'tracks' => json_encode($track),
 				'class' => $this->options['class'],
