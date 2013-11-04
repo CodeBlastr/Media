@@ -168,12 +168,14 @@ class AppMediaGalleriesController extends MediaAppController {
 		
 		$this->WkHtmlToPdf = $this->Components->load('WkHtmlToPdf');
 		$this->WkHtmlToPdf->initialize($this);
-		$pdfLocation = $this->WkHtmlToPdf->createPdf($autoDownload, array(
-			'javascriptdelay' => 10000,
-			'pagesize' => 'A3',
-			'orientation' => 'Landscape',
-			//'windowstatus' => 'readytoprint'
-		));
+		// $pdfLocation = $this->WkHtmlToPdf->createPdf($autoDownload, array(
+			// 'javascriptdelay' => 10000,
+			// 'pagesize' => 'A3',
+			// 'orientation' => 'Landscape',
+			// //'windowstatus' => 'readytoprint'
+		// ));
+		
+		$this->WkHtmlToPdf->rasterizePdf();
 		
 		if (!$autoDownload) {
 			return $pdfLocation;
