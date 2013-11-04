@@ -160,11 +160,19 @@ class AppMediaGalleriesController extends MediaAppController {
 	}
 
 
-	public function printCanvas($id) {
+	public function printCanvas($id, $autoDownload = true) {
 		$this->request->data = $this->MediaGallery->find('first', array(
 			'conditions' => array('MediaGallery.id' => $id)
 		));
 		$this->layout = false;
+		
+		$this->WkHtmlToPdf = $this->Components->load('WkHtmlToPdf');
+		$this->WkHtmlToPdf->initialize($this);
+		$pdfLocation = $this->WkHtmlToPdf->createPdf($autoDownload);
+		
+		if (!$autoDownload) {
+			return $pdfLocation;
+		}
 	}
 
 	
