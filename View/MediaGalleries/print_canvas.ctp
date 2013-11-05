@@ -1,5 +1,5 @@
 <?php
-echo $this->Html->css(array('/css/google-webfonts.css', '/media/css/canvasBuildrr.css'), null, array('inline' => false));
+echo $this->Html->css(array('/css/google-webfonts.css', '/media/css/canvasBuildrr.css'));
 ?>
 
 
