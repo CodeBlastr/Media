@@ -8,13 +8,13 @@ class AppMediaGalleriesController extends MediaAppController {
 
 	public $name = 'MediaGalleries';
 	public $uses = 'Media.MediaGallery';
-	
+
 	public $helpers = array('Media.Media');
-	
+
 	public $displayElements =  array(
 		'jplayer_element' => 'JPlayer',
 	);
-	
+
 	public function index() {
 		$galleries = $this->MediaGallery->find('all', array(
 			'conditions' => array()
@@ -84,16 +84,16 @@ class AppMediaGalleriesController extends MediaAppController {
 				),
 				'order' => array('MediaGallery.created' => 'DESC')
 			));
-			
+
 		} else {
 			$this->redirect('/');
 		}
 	}
-	
+
 	/**
 	 * function for ajax request to retrieve media element by gallery id
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	public function getGalleryMedia($galleryid) {
 		$limit = isset($this->request->query['limit']) ? $this->request->query['limit'] : 48;
@@ -102,7 +102,7 @@ class AppMediaGalleriesController extends MediaAppController {
 		if($galleryid) {
 			$this->request->data = $this->MediaGallery->find('all', array(
 					'conditions' => array('id' => $galleryid),
-					'fields' => array('MediaGallery.id'), 
+					'fields' => array('MediaGallery.id'),
 					'contain' => array('Media' => array('fields' => array('Media.extension', 'Media.filename', 'Media.id'), 'limit' => $limit, 'order' => 'RAND()')),
 			));
 		}
@@ -114,7 +114,7 @@ class AppMediaGalleriesController extends MediaAppController {
 
 /**
  * action that handles the canvasBuildrr
- * 
+ *
  * @etymology Late Middle English: from Old Northern French canevas, based on Latin cannabis ‘hemp,’ from Greek kannabis.
  * @param char $galleryId
  * @param char $mediaId
@@ -132,7 +132,7 @@ class AppMediaGalleriesController extends MediaAppController {
 				// redirect them to this gallery's first page editor
 				$this->redirect(array('action' => 'canvas', $this->MediaGallery->id, $firstMediaId));
 			}
-			
+
 			// A mediaId was specified.  Find it and return it's data.
 			if ($mediaId) {
 				$this->request->data = $this->MediaGallery->find('first', array(
@@ -160,12 +160,33 @@ class AppMediaGalleriesController extends MediaAppController {
 	}
 
 
-	public function printCanvas($id, $autoDownload = true) {
+	public function printCanvas($id, $page = 1) {
 		$this->request->data = $this->MediaGallery->find('first', array(
 			'conditions' => array('MediaGallery.id' => $id)
 		));
+
+		// format data
+		foreach ($this->request->data['Media'] as $media) {
+			$collectionArray[] = json_decode($media['data']);
+		}
+
+		if ($page == 1) {
+			$sides = array(
+				$collectionArray[3],
+				$collectionArray[0]
+			);
+		}
+		if ($page == 2) {
+			$sides = array(
+				$collectionArray[1],
+				$collectionArray[2]
+			);
+		}
+
+		$this->set('collectionArray', $sides);
+
 		$this->layout = false;
-		
+
 		$this->WkHtmlToPdf = $this->Components->load('WkHtmlToPdf');
 		$this->WkHtmlToPdf->initialize($this);
 		// $pdfLocation = $this->WkHtmlToPdf->createPdf($autoDownload, array(
@@ -174,15 +195,37 @@ class AppMediaGalleriesController extends MediaAppController {
 			// 'orientation' => 'Landscape',
 			// //'windowstatus' => 'readytoprint'
 		// ));
-		
-		$this->WkHtmlToPdf->rasterizePdf();
-		
+
+		$pdfLocation = $this->WkHtmlToPdf->rasterizePdf();
+
+		if (!$autoDownload) {
+			return $pdfLocation;
+		}
+	}
+	public function printCanvas2($id, $autoDownload = true) {
+		$this->request->data = $this->MediaGallery->find('first', array(
+			'conditions' => array('MediaGallery.id' => $id)
+		));
+		$this->layout = false;
+		$this->view = 'printCanvas';
+
+		$this->WkHtmlToPdf = $this->Components->load('WkHtmlToPdf');
+		$this->WkHtmlToPdf->initialize($this);
+		// $pdfLocation = $this->WkHtmlToPdf->createPdf($autoDownload, array(
+			// 'javascriptdelay' => 10000,
+			// 'pagesize' => 'A3',
+			// 'orientation' => 'Landscape',
+			// //'windowstatus' => 'readytoprint'
+		// ));
+
+		$pdfLocation = $this->WkHtmlToPdf->rasterizePdf();
+
 		if (!$autoDownload) {
 			return $pdfLocation;
 		}
 	}
 
-	
+
 /**
  * Creates a duplicate Gallery for the current user.
  */
