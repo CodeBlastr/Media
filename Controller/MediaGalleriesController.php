@@ -16,9 +16,7 @@ class AppMediaGalleriesController extends MediaAppController {
 	);
 
 	public function index() {
-		$galleries = $this->MediaGallery->find('all', array(
-			'conditions' => array()
-		));
+		$galleries = $this->paginate();
 		$this->set('tagOptions', $this->displayElements);
 		$this->set('galleries', $galleries);
 	}
