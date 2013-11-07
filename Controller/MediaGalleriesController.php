@@ -88,6 +88,27 @@ class AppMediaGalleriesController extends MediaAppController {
 		}
 	}
 
+	public function delete($id) {
+		try {
+			if (isset($id) && $this->MediaGallery->exists($id)) {
+				$this->loadModel('Media.MediaAttachment');
+				if (!$this->MediaGallery->delete($id, false)) {
+					throw new Exception('Could not delete Media Record');
+				}
+				if (!$this->MediaAttachment->deleteAll(array('foreign_key' => $id))) {
+					throw new Exception('Could not delete attachment records');
+				}
+				$this->Session->setFlash(__('Gallery deleted.'));
+			} else {
+				throw new MethodNotAllowedException('Action not allowed');
+			}
+		} catch (Exception $e) {
+			$this->Session->setFlash($e->getMessage());
+		}
+
+		$this->redirect($this->referer());
+	}
+
 	/**
 	 * function for ajax request to retrieve media element by gallery id
 	 *
