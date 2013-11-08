@@ -2,7 +2,7 @@
 //Setting the $selected variable on element call will control how many items can be selected
 $multiple = isset($multiple) && is_bool($multiple) ? $multiple : false;
 $wrapperclass = isset($class) ? $class : 'col-md-3';
-$theme = isset($theme) ? $theme : 'boot3';
+$theme = isset($theme) ? $theme : 'boot2';
 //Format the media regardless of how it sent
 $selecteditems = array();
 if(isset($media) && !empty($media)) {
