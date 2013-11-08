@@ -50,10 +50,7 @@ $selecteditems = json_encode($selecteditems);
 
 
 <script type="text/javascript">
-	$(function() {
-		$($('#mediaModalTemplate').html()).appendTo('body');
-	});
-	
+	$($('#mediaModalTemplate').html()).appendTo('body');
 	var thumbnail = <?php echo $thumbnail ? $thumbnail : 'false' ?>;
 	var selectable = true;
 	var wrapperclass = '<?php echo $wrapperclass; ?>';
