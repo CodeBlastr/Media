@@ -11,33 +11,7 @@ class MediaAttachableBehavior extends ModelBehavior {
  */
 	public function setup(Model $Model, $config = array()) {
 		//Add the HasMany Relationship to the $Model
-		$Model->bindModel(
-	        array('hasAndBelongsToMany' => array(
-	        	'Media' =>
-	            	array(
-	                	'className' => 'Media.Media',
-	                	'joinTable' => 'media_attachments',
-	                	'foreignKey' => 'foreign_key',
-	                	'associationForeignKey' => 'media_id',
-	                	'conditions' => array(
-	                		'MediaAttachment.model' => $Model->alias,
-	                		'OR' => array(
-	                				array('MediaAttachment.primary' => 0),
-	                				array('MediaAttachment.primary' => null)
-	                			)
-	                		),
-	            		'order' => array('MediaAttachment.order')
-	            	),
-	        	'MediaThumbnail' =>
-	        		array(
-        				'className' => 'Media.Media',
-        				'joinTable' => 'media_attachments',
-        				'foreignKey' => 'foreign_key',
-        				'associationForeignKey' => 'media_id',
-        				'conditions' => array('MediaAttachment.model' => $Model->alias, 'MediaAttachment.primary' => true),
-	        		)
-	        	)
-			), false);
+		$Model->bindModel($this->_bindModel($Model),false);
 	}
 	
 /**
@@ -151,6 +125,9 @@ class MediaAttachableBehavior extends ModelBehavior {
  * @return mixed An array value will replace the value of $results - any other value will be ignored.
  */
 	public function beforeFind(Model $Model, $query) {
+		if(empty($Model->hasAndBelongsToMany['Media'])){
+			$Model->bindModel($this->_bindModel($Model),false);
+		}
 		//Allows us to pass $query['media'] = false to not contain media
 		if(isset($query['media']) && !$query['media']) {
 			return $query;
@@ -158,6 +135,37 @@ class MediaAttachableBehavior extends ModelBehavior {
 		$query['contain'][] = 'Media';
 		$query['contain'][] = 'MediaThumbnail';
 		return $query;
+		
+		
+	}
+	
+	protected function _bindModel($Model){
+		     return array('hasAndBelongsToMany' => array(
+		        	'Media' =>
+		            	array(
+		                	'className' => 'Media.Media',
+		                	'joinTable' => 'media_attachments',
+		                	'foreignKey' => 'foreign_key',
+		                	'associationForeignKey' => 'media_id',
+		                	'conditions' => array(
+		                		'MediaAttachment.model' => $Model->alias,
+		                		'OR' => array(
+		                				array('MediaAttachment.primary' => 0),
+		                				array('MediaAttachment.primary' => null)
+		                			)
+		                		),
+		            		'order' => array('MediaAttachment.order')
+		            	),
+		        	'MediaThumbnail' =>
+		        		array(
+	        				'className' => 'Media.Media',
+	        				'joinTable' => 'media_attachments',
+	        				'foreignKey' => 'foreign_key',
+	        				'associationForeignKey' => 'media_id',
+	        				'conditions' => array('MediaAttachment.model' => $Model->alias, 'MediaAttachment.primary' => true),
+		        		)
+		        	)
+				);
 	}
 	
 		

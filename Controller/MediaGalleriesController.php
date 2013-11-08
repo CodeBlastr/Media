@@ -16,9 +16,7 @@ class AppMediaGalleriesController extends MediaAppController {
 	);
 
 	public function index() {
-		$galleries = $this->MediaGallery->find('all', array(
-			'conditions' => array()
-		));
+		$galleries = $this->paginate();
 		$this->set('tagOptions', $this->displayElements);
 		$this->set('galleries', $galleries);
 	}
@@ -88,6 +86,27 @@ class AppMediaGalleriesController extends MediaAppController {
 		} else {
 			$this->redirect('/');
 		}
+	}
+
+	public function delete($id) {
+		try {
+			if (isset($id) && $this->MediaGallery->exists($id)) {
+				$this->loadModel('Media.MediaAttachment');
+				if (!$this->MediaGallery->delete($id, false)) {
+					throw new Exception('Could not delete Media Record');
+				}
+				if (!$this->MediaAttachment->deleteAll(array('foreign_key' => $id))) {
+					throw new Exception('Could not delete attachment records');
+				}
+				$this->Session->setFlash(__('Gallery deleted.'));
+			} else {
+				throw new MethodNotAllowedException('Action not allowed');
+			}
+		} catch (Exception $e) {
+			$this->Session->setFlash($e->getMessage());
+		}
+
+		$this->redirect($this->referer());
 	}
 
 	/**
@@ -189,41 +208,10 @@ class AppMediaGalleriesController extends MediaAppController {
 
 		$this->WkHtmlToPdf = $this->Components->load('WkHtmlToPdf');
 		$this->WkHtmlToPdf->initialize($this);
-		// $pdfLocation = $this->WkHtmlToPdf->createPdf($autoDownload, array(
-			// 'javascriptdelay' => 10000,
-			// 'pagesize' => 'A3',
-			// 'orientation' => 'Landscape',
-			// //'windowstatus' => 'readytoprint'
-		// ));
-
 		$pdfLocation = $this->WkHtmlToPdf->rasterizePdf();
 
-		if (!$autoDownload) {
-			return $pdfLocation;
-		}
 	}
-	public function printCanvas2($id, $autoDownload = true) {
-		$this->request->data = $this->MediaGallery->find('first', array(
-			'conditions' => array('MediaGallery.id' => $id)
-		));
-		$this->layout = false;
-		$this->view = 'printCanvas';
 
-		$this->WkHtmlToPdf = $this->Components->load('WkHtmlToPdf');
-		$this->WkHtmlToPdf->initialize($this);
-		// $pdfLocation = $this->WkHtmlToPdf->createPdf($autoDownload, array(
-			// 'javascriptdelay' => 10000,
-			// 'pagesize' => 'A3',
-			// 'orientation' => 'Landscape',
-			// //'windowstatus' => 'readytoprint'
-		// ));
-
-		$pdfLocation = $this->WkHtmlToPdf->rasterizePdf();
-
-		if (!$autoDownload) {
-			return $pdfLocation;
-		}
-	}
 
 
 /**

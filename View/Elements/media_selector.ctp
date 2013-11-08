@@ -3,6 +3,7 @@
 	$multiple = isset($multiple) && is_bool($multiple) ? $multiple : false;
 	$wrapperclass = isset($class) ? $class : 'col-md-3';
 	//Format the media regardless of how it sent
+	$bootstrap = isset($bootstrap) ? $bootstrap :  3;
 	$selecteditems = array();
 	if(isset($media) && !empty($media)) {
 	foreach ($media as $m) {
@@ -62,8 +63,11 @@
 	
 </script>
 
+<?php if($bootstrap == 2): ?>
+	<script data-main="/Media/js/mediabrowser_boot2/build/media-min.js" src="/Media/js/mediabrowser/scripts/require.js"></script>
+<?php else: ?>
 <script data-main="/Media/js/mediabrowser/build/media-min.js" src="/Media/js/mediabrowser/scripts/require.js"></script>
-
+<?php endif; ?>
 
 
 <style>
