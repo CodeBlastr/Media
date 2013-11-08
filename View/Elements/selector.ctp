@@ -2,6 +2,7 @@
 //Setting the $selected variable on element call will control how many items can be selected
 $multiple = isset($multiple) && is_bool($multiple) ? $multiple : false;
 $wrapperclass = isset($class) ? $class : 'col-md-3';
+$theme = isset($theme) ? $theme : 'boot3';
 //Format the media regardless of how it sent
 $selecteditems = array();
 if(isset($media) && !empty($media)) {
@@ -49,7 +50,10 @@ $selecteditems = json_encode($selecteditems);
 
 
 <script type="text/javascript">
-	$($('#mediaModalTemplate').html()).appendTo('body');
+	$(function() {
+		$($('#mediaModalTemplate').html()).appendTo('body');
+	}
+	
 	var thumbnail = <?php echo $thumbnail ? $thumbnail : 'false' ?>;
 	var selectable = true;
 	var wrapperclass = '<?php echo $wrapperclass; ?>';
@@ -57,8 +61,11 @@ $selecteditems = json_encode($selecteditems);
 	var baseUrl = '<?php echo $this->Html->url(array('plugin' => 'media', 'controller' => 'media_browser', 'action' => 'media')); ?>';
 </script>
 
-<script data-main="/Media/js/mediabrowser/build/media-min.js" src="/Media/js/mediabrowser/scripts/require.js"></script>
-
+<?php if($theme == 'boot2'): ?>
+	<script data-main="/Media/js/mediabrowser_boot2/build/media-min-nojquery.js" src="/Media/js/mediabrowser/scripts/require.js"></script>
+<?php else: ?>
+	<script data-main="/Media/js/mediabrowser/build/media-min.js" src="/Media/js/mediabrowser/scripts/require.js"></script>
+<?php endif; ?>
 <style>
 	.modal-footer {
 		border: none;
