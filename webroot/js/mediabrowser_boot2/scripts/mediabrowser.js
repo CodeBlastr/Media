@@ -4,7 +4,7 @@ require.config({
     out: "../build/media-min.js",
     
 	paths: {
-	    jquery: 'http://code.jquery.com/jquery-latest.js',
+	    jquery: 'http://code.jquery.com/jquery-latest',
 	    underscore: 'libs/underscore/underscore-min',
 	    backbone: 'libs/backbone/backbone-min',
 	    handlebars: 'libs/handlebars',
