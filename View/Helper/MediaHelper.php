@@ -136,5 +136,12 @@ class MediaHelper extends AppHelper {
 	}
 	
 	
+	public function loadData($options = array()) {
+		$this->Model = ClassRegistry::init('Media.MediaGallery');
+		$defaults = array();
+		$options = Set::merge($options, $defaults);
+		$data = $this->Model->find('all', $options);
+		return $data;
+	}
 	
 }
