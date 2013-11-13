@@ -44,17 +44,33 @@ class AppMediaGallery extends MediaAppModel {
 			'conditions' => array('id' => $galleryId)
 		));
 		
-		// create a clone for this user
-		$mediaGallery['MediaGallery']['id'] = null;
-		$mediaGallery['MediaGallery']['creator_id'] = $mediaGallery['MediaGallery']['modifier_id'] = $this->userId;
-		foreach ($mediaGallery['Media'] as &$media) {
-			$media['creator_id'] = $media['modifier_id'] = $this->userId;
-			$media['MediaAttachment']['creator_id'] = $media['MediaAttachment']['modifier_id'] = $this->userId;
+		// create gallery
+		$newGallery = $this->create(array(
+			'title' => 'Copy of ' . $mediaGallery['MediaGallery']['title']
+		));
+		$this->save($newGallery);
+		
+		// clone the Media & Attach it
+		$i = 0;
+		foreach ($mediaGallery['Media'] as $media) {
+			$this->Media->create();
+			$media['creator_id'] = $media['modifier_id'] = $media['user_id'] = $this->userId;
+			$this->Media->save($media, array('callbacks' => false));
+			
+			$this->Media->MediaAttachment->create();
+			$this->Media->MediaAttachment->save(array(
+				'MediaAttachment' => array(
+					'model' => 'MediaGallery',
+					'foreign_key' => $this->id,
+					'media_id' => $this->Media->id,
+					'creator_id' => $this->userId,
+					'modifier_id' => $this->userId,
+					'order' => $i
+				)
+			), array('callbacks' => false));
+			++$i;
 		}
-
-		if (!$this->saveAll($mediaGallery)) {
-			throw new Exception("Error Processing Request", 1);
-		}
+		
 		return $this->id;
 	}
 
