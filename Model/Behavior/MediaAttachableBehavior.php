@@ -125,13 +125,14 @@ class MediaAttachableBehavior extends ModelBehavior {
  * @return mixed An array value will replace the value of $results - any other value will be ignored.
  */
 	public function beforeFind(Model $Model, $query) {
-		if(empty($Model->hasAndBelongsToMany['Media'])){
-			$Model->bindModel($this->_bindModel($Model),false);
-		}
 		//Allows us to pass $query['media'] = false to not contain media
 		if(isset($query['media']) && !$query['media']) {
 			return $query;
 		}
+		if(empty($Model->hasAndBelongsToMany['Media'])){
+			$Model->bindModel($this->_bindModel($Model),false);
+		}
+		
 		$query['contain'][] = 'Media';
 		$query['contain'][] = 'MediaThumbnail';
 		return $query;
