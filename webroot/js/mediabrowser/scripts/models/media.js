@@ -46,6 +46,18 @@ define([
     		return true;
     	}
     	return false;
+	},
+	isDoc: function() {
+    	if(this.get('type') == 'docs') {
+    		return true;
+    	}
+    	return false;
+	},
+	isVideo: function() {
+    	if(this.get('type') == 'video') {
+    		return true;
+    	}
+    	return false;
 	}
   
   });

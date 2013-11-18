@@ -22,6 +22,8 @@ define([
 				i++;
 				model.set('audio', model.isAudio());
 				model.set('image', model.isImage());
+				model.set('doc', model.isDoc());
+				model.set('video', model.isVideo());
 				var renderObj = ({cid: model.cid, model: model.toJSON(), wrapperclass: that.wrapperclass, index: index});
 				html = $(that.selectedTemplate(renderObj));
 				html.find('.selected-actions').find('a').bind('click', function(e) {

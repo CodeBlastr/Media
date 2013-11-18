@@ -3,7 +3,7 @@
 <?php echo $this->Form->input('MediaGallery.title', array('label' => 'Gallery Title', 'class' => 'form-control')); ?>
 <?php echo $this->Form->input('MediaGallery.description', array('label' => 'Gallery Description', 'class' => 'form-control')); ?>
 
-<?php echo $this->Element('Media.media_selector', array('media' => $this->request->data['Media'], 'multiple' => true)); ?>
+<?php echo $this->Element('Media.selector', array('theme' => 'boot3', 'media' => $this->request->data['Media'], 'multiple' => true)); ?>
 
 <?php echo $this->Form->submit('Save Gallery'); ?>
 <?php echo $this->Form->end(); ?>

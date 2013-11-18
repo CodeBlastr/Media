@@ -229,7 +229,6 @@ define([
 		var view = new MediaItemView({model: model});
 		view.render();
 		view.$el.find('.actions').remove();
-		
 		var innerhtml = view.$el.html();
 		var renderObj = ({cid: model.cid, model: model.toJSON(), innerhtml: innerhtml, wrapperclass: that.wrapperclass, index: this.selectedCollection.length });
 		html = $(this.selectedThumbnail(renderObj));
