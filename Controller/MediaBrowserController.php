@@ -15,20 +15,21 @@
 class AppMediaBrowserController extends MediaAppController {
 
 	public $name = 'Media';
+
 	public $uses = array('Media.Media', 'Media.MediaGallery');
+
 	public $helpers = array('Media.Media');
 	
 	public $allowedActions = array('index');
 	
 	public $viewPath = '/MediaBrowser';
 	
-	/**
-	 * Filebrowser Action
-	 * Supports Ajax
-	 * All this does is return the filebrower view
-	 * 
-	 */
-	
+/**
+ * Filebrowser Action
+ * Supports Ajax
+ * All this does is return the filebrower view
+ * 
+ */
 	public function filebrowser($galleryid = false) {
 		
 		if(isset($this->request->query['selected'])) {
@@ -48,10 +49,13 @@ class AppMediaBrowserController extends MediaAppController {
 	
 	}
 	
-	/**
-	 * Index of the media. Only gives back the media owned by the person viewing the
-	 * media Should only be called with AJAX
-	 */
+/**
+ * Media method
+ * Index of the media. Only gives back the media owned by the person viewing the
+ * media Should only be called with AJAX
+ * 
+ * @param uuid $id
+ */
 	public function media($id = null) {
 		if($this->request->is('get')) {
 			$conditions = array();
@@ -69,8 +73,8 @@ class AppMediaBrowserController extends MediaAppController {
 			if($this->Session->read('Auth.User.user_role_id') != 1) {
 				$conditions['conditions']['creator_id'] = $this->userId;
 			}
-			
 			$media = $this->Media->find('all', $conditions);
+			
 			$this->request->data = array();
 			foreach($media as $m) {
 				$m['Media']['type'] = $this->Media->mediaType($m['Media']['extension']);
