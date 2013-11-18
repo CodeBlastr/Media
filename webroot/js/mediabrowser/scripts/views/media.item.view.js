@@ -6,7 +6,9 @@ define([
   'models/media',
   'popover',
   'text!templates/media_item_image.html',
-  'text!templates/media_item_audio.html'
+  'text!templates/media_item_audio.html',
+  'text!templates/media_item_document.html',
+  'text!templates/media_item_video.html'
 ], function($, 
 			_, 
 			Backbone, 
@@ -14,7 +16,9 @@ define([
 			MediaItem, 
 			Popover,
 			ImageTemplate,
-			AudioTemplate
+			AudioTemplate,
+			DocumentTemplate,
+			VideoTemplate
 ){
   var MediaItemView = Backbone.View.extend({
   
@@ -25,8 +29,8 @@ define([
 	
 	imageTemplate: Handlebars.compile(ImageTemplate),
 	audioTemplate: Handlebars.compile(AudioTemplate),
-	//videoTemplate: Handlebars.compile(MediaItemsTemplate),
-	//docTemplate: Handlebars.compile(MediaItemsTemplate),
+	docTemplate: Handlebars.compile(DocumentTemplate),
+	videoTemplate: Handlebars.compile(VideoTemplate),
     
 	tagName: 'div',
     
@@ -84,7 +88,13 @@ define([
 	      case 'audio':
 	    	  html = this.audioTemplate(renderObj);
 	    	  break;
-    	}
+	      case 'docs':
+	    	  html = this.docTemplate(renderObj);
+	    	  break;
+	      case 'video':
+	    	  html = this.videoTemplate(renderObj);
+	    	  break;
+    		}
     	this.trigger('mediaready');
     	return html;
     },
