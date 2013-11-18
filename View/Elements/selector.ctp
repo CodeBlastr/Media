@@ -59,7 +59,7 @@ $selecteditems = json_encode($selecteditems);
 <?php if($theme == 'boot2'): ?>
 	<script data-main="/Media/js/mediabrowser_boot2/build/media-min-nojquery.js" src="/Media/js/mediabrowser/scripts/require.js"></script>
 <?php else: ?>
-	<script data-main="/Media/js/mediabrowser/scripts/mediabrowser.js" src="/Media/js/mediabrowser/scripts/require.js"></script>
+	<script data-main="/Media/js/mediabrowser/build/media-min.js" src="/Media/js/mediabrowser/scripts/require.js"></script>
 <?php endif; ?>
 <style>
 	.modal-footer {
