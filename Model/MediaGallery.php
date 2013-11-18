@@ -46,7 +46,8 @@ class AppMediaGallery extends MediaAppModel {
 		
 		// create gallery
 		$newGallery = $this->create(array(
-			'title' => 'Copy of ' . $mediaGallery['MediaGallery']['title']
+			'title' => 'Copy of ' . $mediaGallery['MediaGallery']['title'],
+			'description' => $mediaGallery['MediaGallery']['description']
 		));
 		$this->save($newGallery);
 		
