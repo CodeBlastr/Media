@@ -54,8 +54,14 @@ class AppMediaGallery extends MediaAppModel {
 		// clone the Media & Attach it
 		$i = 0;
 		foreach ($mediaGallery['Media'] as $media) {
+			$originalId = $media['id'];
 			$this->Media->create();
+			$media['id'] = null;
 			$media['creator_id'] = $media['modifier_id'] = $media['user_id'] = $this->userId;
+			$this->Media->save($media, array('callbacks' => false));
+			// re-save the `content` with the correct ID.
+			$updatedContent = str_replace($originalId, $this->Media->id, $media['content']);
+			$this->Media->set('content', $updatedContent);
 			$this->Media->save($media, array('callbacks' => false));
 			
 			$this->Media->MediaAttachment->create();
