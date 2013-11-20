@@ -11,4 +11,4 @@
 <script type="text/javascript">
 	var baseUrl = '<?php echo $this->Html->url(array('plugin' => 'media', 'contoller' => 'media_browser', 'action' => 'media')); ?>';
 </script>
-<script data-main="/Media/js/mediabrowser/scripts/mediabrowser.js" src="/Media/js/mediabrowser/scripts/require.js"></script>
+<script data-main="/Media/js/mediabrowser/build/media-min.js" src="/Media/js/mediabrowser/scripts/require.js"></script>
