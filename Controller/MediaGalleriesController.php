@@ -208,7 +208,7 @@ class AppMediaGalleriesController extends MediaAppController {
 
 		$this->WkHtmlToPdf = $this->Components->load('WkHtmlToPdf');
 		$this->WkHtmlToPdf->initialize($this);
-		$pdfLocation = $this->WkHtmlToPdf->rasterizePdf();
+		$pdfLocation = $this->WkHtmlToPdf->rasterizePdf(null, null, 'rasterize.ttysoon');
 
 	}
 
