@@ -94,7 +94,7 @@ class MediaHelper extends AppHelper {
 			$method = $this->type . 'Media';
 			return $this->$method($item);
 		} else {
-			return '<img src="/img/noImage.jpg" />';
+			return '<img src="/img/noImage.jpg" width="'.$this->options['width'].'" height="'.$this->options['height'].'" />';
 		}
 	}
 
