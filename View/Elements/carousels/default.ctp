@@ -1,10 +1,6 @@
-<?php
-// This file is good to edit but make a copy of it in beefjockey first 
-// note : twitter bootstrap is needed to run this 
-?>
+<?php // note : twitter bootstrap is needed to run this ?>
 <?php $options = $dataForView; ?>
 <?php unset($options['defaultTemplate']); // its just too much to read in a debug :) ?>
-
 <?php if (count($options['data']['Media']) > 1) : ?>
 	<div id="myCarousel" class="carousel slide" data-pause="hover" data-interval="5000">
 		<!-- Carousel items -->
@@ -27,5 +23,6 @@
 		</div>
 	</div>
 <?php else : ?>
+	<?php // would like to pass parames directly from element('carousel', $options) to here ?>
 	<?php echo $this->Media->display($options['data']['Media'][0], $options); ?>
 <?php endif; ?>

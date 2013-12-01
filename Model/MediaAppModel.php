@@ -1,9 +1,9 @@
 <?php
 class MediaAppModel extends AppModel {
 
-	/**
-	 * Create the directories for this plugin if they aren't there already.
-	 */
+/**
+ * Create the directories for this plugin if they aren't there already.
+ */
 	protected function __createDirectories() {
 		if (!file_exists($this->themeDirectory)) {
 			if (
@@ -23,13 +23,13 @@ class MediaAppModel extends AppModel {
 		}
 	}
 	
-	/**
-	 * Get the extension of a given file path
-	 *
-	 * @param
-	 *        	{string} A file name/path string
-	 */
-	function getFileExtension($filepath) {
+/**
+ * Get the extension of a given file path
+ *
+ * @param
+ *        	{string} A file name/path string
+ */
+	public function getFileExtension($filepath) {
 		preg_match('/[^?]*/', $filepath, $matches);
 		$string = $matches [0];
 		
@@ -46,4 +46,20 @@ class MediaAppModel extends AppModel {
 			return strtolower($matches [0]);
 		}
 	}
+
+	
+/**
+ * Menu Init method
+ * Used by WebpageMenuItem to initialize when someone creates a new menu item for the users plugin.
+ * 
+ */
+ 	public function menuInit($data = null) {
+ 		App::uses('Media', 'Media.Model');
+		$Media = new Media;
+		// link to properties index and first property
+		$data['WebpageMenuItem']['item_url'] = '/media/media_browser/filebrowser';
+		$data['WebpageMenuItem']['item_text'] = 'File Manager';
+		$data['WebpageMenuItem']['name'] = 'File Manager';
+ 		return $data;
+ 	}
 }
