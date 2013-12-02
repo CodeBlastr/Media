@@ -5,7 +5,8 @@ class MediaHelper extends AppHelper {
 	public $helpers = array(
 		'Html',
 		'Form',
-		'Url'
+		'Url',
+		'Media.PhpThumb'
 	);
 
 	public $options = array(
@@ -105,6 +106,11 @@ class MediaHelper extends AppHelper {
 		return $this->_View->element('Media.carousels/' . $type, $options);
 	}
 
+/**
+ * Images media
+ * 
+ * @param array
+ */
 	public function imagesMedia($item) {
 		$imagePath = $this->mediaUrl . $this->type . '/' . $item['filename'] . '.' . $item['extension'];
 		$thumbImageOptions = array(
@@ -204,6 +210,13 @@ class MediaHelper extends AppHelper {
 		$options = Set::merge($options, $defaults);
 		$data = $this->Model->find('all', $options);
 		return $data;
+	}
+
+/**
+ * Watermark method
+ */
+	public function watermark() {
+		
 	}
 
 }
