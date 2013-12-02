@@ -100,13 +100,6 @@ class MediaHelper extends AppHelper {
 	}
 
 /**
- * Carousel method
- */
-	public function carousel($type = 'default', $options = array()) {
-		return $this->_View->element('Media.carousels/' . $type, $options);
-	}
-
-/**
  * Images media
  * 
  * @param array
@@ -213,10 +206,23 @@ class MediaHelper extends AppHelper {
 	}
 
 /**
- * Watermark method
+ * Carousel method
  */
-	public function watermark() {
-		
+	public function carousel($type = 'default', $options = array()) {
+		return $this->_View->element('Media.carousels/' . $type, $options);
+	}
+
+/**
+ * PhpThumb method
+ * 
+ * @todo the save path (thumbsPath) should be a CDN
+ */
+	public function phpthumb($item, $options = array()) {
+		$this->_getType($item);
+		$image = $item['filename'] . '.' . $item['extension'];
+		Configure::write('PhpThumb.thumbsPath', ROOT . DS . SITE_DIR . DS . 'Locale' . DS . 'View' . DS . 'webroot' . DS . 'media' . DS . $this->type . DS );
+		Configure::write('PhpThumb.displayPath', $this->mediaUrl . $this->type . DS . 'tmp');
+		return $this->PhpThumb->thumbnail($image, $options);
 	}
 
 }

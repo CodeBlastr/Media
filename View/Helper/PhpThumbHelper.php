@@ -23,6 +23,9 @@ class PhpThumbHelper extends HtmlHelper {
         $this->file_extension = substr($this->options['src'], strrpos($this->options['src'], '.'), strlen($this->options['src']));
     }
     
+/**
+ * This might also be a good spot to do a CDN
+ */
     private function set_cache_filename()    {
         ksort($this->options);
         $filename_parts = array();
@@ -41,19 +44,18 @@ class PhpThumbHelper extends HtmlHelper {
         }
         
         $last_modified = date("F d Y H:i:s.", filectime($this->options['src']));
-        
-        $this->cache_filename = $this->options['save_path'] . DS . md5($this->cache_filename . $last_modified) . $this->file_extension;
+        $this->cache_filename = $this->options['save_path'] . 'tmp' . DS . md5($this->cache_filename . $last_modified) . $this->file_extension;
     }
     
-    private function image_is_cached()    {
+    private function image_is_cached() {
         if(is_file($this->cache_filename))    {
             return true;
         }
         return false;
     }
     
-    private function create_thumb()    {
-        App::import('Vendor', 'PhpThumb.PhpThumb', array('file' => 'phpThumb'.DS.'phpthumb.class.php'));
+    private function create_thumb() {
+        App::import('Vendor', 'Media.Vendor', array('file' => 'PhpThumb'.DS.'phpthumb.class.php'));
     	
         $this->php_thumb = new phpThumb();
         
@@ -71,7 +73,7 @@ class PhpThumbHelper extends HtmlHelper {
         }
     }
     
-    private function get_thumb_data()    {
+    private function get_thumb_data() {
     	$this->thumb_data['error'] = $this->error;
     	
         if($this->error)    {
@@ -123,20 +125,21 @@ class PhpThumbHelper extends HtmlHelper {
         	    $this->create_thumb();
         	}
         }
-		
         return $this->get_thumb_data();
     }
 
-    function generateThumbnail($image, $options) {
-        $thumbs_path = Configure::read('PhpThumb.thumbs_path');
-        if (empty($thumbs_path)) {
+	public function generateThumbnail($image, $options) {
+        $thumbsPath = Configure::read('PhpThumb.thumbsPath');
+        $displayPath = Configure::read('PhpThumb.displayPath');
+        if (empty($thumbsPath)) {
             return false;
         }
         $pathOptions = array(
-            'save_path' => WWW_ROOT . $thumbs_path,
-            'display_path' => '/' . $thumbs_path,
+            'save_path' => $thumbsPath,
+            'display_path' => $displayPath,
             'error_image_path' => Configure::read('PhpThumb.error_image_path')
         );
+		
         if (!empty($options['model'])) {
             // model images from MeioUpload
             if (empty($options['field'])) {
@@ -156,13 +159,16 @@ class PhpThumbHelper extends HtmlHelper {
             unset($options['model']);
             unset($options['field']);
         } else {
-            $options['src'] = WWW_ROOT . $image;
+            $options['src'] = $thumbsPath . $image;
         }
         $finalOptions = array_merge($options, $pathOptions);
         return $this->generate($finalOptions);
     }
 
-    function url($image = null, $options = array()) {
+/**
+ * Url method
+ */
+    public function url($image = null, $options = array()) {
         $thumbnail = $this->generateThumbnail($image, $options);
         if (!empty($thumbnail['error'])) {
             return false;
@@ -170,9 +176,13 @@ class PhpThumbHelper extends HtmlHelper {
         return $thumbnail['src'];
     }
 
-    function thumbnail($image, $options, $htmlOptions = array()) {
+/**
+ * Thumbnail method
+ */
+    public function thumbnail($image, $options, $htmlOptions = array()) {
         $thumbnail = $this->generateThumbnail($image, $options);
         if (!empty($thumbnail['error'])) {
+			debug($this->error_detail);
             return false;
         }
         return $this->image($thumbnail['src'], array_merge(
