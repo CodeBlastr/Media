@@ -27,6 +27,7 @@ class MediaAttachableBehavior extends ModelBehavior {
  * @return mixed False if the operation should abort. Any other result will continue.
  */
 	public function beforeSave(Model $Model, $options = array()) {
+		
 		//doing it this way to protect against saveAll
 		if(isset($Model->data['MediaAttachment'])) {
 			$this->data['MediaAttachment'] = $Model->data['MediaAttachment'];
@@ -141,32 +142,32 @@ class MediaAttachableBehavior extends ModelBehavior {
 	}
 	
 	protected function _bindModel($Model){
-		     return array('hasAndBelongsToMany' => array(
-		        	'Media' =>
-		            	array(
-		                	'className' => 'Media.Media',
-		                	'joinTable' => 'media_attachments',
-		                	'foreignKey' => 'foreign_key',
-		                	'associationForeignKey' => 'media_id',
-		                	'conditions' => array(
-		                		'MediaAttachment.model' => $Model->alias,
-		                		'OR' => array(
-		                				array('MediaAttachment.primary' => 0),
-		                				array('MediaAttachment.primary' => null)
-		                			)
-		                		),
-		            		'order' => array('MediaAttachment.order')
-		            	),
-		        	'MediaThumbnail' =>
-		        		array(
-	        				'className' => 'Media.Media',
-	        				'joinTable' => 'media_attachments',
-	        				'foreignKey' => 'foreign_key',
-	        				'associationForeignKey' => 'media_id',
-	        				'conditions' => array('MediaAttachment.model' => $Model->alias, 'MediaAttachment.primary' => true),
-		        		)
-		        	)
-				);
+    	return array('hasAndBelongsToMany' => array(
+        	'Media' =>
+            	array(
+                	'className' => 'Media.Media',
+                	'joinTable' => 'media_attachments',
+                	'foreignKey' => 'foreign_key',
+                	'associationForeignKey' => 'media_id',
+                	'conditions' => array(
+                		'MediaAttachment.model' => $Model->alias,
+                		'OR' => array(
+                				array('MediaAttachment.primary' => 0),
+                				array('MediaAttachment.primary' => null)
+                			)
+                		),
+            		'order' => array('MediaAttachment.order')
+            	),
+        	'MediaThumbnail' =>
+        		array(
+    				'className' => 'Media.Media',
+    				'joinTable' => 'media_attachments',
+    				'foreignKey' => 'foreign_key',
+    				'associationForeignKey' => 'media_id',
+    				'conditions' => array('MediaAttachment.model' => $Model->alias, 'MediaAttachment.primary' => true),
+        		)
+        	)
+		);
 	}
 	
 		
