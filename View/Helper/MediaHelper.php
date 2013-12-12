@@ -82,12 +82,21 @@ class MediaHelper extends AppHelper {
 		),
 	);
 
+/**
+ * Constructor
+ */
 	public function __construct(View $View, $settings = array()) {
 		parent::__construct($View, $settings);
 		$this->mediaPath = DS . 'theme' . DS . 'default' . DS . 'media' . DS;
 		$this->mediaUrl = '/theme/default/media/';
 	}
 
+/**
+ * Display method
+ * 
+ * @param array (Media array)
+ * @param array 
+ */
 	public function display($item, $options = array()) {
 		$this->options = array_merge($this->options, $options);
 		$item = isset($item['Media']) ? $item['Media'] : $item;
@@ -95,9 +104,40 @@ class MediaHelper extends AppHelper {
 			$method = $this->type . 'Media';
 			return $this->$method($item);
 		} else {
-			return '<img src="/img/noImage.jpg" width="'.$this->options['width'].'" height="'.$this->options['height'].'" />';
+			return $this->noImage();
 		}
 	}
+
+/**
+ * Find method
+ */
+ 	public function find($type = 'first', $params = array()) {
+		App::uses('MediaAttachment', 'Media.Model');
+		$MediaAttachment = new MediaAttachment;
+		// $params['contain'][] = 'Media'; contain isn't working here, and I don't know why???? RK
+		$attachments = $MediaAttachment->find($type, $params);
+		if (!empty($attachments[0])) {
+			// $type = 'all'
+			$ids = Set::extract('/MediaAttachment/media_id');
+		} else {
+			// $type = 'first'
+			$ids = $attachments['MediaAttachment']['media_id'];
+		}
+		App::uses('Media', 'Media.Model');
+		$Media = new Media;
+ 		return $Media->find('all', array('conditions' => array('Media.id' => $ids)));
+ 	}
+	
+/**
+ * Show method
+ * Like display except it will look up the image for you if you give a model and foreignKey
+ * 
+ * @param array find params
+ */
+ 	public function show(array $params, $options = array()) {
+ 		$media = $this->find('first', $params);
+		return $this->display($media[0]['Media'], $options);
+ 	}
 
 /**
  * Images media
@@ -110,7 +150,7 @@ class MediaHelper extends AppHelper {
 			'width' => $this->options['width'],
 			'height' => $this->options['height'],
 			'alt' => $item['title'],
-			'class' => 'media-image-thumb',
+			'class' => $this->options['class'] . ' media-image-thumb',
 		);
 		$image = $this->Html->image($imagePath, $thumbImageOptions, array(
 			'conversion' => $this->options['conversion'],
@@ -187,6 +227,9 @@ class MediaHelper extends AppHelper {
 	public function videoMedia($item) {
 	}
 
+/**
+ * Get Type method
+ */
 	protected function _getType($item) {
 		foreach ($this->types as $type => $extensions) {
 			if (in_array($item['extension'], $extensions)) {
@@ -197,6 +240,9 @@ class MediaHelper extends AppHelper {
 		return false;
 	}
 
+/**
+ * Load data method
+ */
 	public function loadData($options = array()) {
 		$this->Model = ClassRegistry::init('Media.MediaGallery');
 		$defaults = array();
@@ -218,11 +264,25 @@ class MediaHelper extends AppHelper {
  * @todo the save path (thumbsPath) should be a CDN
  */
 	public function phpthumb($item, $options = array()) {
-		$this->_getType($item);
-		$image = $item['filename'] . '.' . $item['extension'];
-		Configure::write('PhpThumb.thumbsPath', ROOT . DS . SITE_DIR . DS . 'Locale' . DS . 'View' . DS . 'webroot' . DS . 'media' . DS . $this->type . DS );
-		Configure::write('PhpThumb.displayPath', $this->mediaUrl . $this->type . DS . 'tmp');
-		return $this->PhpThumb->thumbnail($image, $options);
+		$this->options = array_merge($this->options, $options);
+		if (!empty($item)) {
+			$this->_getType($item);
+			$image = $item['filename'] . '.' . $item['extension'];
+			Configure::write('PhpThumb.thumbsPath', ROOT . DS . SITE_DIR . DS . 'Locale' . DS . 'View' . DS . 'webroot' . DS . 'media' . DS . $this->type . DS );
+			Configure::write('PhpThumb.displayPath', $this->mediaUrl . $this->type . DS . 'tmp');
+			return $this->PhpThumb->thumbnail($image, $options, $options);
+		} else {
+			Configure::write('PhpThumb.thumbsPath', ROOT . DS . 'app' . DS . 'webroot' . DS . 'img' . DS);
+			Configure::write('PhpThumb.displayPath', DS . 'img' . DS . 'tmp');
+			return $this->PhpThumb->thumbnail('lgnoimage.gif', $options, $options);
+		}
 	}
+
+/** 
+ * No Image method
+ */
+ 	public function noImage() {
+ 		return '<img src="/img/noImage.jpg" width="'.$this->options['width'].'" height="'.$this->options['height'].'" />';
+ 	}
 
 }

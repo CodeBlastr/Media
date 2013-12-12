@@ -64,7 +64,6 @@ class PhpThumbHelper extends HtmlHelper {
                 $this->php_thumb->setParameter($var, $this->options[$var]);
             }
         }
-        
         if($this->php_thumb->GenerateThumbnail()) {
             $this->php_thumb->RenderToFile($this->cache_filename);
         } else {
@@ -72,7 +71,10 @@ class PhpThumbHelper extends HtmlHelper {
             $this->error_detail = ereg_replace("[^A-Za-z0-9\/: .]", "", $this->php_thumb->fatalerror);
         }
     }
-    
+
+/**
+ * Get thumb data method
+ */
     private function get_thumb_data() {
     	$this->thumb_data['error'] = $this->error;
     	
@@ -98,6 +100,9 @@ class PhpThumbHelper extends HtmlHelper {
         return $this->thumb_data;
     }
     
+/**
+ * Validate method
+ */
     private function validate()	{
     	if(!is_file($this->options['src']))	{
     		$this->error = 1;
@@ -113,7 +118,10 @@ class PhpThumbHelper extends HtmlHelper {
     		return;
     	}
     }
-    
+
+/**
+ * Generate method
+ */
     public function generate($options = array())    {
     	$this->init($options);
     	
@@ -128,6 +136,9 @@ class PhpThumbHelper extends HtmlHelper {
         return $this->get_thumb_data();
     }
 
+/**
+ * Generate Thumbnail method
+ */
 	public function generateThumbnail($image, $options) {
         $thumbsPath = Configure::read('PhpThumb.thumbsPath');
         $displayPath = Configure::read('PhpThumb.displayPath');
@@ -139,7 +150,6 @@ class PhpThumbHelper extends HtmlHelper {
             'display_path' => $displayPath,
             'error_image_path' => Configure::read('PhpThumb.error_image_path')
         );
-		
         if (!empty($options['model'])) {
             // model images from MeioUpload
             if (empty($options['field'])) {
