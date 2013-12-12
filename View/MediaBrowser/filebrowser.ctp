@@ -1,13 +1,13 @@
 <div class="container">
-  <div class="row">
-  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-  <h1>The Filebrowser</h1>
-  		<div id="mediaBrowser"></div>
+	<div class="row">
+  		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+  			<h1>The Filebrowser</h1>
+  			<div id="mediaBrowser"></div>
+		</div>
 	</div>
 </div>
-</div>
 
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script type="text/javascript">
 	var baseUrl = '<?php echo $this->Html->url(array('plugin' => 'media', 'contoller' => 'media_browser', 'action' => 'media')); ?>';
 </script>
