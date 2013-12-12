@@ -13,6 +13,11 @@ App::uses('MediaAppModel', 'Media.Model');
 class MediaAttachment extends MediaAppModel {
 		
 	public $name = 'MediaAttachment';
-	
-	
+
+	public $hasMany = array(
+		'Media' => array(
+			'className' => 'Media.Media',
+			'foreignKey' => 'media_id'
+		)
+	);
 }
