@@ -1,4 +1,5 @@
 <?php
+App::uses('MediaAppModel', 'Media.Model');
 class Media extends MediaAppModel {
 
 /**
