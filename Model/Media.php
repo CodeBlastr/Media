@@ -10,7 +10,7 @@ class Media extends MediaAppModel {
 /**
  * An array of video types we accept to the media plugin.
  */
-	public $supportedVideoExtensions = array('mpg', 'mov', 'wmv', 'rm', '3g2', '3gp', '3gp2', '3gpp', '3gpp2', 'avi', 'divx', 'dv', 'dv-avi', 'dvx', 'f4v', 'flv', 'h264', 'hdmov', 'm4v', 'mkv', 'mp4', 'mp4v', 'mpe', 'mpeg', 'mpeg4', 'mpg', 'nsv', 'qt', 'swf', 'xvid');
+	public $supportedVideoExtensions = array('mpg', 'mov', 'wmv', 'rm', '3g2', '3gp', '3gp2', '3gpp', '3gpp2', 'avi', 'divx', 'dv', 'dv-avi', 'dvx', 'f4v', 'flv', 'h264', 'hdmov', 'm4v', 'mkv', 'mp4', 'mp4v', 'wav', 'mpe', 'mpeg', 'mpeg4', 'mpg', 'nsv', 'qt', 'swf', 'xvid');
 
 /**
  * An array of audio types we accept to the media plugin.
@@ -144,7 +144,6 @@ class Media extends MediaAppModel {
 	public function uploadFile($data) {
 		$uuid = $this->__uuid().uniqid();
 		$newFile =  $this->themeDirectory . DS . $this->data['Media']['type'] . DS . $uuid . '.' . $this->fileExtension;
-
 		if (rename($data['Media']['filename']['tmp_name'], $newFile)) {
 			$data['Media']['filename'] = $uuid; // change the filename to just the filename
 			$data['Media']['extension'] = $this->fileExtension; // change the extension to just the extension
