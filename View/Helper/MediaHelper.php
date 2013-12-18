@@ -269,11 +269,11 @@ class MediaHelper extends AppHelper {
 			$this->_getType($item);
 			$image = $item['filename'] . '.' . $item['extension'];
 			Configure::write('PhpThumb.thumbsPath', ROOT . DS . SITE_DIR . DS . 'Locale' . DS . 'View' . DS . 'webroot' . DS . 'media' . DS . $this->type . DS );
-			Configure::write('PhpThumb.displayPath', $this->mediaUrl . $this->type . DS . 'tmp');
+			Configure::write('PhpThumb.displayPath', $this->mediaUrl . $this->type . '/' . 'tmp');
 			return $this->PhpThumb->thumbnail($image, $options, $options);
 		} else {
 			Configure::write('PhpThumb.thumbsPath', ROOT . DS . 'app' . DS . 'webroot' . DS . 'img' . DS);
-			Configure::write('PhpThumb.displayPath', DS . 'img' . DS . 'tmp');
+			Configure::write('PhpThumb.displayPath', '/' . 'img' . '/' . 'tmp');
 			return $this->PhpThumb->thumbnail('lgnoimage.gif', $options, $options);
 		}
 	}
