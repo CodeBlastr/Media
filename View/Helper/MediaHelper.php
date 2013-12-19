@@ -225,6 +225,9 @@ class MediaHelper extends AppHelper {
 	}
 
 	public function videoMedia($item) {
+		return $this->_View->element('Media.video_display', array(
+			'url' => $this->mediaUrl . $this->type . 's/' . $item['filename'] . '.' . $item['extension']
+		));
 	}
 
 /**
