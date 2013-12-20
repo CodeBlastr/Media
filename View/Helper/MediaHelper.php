@@ -224,9 +224,12 @@ class MediaHelper extends AppHelper {
 		));
 	}
 
-	public function videoMedia($item) {
+	public function videoMedia($item, $options = array()) {
 		return $this->_View->element('Media.video_display', array(
-			'url' => $this->mediaUrl . $this->type . 's/' . $item['filename'] . '.' . $item['extension']
+			'url' => $this->mediaUrl . $this->type . 's/' . $item['filename'] . '.' . $item['extension'],
+			'height' => $this->options['height'],
+			'width' => $this->options['width'],
+			'class' => $this->options['class'],
 		));
 	}
 

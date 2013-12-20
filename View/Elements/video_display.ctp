@@ -1,1 +1,6 @@
-<video width="640"  height="360" src="<?php echo $url ?>" controls>upgrade your browser.. for real.</video>
+<?php
+// default options
+if (empty($height)) $height = '360px';
+if (empty($width)) $width = '640px';
+?>
+<video width="<?php echo $width ?>"  height="<?php echo $height ?>" src="<?php echo $url ?>" class="<?php echo $class ?>" controls>upgrade your browser.. for real.</video>
