@@ -1,0 +1,55 @@
+
+#mediaBrowser .navbar {
+	padding: 5px;
+	background: #eee;
+	border: 1px solid #ccc;
+}
+
+#mediaBrowser .navbar div.input {
+	float:left;
+	margin: 0 5px;
+}
+#mediaBrowser .navbar div.input label {
+	padding: 0px 3px;
+	}
+	
+#mediaUploadForm input {
+	float:left;
+	margin: 0 5px;
+}
+
+#mediaUploadForm {
+	float: right;
+	padding: 5px;
+}
+
+#mediaBrowser .media-item {
+	float:left;
+	width: 150px;
+	height: 150px;
+	padding: 10px;
+	border: 1px #eee solid;
+	border-radius: 10px;
+	overflow: hidden;
+	margin: 10px;	
+}
+
+#mediaBrowser .media-item .title {
+	padding: 3px;
+	border-top: 1px #eee solid;
+	border-bottom: 1px #eee solid;
+}
+
+#mediaBrowser .media-item .content {
+	border: 1px #eee solid;
+	padding: 2px;
+	width:100%;
+	height:70%;
+	overflow:hidden;
+	text-align: center;
+}
+
+#mediaBrowser .media-item .content img {
+	height: 100%;
+	margin: 0 auto;
+}
