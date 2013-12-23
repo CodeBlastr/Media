@@ -206,10 +206,14 @@ class AppMediaGalleriesController extends MediaAppController {
 
 		$this->layout = false;
 
-		$this->WkHtmlToPdf = $this->Components->load('WkHtmlToPdf');
-		$this->WkHtmlToPdf->initialize($this);
-		$pdfLocation = $this->WkHtmlToPdf->rasterizePdf(null, null, 'rasterize.ttysoon');
-
+		try {
+			$this->WkHtmlToPdf = $this->Components->load('WkHtmlToPdf');
+			$this->WkHtmlToPdf->initialize($this);
+			$pdfLocation = $this->WkHtmlToPdf->rasterizePdf(true, null, 'rasterize.ttysoon');
+		} catch (Exception $e) {
+			$this->Session->setFlash($e->getMessage());
+			$this->redirect($this->referer());
+		}
 	}
 
 
