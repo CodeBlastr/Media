@@ -88,42 +88,48 @@ class Media extends MediaAppModel {
 
 	}
 
-    /**
-     *
-     * @param type $results
-     * @param type $primary
-     * @return array
-     */
+/**
+ *
+ * @param type $results
+ * @param type $primary
+ * @return array
+ */
     public function afterFind($results, $primary = false) {
+/**
+ * This code was only ever used for the Zencoder service.
+ * It seemed to have been putting arrays into 'filename' and 'ext', 
+ * so that we could echo out the different available filetypes for this audio/video file.
+ */
 
-		foreach($results as $key => $val) {
-			if(isset($val['Media']['filename'])) {
-
-				# what formats did we receive from the encoder?
-				$outputs = json_decode($val['Media']['filename'], true);
-
-				# audio files have 1 output currently.. arrays are not the same.. make them so.
-				/** @todo this part is kinda hacky.. **/
-				if($val['Media']['type'] == 'audio') {
-					$temp['outputs'] = $outputs['outputs'];
-					$outputs = null;
-					$outputs['outputs'][0] = $temp['outputs'];
-				}
-
-				if($val['Media']['type'] == 'videos') {
-					$outputArray = $extensionArray = null;
-					if (!empty($outputs)) {
-						foreach ($outputs['outputs'] as $output) {
-							$outputArray[] = 'http://' . $_SERVER['HTTP_HOST'] . '/media/media/stream/' . $val['Media']['filename'] . '/' . $output['label'];
-							$extensionArray[] = $output['label'];
-						}
-					}
-					# set the modified ['filename']
-					$results[$key]['Media']['filename'] = $outputArray;
-					$results[$key]['Media']['ext'] = $extensionArray;
-				}
-			}
-		}
+		// foreach ($results as $key => $val) {
+			// if (isset($val['Media']['filename'])) {
+// 
+				// // what formats did we receive from the encoder?
+				// $outputs = json_decode($val['Media']['filename'], true);
+// 
+				// // audio files have 1 output currently.. arrays are not the same.. make them so.
+				// /** @todo this part is kinda hacky.. **/
+				// if ($val['Media']['type'] == 'audio') {
+					// $temp['outputs'] = $outputs['outputs'];
+					// $outputs = null;
+					// $outputs['outputs'][0] = $temp['outputs'];
+				// }
+// 
+				// if ($val['Media']['type'] == 'videos') {
+					// $outputArray = $extensionArray = null;
+					// if (!empty($outputs)) {
+						// foreach ($outputs['outputs'] as $output) {
+							// $outputArray[] = 'http://' . $_SERVER['HTTP_HOST'] . '/media/media/stream/' . $val['Media']['filename'] . '/' . $output['label'];
+							// $extensionArray[] = $output['label'];
+						// }
+					// }
+					// // set the modified ['filename']
+					// $results[$key]['Media']['filename'] = $outputArray;
+					// $results[$key]['Media']['ext'] = $extensionArray;
+				// }
+			// }
+		// }
+		
 		return $results;
     }
 
