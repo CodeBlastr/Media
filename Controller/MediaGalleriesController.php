@@ -204,6 +204,7 @@ class AppMediaGalleriesController extends MediaAppController {
 
 		$this->set('collectionArray', $sides);
 
+		/// comment out this block to view the output in your browser
 		$this->layout = false;
 
 		try {
@@ -214,6 +215,7 @@ class AppMediaGalleriesController extends MediaAppController {
 			$this->Session->setFlash($e->getMessage());
 			$this->redirect($this->referer());
 		}
+		///
 	}
 
 
