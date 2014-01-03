@@ -12,11 +12,11 @@ foreach ($collectionArray as $page) {
 ?>
 <html>
 	<head>
-		<style>
+		<style type="text/css">
 		<?php foreach ($fonts as $font) : ?>
 			@font-face {
-				font-family: "<?php echo $font ?>";
-				src: url('/fonts/google/<?php echo str_replace(' ', '', $font) ?>.ttf');
+				font-family: <?php echo $font ?>;
+				src: url('/fonts/google/<?php echo str_replace("'", '', $font) ?>.ttf');
 				font-style: normal;
 				font-weight: 400;
 			}
@@ -24,15 +24,15 @@ foreach ($collectionArray as $page) {
 		</style>
 	</head>
 	<body>
-		
+
 		<?php foreach ($fonts as $font) : ?>
-		<span style="font-family: '<?php echo $font ?>'; font-size: 0px;">.</span>
+		<span style="font-family: <?php echo $font ?>; font-size: 0px;">.</span>
 		<?php endforeach; ?>
-		
+
 		<div class="canvasBuildrr" style="width: 4984px;">
 			<!-- canvasBuildrr app goes here -->
 		</div>
-		
+
 		<script type="text/html" id="template-canvas">
 			<canvas id="canvas<%= canvas%>" height="2490" width="1740">
 				You are using an outdated browser.
@@ -42,14 +42,14 @@ foreach ($collectionArray as $page) {
 				to better experience this site.
 			</canvas>
 		</script>
-		
+
 		<script type="text/javascript">
 			var canvasData1 = <?php echo json_encode($collectionArray[0]); ?>;
 			var canvasData2 = <?php echo json_encode($collectionArray[1]); ?>;
 			var galleryId = '<?php echo $this->passedArgs[0] ?>';
 		</script>
-		
+
 		<script data-main="/js/printCanvasGut/printCanvas.js" src="/js/printCanvasGut/require.js"></script>
-		
+
 	</body>
 </html>
