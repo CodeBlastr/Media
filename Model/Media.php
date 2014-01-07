@@ -1,6 +1,6 @@
 <?php
 App::uses('MediaAppModel', 'Media.Model');
-class Media extends MediaAppModel {
+class AppMedia extends MediaAppModel {
 
 /**
  * An array of file types we accept to the media plugin.
@@ -330,4 +330,8 @@ class Media extends MediaAppModel {
 
 	}
 
+}
+
+if (!isset($refuseInit)) {
+	class Media extends AppMedia {}
 }
