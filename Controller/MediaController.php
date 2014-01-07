@@ -229,7 +229,7 @@ class AppMediaController extends MediaAppController {
 				}
 
 			} else {
-                /** 404 **/
+                throw new NotFoundException();
 			}
 
 		}
