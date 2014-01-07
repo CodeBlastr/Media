@@ -47,7 +47,7 @@ class AppMediaController extends MediaAppController {
 					'filename' => $file
 				);
 				$this->Media->create();
-				$media = $this->Media->save($media);
+				$media = $this->Media->upload($media);
 				if (isset($this->request->data['MediaAttachment'])) {
 					$attachedmedia = array(
 						'MediaAttachment' => array(
@@ -73,7 +73,7 @@ class AppMediaController extends MediaAppController {
 					$this->redirect(array('action' => 'my'));
 				}
 			} else {
-				$this->Session->setFlash('Upload failed, check directory permissions');
+				$this->Session->setFlash('Upload failed, check directory permissions', 'flash_danger');
 			}
 
 		}
@@ -91,13 +91,12 @@ class AppMediaController extends MediaAppController {
 			$this->request->data = $this->Media->findById($uid);
 		} else {
             // save the new media metadata
-            debug($this->Media->save($this->request->data));
-            if ($this->Media->save($this->request->data, array('callbacks' => false))) {
-                $this->Session->setFlash('Your media has been updated.');
+            if ($this->Media->save($this->request->data)) {
+                $this->Session->setFlash('Your media has been updated.', 'flash_success');
                 $this->redirect($this->referer());
             }
 		}
-	}//edit()
+	}
 
 
 	public function delete($id) {

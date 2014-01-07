@@ -49,8 +49,15 @@ class AppMedia extends MediaAppModel {
 	}
 
 
-	public function beforeSave($options = array()) {
-		parent::beforeSave($options);
+	public function upload() {
+		if ($this->beforeUpload()) {
+			return $this->save($this->data);
+		} else {
+			return false;
+		}
+	}
+
+	public function beforeUpload() {
 		$this->data['Media']['model'] = !empty($this->data['Media']['model']) ? $this->data['Media']['model'] : 'Media';
 		$this->plugin = strtolower(ZuhaInflector::pluginize($this->data['Media']['model']));
 		$this->__createDirectories();
