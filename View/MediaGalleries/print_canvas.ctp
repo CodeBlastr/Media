@@ -49,7 +49,7 @@ foreach ($collectionArray as $page) {
 			var galleryId = '<?php echo $this->passedArgs[0] ?>';
 		</script>
 
-		<script data-main="/js/printCanvasGut/printCanvas.js" src="/js/printCanvasGut/require.js"></script>
+		<script data-main="/js/printCanvasGut/printCanvas-built.js" src="/js/printCanvasGut/require.js"></script>
 
 	</body>
 </html>
