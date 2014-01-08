@@ -313,14 +313,14 @@ class AppMedia extends MediaAppModel {
 			if ($galleryId === false) {
 				$this->Behaviors->disable('MediaAttachment');
 			}
-			$added = $this->save(array(
+			$this->data = array(
 				'Media' => array(
 					'filename' => array(
 						'name' => $uuid . '.' . $extension,
 						'tmp_name' => sys_get_temp_dir() . DS . $uuid
 					)
-				)
-			));
+				));
+			$added = $this->upload();
 			
 			/** this was commented out since the canvasBuildrr is currently running off of 4 pre-attached media **/
 			// if ($added) {
