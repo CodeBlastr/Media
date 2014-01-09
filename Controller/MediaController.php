@@ -25,7 +25,7 @@ class AppMediaController extends MediaAppController {
 		$allMedia = $this->Media->find('all', array(
 			'conditions' => array(
 				'Media.filename !=' => '',
-				'Media.is_visible' => '1', // 0 = not on our server; 1 = good to go
+				//'Media.is_visible' => '1', // 0 = not on our server; 1 = good to go
 				'Media.type' => $mediaType
 				)
 			));
@@ -41,14 +41,23 @@ class AppMediaController extends MediaAppController {
 
             $this->request->data['User']['id'] = $this->Auth->user('id');
 			$mediaarray = array();
+			
+			// Format single uploads into a [0] many array.
+			// Also allowing for `title` & `description` to be saved for single file uploads.
 			if (!is_array($this->request->data['Media']['files'][0]) && is_array($this->request->data['Media']['files'])) {
 				$this->request->data['Media']['files'] = array($this->request->data['Media']['files']);
+				$mediaTitle = $this->request->data['Media']['title'];
+				$mediaDescription = $this->request->data['Media']['description'];
 			}
+			
 			foreach ($this->request->data['Media']['files'] as $file) {
 				$media['Media'] = array(
 					'user_id' => $this->Auth->user('id'),
-					'filename' => $file
+					'filename' => $file,
+					'title' => isset($mediaTitle) ? $mediaTitle : null,
+					'description' => isset($mediaDescription) ? $mediaDescription : null
 				);
+				
 				$this->Media->create();
 				$media = $this->Media->upload($media);
 
