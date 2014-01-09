@@ -49,14 +49,33 @@ class AppMedia extends MediaAppModel {
 	}
 
 
-	public function upload() {
+/**
+ * This function was made to replace the takeover of save() that we had, processing uploaded files.
+ * If trying to upload & save a Media object, pass it to this function.
+ * 
+ * @param array $media
+ * @return boolean
+ */
+	public function upload($media = null) {
+		if ($media !== null) {
+			$this->data = $media;
+		}
 		if ($this->beforeUpload()) {
-			return $this->save($this->data);
+			$savedData = $this->save($this->data);
+			if ($savedData) {
+				return $this->afterUpload($savedData);
+			} else {
+				return false;
+			}
 		} else {
 			return false;
 		}
 	}
 
+/**
+ * 
+ * @return boolean
+ */
 	public function beforeUpload() {
 		$this->data['Media']['model'] = !empty($this->data['Media']['model']) ? $this->data['Media']['model'] : 'Media';
 		$this->plugin = strtolower(ZuhaInflector::pluginize($this->data['Media']['model']));
@@ -68,10 +87,78 @@ class AppMedia extends MediaAppModel {
 		return $this->processFile();
 	}
 
+/**
+ * 
+ * @param array $data
+ * @return array|boolean
+ */
+	public function afterUpload($data) {
+		$mediaType = $this->mediaType($this->fileExtension);
+		// automatically generate and save video thumbnails
+		if ($mediaType === 'videos') {
+			return $this->setVideoThumbnail($data);
+		}
+	}
 
+/**
+ * Given a Media object, this will take a snapshot of the video, save it in /media/images/, and record it's relative URL in Media.thumbnail
+ * 
+ * @param array $data Media object
+ * @param array $options Defaults are: array('thumbnailSize' => '150x150', 'fromTime' => '00:00:5')
+ * @return array|boolean Result from Media->save()
+ * @throws Exception
+ */
+	public function setVideoThumbnail($data, $options = array()) {
+		
+		$defaults['thumbnailSize'] = '150x150';
+		$defaults['fromTime'] = '00:00:5';
+		$options = Set::merge($options, $defaults);
+		
+		$uploadFile = $this->getMediaFilePath($data);
+		$randomFilename = $this->__uuid().uniqid();
+		$thumbnailFilePath = $this->themeDirectory . DS . 'images' . DS . $randomFilename . '.jpg';
+		
+		if (PHP_OS === 'Darwin') {
+			$command = VENDORS . 'ffmpeg/mac64/ffmpeg -i ' . $uploadFile . " -vcodec mjpeg -vframes 1 -an -f rawvideo -s {$options['thumbnailSize']} -ss {$options['fromTime']} ".$thumbnailFilePath;
+		} elseif (PHP_OS === 'WINNT') {
+			throw new Exception('Windows ffmpeg not setup yet', 1);
+			//$command = VENDORS . 'ffmpeg\windows\ffmpeg -i ' . $uploadFile . " -vcodec mjpeg -vframes 1 -an -f rawvideo -s {$options['thumbnailSize']} -ss {$options['fromTime']} ".$thumbnailFilePath;
+		} else {
+			switch (PHP_INT_SIZE) {
+				case 4 :
+					throw new Exception('*nix 32bit not setup yet', 1);
+				case 8 :
+					$command = VENDORS . 'ffmpeg/nix64/ffmpeg -i ' . $uploadFile . " -vcodec mjpeg -vframes 1 -an -f rawvideo -s {$options['thumbnailSize']} -ss {$options['fromTime']} ".$thumbnailFilePath;
+					break;
+				default :
+					throw new Exception('I was unable to detect which ffmpeg binary to use on this system.', 1);
+			}
+		}
+		
+		exec($command);
+		
+		$data['Media']['thumbnail'] = DS . 'media' . DS . 'images' . DS . $randomFilename . '.jpg';
+		
+		return $this->save($data);
+	}
+
+/**
+ * Give this a Media array and it will give you the full path of the actual file
+ * 
+ * @param array Standard $data['Media'] array
+ * @return string Full path of media file
+ */
+	public function getMediaFilePath($data) {
+		return $this->themeDirectory . DS . $data['Media']['type'] . DS . $data['Media']['filename'] . '.' . $data['Media']['extension'];
+	}
+
+/**
+ * 
+ * @return boolean
+ */
 	public function processFile() {
 		$this->data['Media']['type'] = $this->mediaType($this->fileExtension);
-		if($this->data['Media']['type']) {
+		if ($this->data['Media']['type']) {
 			$this->data = $this->uploadFile($this->data);
 			return true;
 		}
@@ -79,10 +166,10 @@ class AppMedia extends MediaAppModel {
 	}
 
 	public function mediaType($ext) {
-		if(in_array($ext, $this->supportedFileExtensions)) {
+		if (in_array($ext, $this->supportedFileExtensions)) {
 			return 'docs';
 			$this->data = $this->uploadFile($this->data);
-		} elseif(in_array($ext, $this->supportedImageExtensions)) {
+		} elseif (in_array($ext, $this->supportedImageExtensions)) {
 			return 'images';
 		} elseif (in_array($ext, $this->supportedVideoExtensions)) {
 			return 'videos';
@@ -179,7 +266,7 @@ class AppMedia extends MediaAppModel {
 			#$url = '/theme/default/media/'.$this->pluginFolder.'/videos/'.$fileName.'.flv';
 
 			if (file_exists($serverFile)) {
-				if(rename($serverFile, $localFile)) {
+				if (rename($serverFile, $localFile)) {
 					#echo $url = '/theme/default/media/'.$this->pluginFolder.'/videos/'.$fileName.'.flv';
 				} else {
 					return false;
@@ -292,7 +379,6 @@ class AppMedia extends MediaAppModel {
 				break;
 			default:
 				return false;
-				break;
 		}
 
 		// set temp filename
@@ -300,9 +386,9 @@ class AppMedia extends MediaAppModel {
 
 		// write image to disk
 		$imageString = str_replace('data:'.$metadata['mediatype'].';base64,', '', $data['content']);
-		$imageString = base64_decode($imageString);
+		$decodedImageString = base64_decode($imageString);
 		$fopen = fopen(sys_get_temp_dir() . DS . $uuid, 'wb');
-		$written = fwrite($fopen, $imageString);
+		$written = fwrite($fopen, $decodedImageString);
 		fclose($fopen);
 
 		if ($written) {
