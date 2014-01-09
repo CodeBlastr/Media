@@ -27,7 +27,7 @@ class AppMedia extends MediaAppModel {
 			'foreignKey' => 'user_id'
 			)
 		);
-		
+
 	public $hasMany = array(
 		'MediaAttachment' => array(
 			'className' => 'Media.MediaAttachment',
@@ -52,7 +52,7 @@ class AppMedia extends MediaAppModel {
 /**
  * This function was made to replace the takeover of save() that we had, processing uploaded files.
  * If trying to upload & save a Media object, pass it to this function.
- * 
+ *
  * @param array $media
  * @return boolean
  */
@@ -73,7 +73,7 @@ class AppMedia extends MediaAppModel {
 	}
 
 /**
- * 
+ *
  * @return boolean
  */
 	public function beforeUpload() {
@@ -88,7 +88,7 @@ class AppMedia extends MediaAppModel {
 	}
 
 /**
- * 
+ *
  * @param array $data
  * @return array|boolean
  */
@@ -102,22 +102,22 @@ class AppMedia extends MediaAppModel {
 
 /**
  * Given a Media object, this will take a snapshot of the video, save it in /media/images/, and record it's relative URL in Media.thumbnail
- * 
+ *
  * @param array $data Media object
  * @param array $options Defaults are: array('thumbnailSize' => '150x150', 'fromTime' => '00:00:5')
  * @return array|boolean Result from Media->save()
  * @throws Exception
  */
 	public function setVideoThumbnail($data, $options = array()) {
-		
+
 		$defaults['thumbnailSize'] = '150x150';
 		$defaults['fromTime'] = '00:00:5';
 		$options = Set::merge($options, $defaults);
-		
+
 		$uploadFile = $this->getMediaFilePath($data);
 		$randomFilename = $this->__uuid().uniqid();
 		$thumbnailFilePath = $this->themeDirectory . DS . 'images' . DS . $randomFilename . '.jpg';
-		
+
 		if (PHP_OS === 'Darwin') {
 			$command = VENDORS . 'ffmpeg/mac64/ffmpeg -i ' . $uploadFile . " -vcodec mjpeg -vframes 1 -an -f rawvideo -s {$options['thumbnailSize']} -ss {$options['fromTime']} ".$thumbnailFilePath;
 		} elseif (PHP_OS === 'WINNT') {
@@ -134,17 +134,17 @@ class AppMedia extends MediaAppModel {
 					throw new Exception('I was unable to detect which ffmpeg binary to use on this system.', 1);
 			}
 		}
-		
+
 		exec($command);
-		
+
 		$data['Media']['thumbnail'] = DS . 'media' . DS . 'images' . DS . $randomFilename . '.jpg';
-		
+
 		return $this->save($data);
 	}
 
 /**
  * Give this a Media array and it will give you the full path of the actual file
- * 
+ *
  * @param array Standard $data['Media'] array
  * @return string Full path of media file
  */
@@ -153,7 +153,7 @@ class AppMedia extends MediaAppModel {
 	}
 
 /**
- * 
+ *
  * @return boolean
  */
 	public function processFile() {
@@ -165,6 +165,11 @@ class AppMedia extends MediaAppModel {
 		return false;
 	}
 
+/**
+ *
+ * @param string $ext
+ * @return string|boolean
+ */
 	public function mediaType($ext) {
 		if (in_array($ext, $this->supportedFileExtensions)) {
 			return 'docs';
@@ -191,16 +196,16 @@ class AppMedia extends MediaAppModel {
     public function afterFind($results, $primary = false) {
 /**
  * This code was only ever used for the Zencoder service.
- * It seemed to have been putting arrays into 'filename' and 'ext', 
+ * It seemed to have been putting arrays into 'filename' and 'ext',
  * so that we could echo out the different available filetypes for this audio/video file.
  */
 
 		// foreach ($results as $key => $val) {
 			// if (isset($val['Media']['filename'])) {
-// 
+//
 				// // what formats did we receive from the encoder?
 				// $outputs = json_decode($val['Media']['filename'], true);
-// 
+//
 				// // audio files have 1 output currently.. arrays are not the same.. make them so.
 				// /** @todo this part is kinda hacky.. **/
 				// if ($val['Media']['type'] == 'audio') {
@@ -208,7 +213,7 @@ class AppMedia extends MediaAppModel {
 					// $outputs = null;
 					// $outputs['outputs'][0] = $temp['outputs'];
 				// }
-// 
+//
 				// if ($val['Media']['type'] == 'videos') {
 					// $outputArray = $extensionArray = null;
 					// if (!empty($outputs)) {
@@ -223,7 +228,7 @@ class AppMedia extends MediaAppModel {
 				// }
 			// }
 		// }
-		
+
 		return $results;
     }
 
@@ -231,6 +236,7 @@ class AppMedia extends MediaAppModel {
 /**
  * This is a valid callback that comes with the Rateable plugin
  * It is being kept here for future reference/use
+ *
  * @param array $data
  */
 	public function afterRate($data) {
@@ -240,6 +246,10 @@ class AppMedia extends MediaAppModel {
 
 /**
  * Handles an uploaded file (ie. doc, pdf, etc)
+ *
+ * @param array $data
+ * @return array
+ * @throws Exception
  */
 	public function uploadFile($data) {
 		$uuid = $this->__uuid().uniqid();
@@ -284,11 +294,12 @@ class AppMedia extends MediaAppModel {
 		return $data;
 	}
 
-	/**
-	 * I beleive that this one was used to save images created with the LiterallyCanvas script
-	 * @param type $data
-	 * @return int
-	 */
+/**
+ * I beleive that this one was used to save images created with the LiterallyCanvas script
+ *
+ * @param type $data
+ * @return int
+ */
 	private function _handleCanvasImages($data) {
 		if ( !empty($data['Media']['canvasImageData']) ) {
 
@@ -311,11 +322,11 @@ class AppMedia extends MediaAppModel {
 	}
 
 
-	/**
-	 *
-	 * @param array $data An entire model from the canvasBuildrr {model:collection:{models}}
-	 * @return array
-	 */
+/**
+ *
+ * @param array $data An entire model from the canvasBuildrr {model:collection:{models}}
+ * @return array
+ */
 	public function updateCanvasObjects($data, $galleryId = false) {
 		$data = json_decode($data, true);
 
@@ -344,14 +355,14 @@ class AppMedia extends MediaAppModel {
 	}
 
 
-	/**
-	 * saves image file from image object to the file server
-	 * 
-	 * @todo Would like to delete the old "screenshot" when a new one is created
-	 * 
-	 * @param array $data
-	 * @return array|boolean
-	 */
+/**
+ * saves image file from image object to the file server
+ *
+ * @todo Would like to delete the old "screenshot" when a new one is created
+ *
+ * @param array $data
+ * @return array|boolean
+ */
 	private function _saveCanvasImageObject($data, $galleryId = false) {
 
 		// make sure that this is (probably) safe to pass to fopen()
@@ -407,7 +418,7 @@ class AppMedia extends MediaAppModel {
 					)
 				));
 			$added = $this->upload();
-			
+
 			/** this was commented out since the canvasBuildrr is currently running off of 4 pre-attached media **/
 			// if ($added) {
 				// $mediaAttachment = array(
