@@ -9,6 +9,7 @@ foreach ($collectionArray as $page) {
 		}
 	}
 }
+$fonts = array_unique($fonts);
 ?>
 <html>
 	<head>
