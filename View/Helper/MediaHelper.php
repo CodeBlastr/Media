@@ -89,6 +89,7 @@ class MediaHelper extends AppHelper {
 		parent::__construct($View, $settings);
 		$this->mediaPath = DS . 'theme' . DS . 'default' . DS . 'media' . DS;
 		$this->mediaUrl = '/theme/default/media/';
+		$this->streamUrl = Router::url(array('plugin' => 'media', 'controller' => 'media', 'action' => 'stream'));
 	}
 
 /**
@@ -207,7 +208,7 @@ class MediaHelper extends AppHelper {
 				$this->_getType($item);
 				$track = array(
 					'title' => $item['title'],
-					'mp3' => $this->mediaUrl . $this->type . '/' . $item['filename'] . '.' . $item['extension'],
+					 $item['extension'] => $this->streamUrl.'/'.$item['filename'].'.'.$item['extension'],
 					'poster' => ''
 				);
 				$tracks[] = $track;

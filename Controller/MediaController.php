@@ -189,63 +189,85 @@ class AppMediaController extends MediaAppController {
  * @param char $mediaID The UUID of the media in question.
  * @param string $requestedFormat The filetype of the media expected.
  */
-	function stream($mediaID = null, $requestedFormat = FALSE) {
-		if ($mediaID && $requestedFormat) {
-
+	public function stream($filename = false) {
+		$this->layout = false;
+		$this->view = false;
+		if ($filename) {
+			$filename = explode('.', $filename);
+			$ext = array_pop($filename);
+			$filename = implode('.', $filename);
 			// find the filetype
-			$theMedia = $this->Media->findById($mediaID);
+			$media = $this->Media->find('first', array(
+				'conditions' => array(
+					'filename' => $filename,
+					'extension' => $ext,
+				)
+			));
+			
+			$mime_type = $this->Media->getMimeType($ext);
+			if(!$mime_type) {
+				throw new NotFoundException();
+			}
+			$media_dir = $this->Media->themeDirectory .DS. $media['Media']['type'].DS;
+			if(!file_exists($media_dir.$filename.'.'.$ext)) {
+				throw new NotFoundException();
+			}
+			
+			$file = $media_dir.$filename.'.'.$ext;
+			$size = filesize($file);
+			$this->response->header(array(
+				'Content-Type' => $mime_type,
+				'Accept-Ranges' => 'bytes'
+			));
+			$this->response->sharable(false, 3600);
+	
+			// multipart-download and download resuming support
+			$rangeheader = $this->request->header('RANGE');
+			//debug($rangeheader);exit;
+			if ($rangeheader) {
+				list ( $a, $range ) = explode('=', $rangeheader, 2);
+				list ( $range ) = explode(',', $range, 2);
+				list ( $range, $range_end ) = explode('-', $range);
+	
+				$range = intval($range);
+	
+				$range_end = (!$range_end) ? $size - 1 : intval($range_end);
+				$new_length = $range_end - $range + 1;
+				debug($range);
+				debug($range_end);
+				debug($new_length);
+				$this->response->statusCode(206);
+				$this->response->header(array(
+						'Content-Range' => 'bytes ' . ($range - $range_end / $size)
+				));
+			} 
+			
+// 			/* output the file itself */
+// 			$chunksize = 1 * (1024 * 1024); // you may want to change this
+// 			//$bytes_send = 0;
+// 			//debug($range);exit;
+// 			debug($this->response);exit;
+// 			if ($file = fopen($file, 'r')) {
+// 				if (isset($_SERVER ['HTTP_RANGE'])) {
+// 					fseek($file, $range);
+// 				}
+				
+// 				$this->response->body(fread($file, $chunksize));
+				
+				
+// 				flush();
+	
+// 				fclose($file);
 
-			foreach($theMedia['Media']['ext'] as $outputExtension) {
-				if ($outputExtension == $requestedFormat) {
-					$outputTypeFound = true;
-				}
+			$this->response->file($file, array('download' => true));
+				
 			}
 
-			if ($outputTypeFound) {
-				// yes, we should have this media in the requested format
-
-				if (!empty($theMedia['Media']['type'])) {
-					// determine what data to send to the browser
-					if ($theMedia['Media']['type'] == 'audio') {
-						switch ($requestedFormat) {
-							case ('mp3'):
-								$filetype = array('extension' => 'mp3', 'mimeType' => array('mp3' => 'audio/mp3'));
-								break;
-							case ('ogg'):
-								$filetype = array('extension' => 'ogg', 'mimeType' => array('ogg' => 'audio/ogg'));
-								break;
-						}
-					} elseif ($theMedia['Media']['type'] == 'video') {
-						switch ($requestedFormat) {
-							case ('mp4'):
-								$filetype = array('extension' => 'mp4', 'mimeType' => array('mp4' => 'video/mp4'));
-								break;
-							case ('webm'):
-								$filetype = array('extension' => 'webm', 'mimeType' => array('mp4' => 'video/webm'));
-								break;
-						}
-					}
-
-					if (isset($filetype)) { /** @todo break up to stream & to download & do download data updating **/
-						// send the file to the browser
-						$this->viewClass = 'Media'; // <-- magic!
-						$params = array(
-							'id' => $mediaID . '.' . $filetype['extension'], // this is the full filename.. perhaps the one shown to the user if they download
-							'name' => $mediaID, // this is the filename minus extension
-							'download' => false, // if true, then a download box pops up
-							'extension' => $filetype['extension'],
-							'mimeType' => $filetype['mimeType'],
-							'path' => ROOT.DS.SITE_DIR.DS.'Locale'.DS.'View'.DS.WEBROOT_DIR . DS . 'media' . DS . 'streams' . DS . $theMedia['Media']['type'] . DS
-                           );
-						$this->set($params);
-					}
-				}
-
-			} else {
-                throw new NotFoundException();
+			else {
+				$this->response->statusCode(404);
 			}
-
-		}
+		//debug($this->response);exit;
+		return $this->response->send();
 	}
 
 
