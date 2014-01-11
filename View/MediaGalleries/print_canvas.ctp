@@ -17,7 +17,7 @@ $fonts = array_unique($fonts);
 		<?php foreach ($fonts as $font) : ?>
 			@font-face {
 				font-family: <?php echo $font ?>;
-				src: url('/fonts/google/<?php echo str_replace("'", '', $font) ?>.ttf');
+				src: url('/fonts/google/<?php echo str_replace(array('"', "'"), '', $font) ?>.ttf');
 				font-style: normal;
 				font-weight: 400;
 			}
@@ -27,7 +27,7 @@ $fonts = array_unique($fonts);
 	<body>
 
 		<?php foreach ($fonts as $font) : ?>
-		<span style="font-family: <?php echo $font ?>; font-size: 0px;">.</span>
+		<span style="font-family: <?php echo str_replace(array('"', "'"), '', $font) ?>; font-size: 0px;">.</span>
 		<?php endforeach; ?>
 
 		<div class="canvasBuildrr" style="width: 4984px;">
