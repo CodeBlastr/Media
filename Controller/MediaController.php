@@ -25,7 +25,7 @@ class AppMediaController extends MediaAppController {
 		$allMedia = $this->Media->find('all', array(
 			'conditions' => array(
 				'Media.filename !=' => '',
-				'Media.is_visible' => '1', // 0 = not on our server; 1 = good to go
+				//'Media.is_visible' => '1', // 0 = not on our server; 1 = good to go
 				'Media.type' => $mediaType
 				)
 			));
@@ -41,13 +41,26 @@ class AppMediaController extends MediaAppController {
 
             $this->request->data['User']['id'] = $this->Auth->user('id');
 			$mediaarray = array();
+			
+			// Format single uploads into a [0] many array.
+			// Also allowing for `title` & `description` to be saved for single file uploads.
+			if (!is_array($this->request->data['Media']['files'][0]) && is_array($this->request->data['Media']['files'])) {
+				$this->request->data['Media']['files'] = array($this->request->data['Media']['files']);
+				$mediaTitle = $this->request->data['Media']['title'];
+				$mediaDescription = $this->request->data['Media']['description'];
+			}
+			
 			foreach ($this->request->data['Media']['files'] as $file) {
 				$media['Media'] = array(
 					'user_id' => $this->Auth->user('id'),
-					'filename' => $file
+					'filename' => $file,
+					'title' => isset($mediaTitle) ? $mediaTitle : null,
+					'description' => isset($mediaDescription) ? $mediaDescription : null
 				);
+				
 				$this->Media->create();
 				$media = $this->Media->upload($media);
+
 				if (isset($this->request->data['MediaAttachment'])) {
 					$attachedmedia = array(
 						'MediaAttachment' => array(
@@ -63,8 +76,9 @@ class AppMediaController extends MediaAppController {
 					$mediaarray[] = $media;
 				}
 			}
+
 			if (!empty($mediaarray)) {
-				$this->Session->setFlash('Media saved.');
+				$this->Session->setFlash('Media saved.', 'flash_success');
 				if ($this->request->isAjax()) {
 					$this->set('media', $mediaarray);
 					$this->layout = false;
@@ -100,27 +114,27 @@ class AppMediaController extends MediaAppController {
 
 
 	public function delete($id) {
-		try{
-			if(isset($id) && $this->Media->exists($id)) {
+		try {
+			if (isset($id) && $this->Media->exists($id)) {
 				//Get the media info so we can delete the file
 				$media = $this->Media->findById($id);
 				$type = $this->Media->mediaType($media['Media']['extension']);
 				$this->loadModel('Media.MediaAttachment');
 				//Delete the media don't cascade because we need better control over what get delete
-				if(!$this->Media->delete($id, false)) {
+				if (!$this->Media->delete($id, false)) {
 					throw new Exception('Could not delete Media Record');
 				}
-				if(!$this->MediaAttachment->deleteAll(array('media_id' => $id))) {
+				if (!$this->MediaAttachment->deleteAll(array('media_id' => $id))) {
 					throw new Exception('Could not delete attachment records');
 				}
-				if(!unlink($this->Media->themeDirectory.DS.$type.DS.$media['Media']['filename'].'.'.$media['Media']['extension'])) {
+				if (!unlink($this->Media->themeDirectory.DS.$type.DS.$media['Media']['filename'].'.'.$media['Media']['extension'])) {
 					throw new Exception('Could not delete file, please check permissions');
 				}
 				$this->Session->setFlash(__('Deleted %n', !empty($media['Media']['title']) ? $media['Media']['title'] : $id ));
-			}else {
+			} else {
 				throw new MethodNotAllowedException('Action not allowed');
 			}
-		}catch(Exception $e) {
+		} catch(Exception $e) {
 			$this->Session->setFlash($e->getMessage());
 		}
 
