@@ -128,7 +128,7 @@ class AppMediaBrowserController extends MediaAppController {
 						'title' => $file['name']
 				);
 				$this->Media->create();
-				$media = $this->Media->save($media);
+				$media = $this->Media->upload($media);
 				if(isset($this->request->data['MediaAttachment'])) {
 					$attachedmedia = array(
 							'MediaAttachment' => array(
