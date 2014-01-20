@@ -136,11 +136,14 @@ class MediaAttachableBehavior extends ModelBehavior {
 		
 		$query['contain'][] = 'Media';
 		$query['contain'][] = 'MediaThumbnail';
-		return $query;
-		
-		
+		return $query;		
 	}
-	
+
+/**
+ * Bind Model method
+ * 
+ * @param object $Model
+ */
 	protected function _bindModel($Model){
     	return array('hasAndBelongsToMany' => array(
         	'Media' =>
