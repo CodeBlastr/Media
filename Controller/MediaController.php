@@ -130,12 +130,12 @@ class AppMediaController extends MediaAppController {
 				if (!unlink($this->Media->themeDirectory.DS.$type.DS.$media['Media']['filename'].'.'.$media['Media']['extension'])) {
 					throw new Exception('Could not delete file, please check permissions');
 				}
-				$this->Session->setFlash(__('Deleted %n', !empty($media['Media']['title']) ? $media['Media']['title'] : $id ));
+				$this->Session->setFlash(__('Deleted %n', !empty($media['Media']['title']) ? $media['Media']['title'] : $id ), 'flash_success');
 			} else {
 				throw new MethodNotAllowedException('Action not allowed');
 			}
 		} catch(Exception $e) {
-			$this->Session->setFlash($e->getMessage());
+			$this->Session->setFlash($e->getMessage(), 'flash_warning');
 		}
 
 		$this->redirect($this->referer());
