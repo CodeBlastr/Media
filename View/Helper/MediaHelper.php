@@ -231,6 +231,7 @@ class MediaHelper extends AppHelper {
 			'height' => $this->options['height'],
 			'width' => $this->options['width'],
 			'class' => $this->options['class'],
+			'id' => $this->options['id'],
 		));
 	}
 
