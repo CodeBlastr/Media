@@ -51,6 +51,7 @@ class AppMediaController extends MediaAppController {
 			}
 			
 			foreach ($this->request->data['Media']['files'] as $file) {
+				$media = $this->request->data; // to ensure that other Model's data gets included. Like Categories.
 				$media['Media'] = array(
 					'user_id' => $this->Auth->user('id'),
 					'filename' => $file,
