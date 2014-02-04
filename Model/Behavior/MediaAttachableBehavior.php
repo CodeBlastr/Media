@@ -9,7 +9,7 @@ class MediaAttachableBehavior extends ModelBehavior {
 /**
  * Setup method
  */
-	public function setup(Model $Model, $config = array()) {
+	public function setup(Model $Model, $settings = array()) {
 		//Add the HasMany Relationship to the $Model
 		$Model->bindModel($this->_bindModel($Model),false);
 	}
@@ -35,7 +35,6 @@ class MediaAttachableBehavior extends ModelBehavior {
 		}
 		return true;
 	}
-
 
 
 /**
@@ -90,7 +89,7 @@ class MediaAttachableBehavior extends ModelBehavior {
 	public function beforeDelete(Model $Model, $cascade = true) {
 		//unbinds the model, so we can handle the delete
 		$Model->unbindModel(
-        	array('hasMany' => array('MediaAttachments'))
+        	array('hasMany' => array('MediaAttachment'))
     	);
 		return true;
 	}
@@ -100,16 +99,18 @@ class MediaAttachableBehavior extends ModelBehavior {
  *
  * Deletes all attachment records, but keeps the attached data
  *
+ * @todo The deleteAll() here seems to not even be necessary, due to the attachments in _bindModel()
+ *
  * @param Model $Model Model using this behavior
  * @return void
  */
 	public function afterDelete(Model $Model) {
-		$MediaAttachment = new MediaAttachment;// This was added to support UserGroup delete
-		//Deletes all linked Media
+		$MediaAttachment = new MediaAttachment; // This was added to support UserGroup delete
+		// delete all Media links
 		$MediaAttachment->deleteAll(array(
 			'model' => $Model->alias,
 			'foreign_key' => $Model->data[$Model->alias]['id']
-			), false);
+		), false);
 	}
 
 /**
@@ -172,7 +173,5 @@ class MediaAttachableBehavior extends ModelBehavior {
         	)
 		);
 	}
-
-
 
 }
