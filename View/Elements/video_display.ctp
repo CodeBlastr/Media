@@ -11,6 +11,6 @@ if (empty($id)) {
 }
 ?>
 
-<video width="<?php echo $width ?>"  height="<?php echo $height ?>" src="<?php echo $url ?>" class="<?php echo $class ?>" id="<?php echo $id ?>" controls>
+<video preload="none" width="<?php echo $width ?>"  height="<?php echo $height ?>" src="<?php echo $url ?>" class="<?php echo $class ?>" id="<?php echo $id ?>" controls>
 	If at all possible, please upgrade your browser.
 </video>
