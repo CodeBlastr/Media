@@ -10,6 +10,7 @@ define([
       description: '',
       filename: '',
       extension: '',
+	  thumbnail: '',
       data: '',
       order: false,
       selected: false
