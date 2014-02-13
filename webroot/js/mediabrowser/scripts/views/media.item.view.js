@@ -91,7 +91,7 @@ define([
 	      case 'docs':
 	    	  html = this.docTemplate(renderObj);
 	    	  break;
-	      case 'video':
+	      case 'videos':
 	    	  html = this.videoTemplate(renderObj);
 	    	  break;
     		}

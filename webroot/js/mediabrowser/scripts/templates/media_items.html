@@ -22,7 +22,7 @@
 	<div class="input">
 		<a href="#" class="upload btn btn-success">Upload</a>
 		<div id="mediaUploadForm" style="display:none;">
-			<form accept-charset="utf-8" method="post" id="MediaAddForm" controller="media_browser" plugin="media" action="/media/media_browser/upload">
+			<form accept-charset="utf-8" method="post" id="MediaAddForm" action="/media/media_browser/upload">
 				<input type="hidden" value="POST" name="_method">
 				<input type="file" id="MediaFiles" multiple="multiple" name="data[Media][files][]">
 				<input type="submit" value="Submit">

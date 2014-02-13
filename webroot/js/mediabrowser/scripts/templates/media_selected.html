@@ -1,11 +1,11 @@
 <div class="media-selected {{wrapperclass}}">
 	<div class="selected-actions" data-cid="{{cid}}" data-order={{model.order}}>
 		{{#if_gt model.order compare=0}}
-		<a href="#" class="orderup"><span class="glyphicon glyphicon-circle-arrow-left"></span></a>
+		<a href="#" class="orderup" title="Order Up"><span class="glyphicon glyphicon-circle-arrow-left"></span></a>
 		{{/if_gt}}
-		<a href="#" class="orderdown"><span class="glyphicon glyphicon-circle-arrow-right"></span></a>
-		<a href="#" class="removeSelected"><span class="glyphicon glyphicon-remove-circle"></span></a>
-		<a href="#" class="makethumbnail"><span class="glyphicon glyphicon-ok-circle"></span></a>
+		<a href="#" class="orderdown" title="Order Down"><span class="glyphicon glyphicon-circle-arrow-right"></span></a>
+		<a href="#" class="removeSelected" title="Remove"><span class="glyphicon glyphicon-remove-circle"></span></a>
+		<a href="#" class="makethumbnail" title="Make Thumbnail"><span class="glyphicon glyphicon-ok-circle"></span></a>
 	</div>
 	<div class="content">
 	{{#if model.audio }}
