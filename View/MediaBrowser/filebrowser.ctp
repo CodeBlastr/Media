@@ -8,7 +8,6 @@
 </div>
 
 <link href="/Media/css/mediaBrowswer.css" type="text/css" />
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script type="text/javascript">
 	var baseUrl = '<?php echo $this->Html->url(array('plugin' => 'media', 'contoller' => 'media_browser', 'action' => 'media')); ?>';
 </script>
