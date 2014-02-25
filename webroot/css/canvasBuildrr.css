@@ -249,3 +249,7 @@ a#cb_cancel {
 #mediaSelected {
 	display: none;
 }
+
+.cb_auto-resize {
+	display: block;
+}
