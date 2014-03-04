@@ -103,6 +103,11 @@ a#cb_cancel {
 	background: -ms-linear-gradient(top,  #a3db55 0%,#80c217 87%,#7cbc0a 100%); /* IE10+ */
 }
 
+#cb_cropper {
+	border: 1px dashed #ccc;
+	position: absolute;
+}
+
 .cb_addEditText div.fontInputBox {
 	position: relative;
 	display: inline-block;
