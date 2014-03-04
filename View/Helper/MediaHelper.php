@@ -54,7 +54,8 @@ class MediaHelper extends AppHelper {
 			'nsv',
 			'qt',
 			'swf',
-			'xvid'
+			'xvid',
+			'youtube'
 		),
 		'audio' => array(
 			'aif',
@@ -226,6 +227,15 @@ class MediaHelper extends AppHelper {
 	}
 
 	public function videoMedia($item, $options = array()) {
+		if ($item['extension'] === 'youtube') {
+			return $this->_View->element('Media.youtube_display', array(
+				'url' => $item['filename'],
+				'height' => $this->options['height'],
+				'width' => $this->options['width'],
+				'class' => $this->options['class'],
+				'id' => $this->options['id'],
+			));
+		}
 		return $this->_View->element('Media.video_display', array(
 			'url' => $this->streamUrl . '/' . $item['filename'] . '.' . $item['extension'],
 			'height' => $this->options['height'],
