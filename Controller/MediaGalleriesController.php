@@ -98,7 +98,7 @@ class AppMediaGalleriesController extends MediaAppController {
 				if (!$this->MediaAttachment->deleteAll(array('foreign_key' => $id))) {
 					throw new Exception('Could not delete attachment records');
 				}
-				$this->Session->setFlash(__('Gallery deleted.'));
+				$this->Session->setFlash(__('Gallery deleted.'), 'flash_success');
 			} else {
 				throw new MethodNotAllowedException('Action not allowed');
 			}
