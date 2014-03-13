@@ -102,7 +102,7 @@ class MediaHelper extends AppHelper {
 	public function display($item, $options = array()) {
 		$this->options = array_merge($this->options, $options);
 		$item = isset($item['Media']) ? $item['Media'] : $item;
-		if ($this->_getType($item)) {
+		if ($this->getType($item)) {
 			$method = $this->type . 'Media';
 			return $this->$method($item);
 		} else {
@@ -206,7 +206,7 @@ class MediaHelper extends AppHelper {
 		if (is_array($items)) {
 			foreach ($items as $item) {
 				$item = isset($item['Media']) ? $item['Media'] : $item;
-				$this->_getType($item);
+				$this->getType($item);
 				$track = array(
 					'title' => $item['title'],
 					 $item['extension'] => $this->streamUrl.'/'.$item['filename'].'.'.$item['extension'],
@@ -247,12 +247,15 @@ class MediaHelper extends AppHelper {
 
 /**
  * Get Type method
+ * 
+ * @param array
+ * @return string
  */
-	protected function _getType($item) {
+	public function getType($item) {
 		foreach ($this->types as $type => $extensions) {
 			if (in_array($item['extension'], $extensions)) {
 				$this->type = $type;
-				return true;
+				return $type;
 			}
 		}
 		return false;
@@ -284,7 +287,7 @@ class MediaHelper extends AppHelper {
 	public function phpthumb($item, $options = array()) {
 		$this->options = array_merge($this->options, $options);
 		if (!empty($item)) {
-			$this->_getType($item);
+			$this->getType($item);
 			$image = $item['filename'] . '.' . $item['extension'];
 			Configure::write('PhpThumb.thumbsPath', ROOT . DS . SITE_DIR . DS . 'Locale' . DS . 'View' . DS . 'webroot' . DS . 'media' . DS . $this->type . DS );
 			Configure::write('PhpThumb.displayPath', $this->mediaUrl . $this->type . '/' . 'tmp');
