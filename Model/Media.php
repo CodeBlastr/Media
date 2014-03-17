@@ -1101,6 +1101,8 @@ class AppMedia extends MediaAppModel {
 
 /**
  * Given a Media object, this will take a snapshot of the video, save it in /media/images/, and record it's relative URL in Media.thumbnail
+ * 
+ * @todo Need to find a good way to get $options into here.  Perhaps Site Settings? ^JB
  *
  * @param array $data Media object
  * @param array $options Defaults are: array('thumbnailSize' => '150x150', 'fromTime' => '00:00:5')
@@ -1109,7 +1111,7 @@ class AppMedia extends MediaAppModel {
  */
 	public function setVideoThumbnail($data, $options = array()) {
 
-		$defaults['thumbnailSize'] = '150x150';
+		$defaults['thumbnailSize'] = '480x360';
 		$defaults['fromTime'] = '00:00:5';
 		$options = Set::merge($options, $defaults);
 
