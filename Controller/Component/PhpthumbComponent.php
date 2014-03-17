@@ -131,12 +131,10 @@ class PhpthumbComponent extends Component {
 		
 		return ROOT . DS . SITE_DIR . DS . 'Locale' . DS . 'View' . DS . 'webroot' . DS . 'media' . DS . $thumbnail['src'];
 		
-		//debug($thumbnail);
-		//exit;
-		
-		return $this->image($thumbnail['src'], array_merge(
-								array('width' => $thumbnail['w'], 'height' => $thumbnail['h']), $htmlOptions
-		));
+//		
+//		return $this->image($thumbnail['src'], array_merge(
+//								array('width' => $thumbnail['w'], 'height' => $thumbnail['h']), $htmlOptions
+//		));
 	}
 
 	public function getType($item) {
