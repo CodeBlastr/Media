@@ -47,6 +47,10 @@ class PhpThumbHelper extends HtmlHelper {
 		$this->cache_filename = $this->options['save_path'] . 'tmp' . DS . md5($this->cache_filename . $last_modified) . $this->file_extension;
 	}
 
+/**
+ * 
+ * @return boolean
+ */
 	private function image_is_cached() {
 		if (is_file($this->cache_filename)) {
 			return true;
@@ -54,6 +58,9 @@ class PhpThumbHelper extends HtmlHelper {
 		return false;
 	}
 
+/**
+ * 
+ */
 	private function create_thumb() {
 		App::import('Vendor', 'Media.Vendor', array('file' => 'PhpThumb' . DS . 'phpthumb.class.php'));
 
@@ -73,7 +80,8 @@ class PhpThumbHelper extends HtmlHelper {
 	}
 
 /**
- * Get thumb data method
+ * 
+ * @return array
  */
 	private function get_thumb_data() {
 		$this->thumb_data['error'] = $this->error;
@@ -101,7 +109,8 @@ class PhpThumbHelper extends HtmlHelper {
 	}
 
 /**
- * Validate method
+ * 
+ * @return type
  */
 	private function validate() {
 		if (!is_file($this->options['src'])) {
@@ -120,7 +129,9 @@ class PhpThumbHelper extends HtmlHelper {
 	}
 
 /**
- * Generate method
+ * 
+ * @param array $options
+ * @return array
  */
 	public function generate($options = array()) {
 		$this->init($options);
@@ -137,7 +148,10 @@ class PhpThumbHelper extends HtmlHelper {
 	}
 
 /**
- * Generate Thumbnail method
+ * 
+ * @param type $image
+ * @param array $options
+ * @return boolean
  */
 	public function generateThumbnail($image, $options) {
 		$thumbsPath = Configure::read('PhpThumb.thumbsPath');
@@ -170,7 +184,10 @@ class PhpThumbHelper extends HtmlHelper {
 	}
 
 /**
- * Url method
+ * 
+ * @param type $image
+ * @param array $options
+ * @return boolean
  */
 	public function url($image = null, $options = array()) {
 		$thumbnail = $this->generateThumbnail($image, $options);
@@ -181,7 +198,11 @@ class PhpThumbHelper extends HtmlHelper {
 	}
 
 /**
- * Thumbnail method
+ * 
+ * @param type $image
+ * @param array $options
+ * @param array $htmlOptions
+ * @return boolean
  */
 	public function thumbnail($image, $options, $htmlOptions = array()) {
 		$thumbnail = $this->generateThumbnail($image, $options);
