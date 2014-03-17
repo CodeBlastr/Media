@@ -280,9 +280,11 @@ class MediaHelper extends AppHelper {
 	}
 
 /**
- * PhpThumb method
- * 
  * @todo the save path (thumbsPath) should be a CDN
+ * 
+ * @param array $item
+ * @param array $options
+ * @return string|false
  */
 	public function phpthumb($item, $options = array()) {
 		$this->options = array_merge($this->options, $options);
@@ -299,8 +301,10 @@ class MediaHelper extends AppHelper {
 		}
 	}
 
-/** 
- * No Image method
+/**
+ * Returns an Image Tag of the default "no image found" image
+ *
+ * @return string
  */
  	public function noImage() {
  		return '<img src="/img/noImage.jpg" width="'.$this->options['width'].'" height="'.$this->options['height'].'" />';
