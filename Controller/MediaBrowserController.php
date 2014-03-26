@@ -68,7 +68,7 @@ class AppMediaBrowserController extends MediaAppController {
 			if(isset($this->request->query['order'])) {
 				$conditions['order'] = $this->request->query['order'];
 			}else {
-				$conditions['order'] = array('created DESC');
+				$conditions['order'] = array('title ASC');
 			}
 			if($this->Session->read('Auth.User.user_role_id') != 1) {
 				$conditions['conditions']['creator_id'] = $this->userId;
