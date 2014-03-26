@@ -10,8 +10,8 @@ class MediaHelper extends AppHelper {
 	);
 
 	public $options = array(
-		'width' => 300,
-		'height' => 300,
+		'width' => null, // was 300 but sometimes we just don't want any width or height attribute, so should only have value if specified
+		'height' => null, // was 300 but sometimes we just don't want any width or height attribute, so should only have value if specified
 		'url' => array(),
 		'class' => 'media-item',
 		'conversion' => 'resizeCrop',
