@@ -54,7 +54,8 @@ class MediaHelper extends AppHelper {
 			'nsv',
 			'qt',
 			'swf',
-			'xvid'
+			'xvid',
+			'youtube'
 		),
 		'audio' => array(
 			'aif',
@@ -101,7 +102,7 @@ class MediaHelper extends AppHelper {
 	public function display($item, $options = array()) {
 		$this->options = array_merge($this->options, $options);
 		$item = isset($item['Media']) ? $item['Media'] : $item;
-		if ($this->_getType($item)) {
+		if ($this->getType($item)) {
 			$method = $this->type . 'Media';
 			return $this->$method($item);
 		} else {
@@ -205,7 +206,7 @@ class MediaHelper extends AppHelper {
 		if (is_array($items)) {
 			foreach ($items as $item) {
 				$item = isset($item['Media']) ? $item['Media'] : $item;
-				$this->_getType($item);
+				$this->getType($item);
 				$track = array(
 					'title' => $item['title'],
 					 $item['extension'] => $this->streamUrl.'/'.$item['filename'].'.'.$item['extension'],
@@ -226,6 +227,15 @@ class MediaHelper extends AppHelper {
 	}
 
 	public function videoMedia($item, $options = array()) {
+		if ($item['extension'] === 'youtube') {
+			return $this->_View->element('Media.youtube_display', array(
+				'url' => $item['filename'],
+				'height' => $this->options['height'],
+				'width' => $this->options['width'],
+				'class' => $this->options['class'],
+				'id' => $this->options['id'],
+			));
+		}
 		return $this->_View->element('Media.video_display', array(
 			'url' => $this->streamUrl . '/' . $item['filename'] . '.' . $item['extension'],
 			'height' => $this->options['height'],
@@ -237,12 +247,15 @@ class MediaHelper extends AppHelper {
 
 /**
  * Get Type method
+ * 
+ * @param array
+ * @return string
  */
-	protected function _getType($item) {
+	public function getType($item) {
 		foreach ($this->types as $type => $extensions) {
 			if (in_array($item['extension'], $extensions)) {
 				$this->type = $type;
-				return true;
+				return $type;
 			}
 		}
 		return false;
@@ -267,14 +280,16 @@ class MediaHelper extends AppHelper {
 	}
 
 /**
- * PhpThumb method
- * 
  * @todo the save path (thumbsPath) should be a CDN
+ * 
+ * @param array $item
+ * @param array $options
+ * @return string|false
  */
 	public function phpthumb($item, $options = array()) {
 		$this->options = array_merge($this->options, $options);
 		if (!empty($item)) {
-			$this->_getType($item);
+			$this->getType($item);
 			$image = $item['filename'] . '.' . $item['extension'];
 			Configure::write('PhpThumb.thumbsPath', ROOT . DS . SITE_DIR . DS . 'Locale' . DS . 'View' . DS . 'webroot' . DS . 'media' . DS . $this->type . DS );
 			Configure::write('PhpThumb.displayPath', $this->mediaUrl . $this->type . '/' . 'tmp');
@@ -286,8 +301,10 @@ class MediaHelper extends AppHelper {
 		}
 	}
 
-/** 
- * No Image method
+/**
+ * Returns an Image Tag of the default "no image found" image
+ *
+ * @return string
  */
  	public function noImage() {
  		return '<img src="/img/noImage.jpg" width="'.$this->options['width'].'" height="'.$this->options['height'].'" />';

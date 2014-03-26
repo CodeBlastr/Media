@@ -128,7 +128,7 @@ class AppMediaController extends MediaAppController {
 				if (!$this->MediaAttachment->deleteAll(array('media_id' => $id))) {
 					throw new Exception('Could not delete attachment records');
 				}
-				if (!unlink($this->Media->themeDirectory.DS.$type.DS.$media['Media']['filename'].'.'.$media['Media']['extension'])) {
+				if (!unlink($this->Media->themeDirectory.DS.$type.DS.$media['Media']['filename'].'.'.$media['Media']['extension']) && $media['Media']['extension'] !== 'youtube') {
 					throw new Exception('Could not delete file, please check permissions');
 				}
 				$this->Session->setFlash(__('Deleted %n', !empty($media['Media']['title']) ? $media['Media']['title'] : $id ), 'flash_success');
