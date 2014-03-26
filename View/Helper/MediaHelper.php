@@ -156,7 +156,7 @@ class MediaHelper extends AppHelper {
 		);
 		$image = $this->Html->image($imagePath, $thumbImageOptions, array(
 			'conversion' => $this->options['conversion'],
-			'quality' => 75,
+			'quality' => 100,
 			'alt' => 'thumbnail',
 			'caller' => 'Media'
 		));
