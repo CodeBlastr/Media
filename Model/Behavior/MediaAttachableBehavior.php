@@ -27,7 +27,14 @@ class MediaAttachableBehavior extends ModelBehavior {
  * @return mixed False if the operation should abort. Any other result will continue.
  */
 	public function beforeSave(Model $Model, $options = array()) {
-
+		if (!empty($Model->data['Media'])) { // do not make this ['Media'][0]
+			$Media = new Media();
+			$files = $Media->upload($Model->data);
+			$ids = Set::extract('/id', $files['Media']);
+			foreach ($ids as $id) {
+				$Model->data['MediaAttachment'][]['media_id'] = $id;
+			}
+		}
 		//doing it this way to protect against saveAll
 		if(isset($Model->data['MediaAttachment'])) {
 			$this->data['MediaAttachment'] = $Model->data['MediaAttachment'];
@@ -47,27 +54,24 @@ class MediaAttachableBehavior extends ModelBehavior {
  */
 	public function afterSave(Model $Model, $created, $options = array()) {
 		if(isset($this->data['MediaAttachment'])) {
-			$MediaAttachment = new MediaAttachment;
-
+			$MediaAttachment = new MediaAttachment();
 			//Removes all Attachment Records so they can be resaved
 			if(!$created) {
 				$MediaAttachment->deleteAll(array(
-								'model' => $Model->alias,
-								'foreign_key' => $Model->data[$Model->alias]['id']
-								), false);
+					'model' => $Model->alias,
+					'foreign_key' => $Model->data[$Model->alias]['id']
+					), false);
 			}
-
 			if(is_array($this->data['MediaAttachment'])) {
 				foreach($this->data['MediaAttachment'] as $k => $media) {
 					$media['model'] = $Model->alias;
 					$media['foreign_key'] = $Model->data[$Model->alias]['id'];
 					$this->data['MediaAttachment'][$k] = $media;
 				}
-			}else {
+			} else {
 				$this->data['MediaAttachment']['model'] = $Model->alias;
 				$this->data['MediaAttachment']['foreign_key'] = $Model->data[$Model->alias]['id'];
 			}
-
 			$MediaAttachment->create();
 			$MediaAttachment->saveMany($this->data['MediaAttachment']);
 		}
@@ -138,6 +142,30 @@ class MediaAttachableBehavior extends ModelBehavior {
 		$query['contain'][] = 'Media';
 		$query['contain'][] = 'MediaThumbnail';
 		return $query;
+	}
+
+/**
+ * After find callback
+ * 
+ * Unserialize the response from Google Maps
+ * 
+ * @param Model $Model
+ * @param array $results
+ * @param boolean $primary
+ * @return array
+ */
+	public function afterFind(Model $Model, array $results, $primary = false) {
+		// handles many
+		for ($i=0; $i < count($results); $i++) {
+			if (!empty($results[$i]['Media'])) {
+				$results[$i]['_Media'] = Set::combine($results[$i], 'Media.{n}.code', 'Media.{n}'); 
+			}
+		}
+		// handles one
+		if (!empty($results['Media'])) {
+			$results['_Media'] = Set::combine($results, 'Media.{n}.code', 'Media.{n}'); 
+		}
+		return $results;
 	}
 
 /**
