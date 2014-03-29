@@ -94,6 +94,15 @@ class MediaHelper extends AppHelper {
 	}
 
 /**
+ * After render file
+ */
+	public function afterRenderFile() {
+		// reset because there can be conflicts with more than one display() on a page
+		$defaults = get_class_vars('MediaHelper');
+		$this->options = $defaults['options'];
+	}
+
+/**
  * Display method
  * 
  * @param array (Media array)
@@ -307,7 +316,9 @@ class MediaHelper extends AppHelper {
  * @return string
  */
  	public function noImage() {
- 		return '<img src="/img/noImage.jpg" width="'.$this->options['width'].'" height="'.$this->options['height'].'" />';
+		Configure::write('PhpThumb.thumbsPath', ROOT . DS . 'app' . DS . 'webroot' . DS . 'img' . DS);
+		Configure::write('PhpThumb.displayPath', '/' . 'img' . '/' . 'tmp');
+ 		return $this->PhpThumb->thumbnail('lgnoimage.gif', $this->options, $this->options);
  	}
 
 }

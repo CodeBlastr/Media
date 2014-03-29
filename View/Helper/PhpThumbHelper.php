@@ -210,9 +210,7 @@ class PhpThumbHelper extends HtmlHelper {
 			debug($this->error_detail);
 			return false;
 		}
-		return $this->image($thumbnail['src'], array_merge(
-								array('width' => $thumbnail['w'], 'height' => $thumbnail['h']), $htmlOptions
-		));
+		return $this->image($thumbnail['src'], array_merge(array('width' => $thumbnail['w'], 'height' => $thumbnail['h']), $htmlOptions));
 	}
 
 }
