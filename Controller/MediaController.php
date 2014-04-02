@@ -32,56 +32,16 @@ class AppMediaController extends MediaAppController {
 		$this->set('media', $allMedia);
 	}
 
-
+/**
+ * Add method
+ */
 	public function add() {
-		if (!empty($this->request->data)) {
-			if (isset($this->request->data['MediaAttachment'])) {
-				$this->loadModel('Media.MediaAttachment');
-			}
-
-            $this->request->data['User']['id'] = $this->Auth->user('id');
-			$mediaarray = array();
-			
-			// Format single uploads into a [0] many array.
-			// Also allowing for `title` & `description` to be saved for single file uploads.
-			if (!is_array($this->request->data['Media']['files'][0]) && is_array($this->request->data['Media']['files'])) {
-				$this->request->data['Media']['files'] = array($this->request->data['Media']['files']);
-				$mediaTitle = $this->request->data['Media']['title'];
-				$mediaDescription = $this->request->data['Media']['description'];
-			}
-			
-			foreach ($this->request->data['Media']['files'] as $file) {
-				$media = $this->request->data; // to ensure that other Model's data gets included. Like Categories.
-				$media['Media'] = array(
-					'user_id' => $this->Auth->user('id'),
-					'filename' => $file,
-					'title' => isset($mediaTitle) ? $mediaTitle : null,
-					'description' => isset($mediaDescription) ? $mediaDescription : null
-				);
-				
-				$this->Media->create();
-				$media = $this->Media->upload($media);
-
-				if (isset($this->request->data['MediaAttachment'])) {
-					$attachedmedia = array(
-						'MediaAttachment' => array(
-							'media_id' => $media['Media']['id'],
-							'model' => $this->request->data['MediaAttachment']['model'],
-							'foreign_key' => $this->request->data['MediaAttachment']['foreign_key'],
-					));
-					$this->MediaAttachment->create();
-					$media = $this->MediaAttachment->save($attachedmedia);
-				}
-
-				if ($media) {
-					$mediaarray[] = $media;
-				}
-			}
-
-			if (!empty($mediaarray)) {
+		if ($this->request->is('post')) {
+			$media = $this->Media->upload($this->request->data);
+			if (!empty($media)) {
 				$this->Session->setFlash('Media saved.', 'flash_success');
 				if ($this->request->isAjax()) {
-					$this->set('media', $mediaarray);
+					$this->set('media', $media);
 					$this->layout = false;
 					$this->view = 'ajax-upload';
 				} else {
@@ -90,11 +50,8 @@ class AppMediaController extends MediaAppController {
 			} else {
 				$this->Session->setFlash('Upload failed, check directory permissions', 'flash_danger');
 			}
-
 		}
-
 	}
-
 
 /**
  *
