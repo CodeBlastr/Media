@@ -22,7 +22,8 @@ class MediaHelper extends AppHelper {
 			'jpg',
 			'jpeg',
 			'gif',
-			'png'
+			'png',
+			'bmp'
 		),
 		'video' => array(
 			'mpg',
@@ -156,7 +157,7 @@ class MediaHelper extends AppHelper {
 		);
 		$image = $this->Html->image($imagePath, $thumbImageOptions, array(
 			'conversion' => $this->options['conversion'],
-			'quality' => 100,
+			'quality' => 70,
 			'alt' => 'thumbnail',
 			'caller' => 'Media'
 		));
