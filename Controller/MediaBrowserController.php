@@ -34,7 +34,7 @@ class AppMediaBrowserController extends MediaAppController {
 		
 		if(isset($this->request->query['selected'])) {
 			$selected = $this->request->query['selected'];
-		}else {
+		} else {
 			$selected = 0;
 		}
 	
@@ -46,7 +46,6 @@ class AppMediaBrowserController extends MediaAppController {
 		if($this->request->isAjax()) {
 			$this->layout = null;
 		}
-	
 	}
 	
 /**
@@ -91,21 +90,28 @@ class AppMediaBrowserController extends MediaAppController {
 			$media['Media'] = $this->request->data;
 			if($this->Media->save($media, array('callbacks' => false))) {
 				$this->response->statusCode(200);
-			}else {
+			} else {
 				$this->response->statusCode(500);
 			}
 		}
 		
 		if($this->request->is('delete')) {
 			$media = $this->Media->findById($id);
-			$filename = $this->Media->themeDirectory.DS.$media['Media']['type'].DS.$media['Media']['filename'].'.'.$media['Media']['extension'];
-			$this->response->statusCode(200);
-			if(unlink($filename)) {
+			if (in_array($media['Media']['extension'], $this->Media->uploadExclusionExtensions)) {
+				// some media are just links 
 				if(!$this->Media->delete($id)) {
-				   $this->response->statusCode(500);
+				   $this->response->statusCode(200);
 				}
-			}else {
-				$this->response->statusCode(500);
+			} else {
+				$filename = $this->Media->themeDirectory.DS.$media['Media']['type'].DS.$media['Media']['filename'].'.'.$media['Media']['extension'];
+				$this->response->statusCode(200);
+				if(unlink($filename)) {
+					if(!$this->Media->delete($id)) {
+					   $this->response->statusCode(500);
+					}
+				} else {
+					$this->response->statusCode(500);
+				}
 			}
 		}
 	}
@@ -125,7 +131,7 @@ class AppMediaBrowserController extends MediaAppController {
 				$media['Media'] = array(
 						'user_id' => $this->Auth->user('id'),
 						'filename' => $file,
-						'title' => $file['name']
+						'title' => is_array($file) ? $file['name'] : $file
 				);
 				$this->Media->create();
 				$media = $this->Media->upload($media);
@@ -149,7 +155,7 @@ class AppMediaBrowserController extends MediaAppController {
 				$this->layout = false;
 				$this->autoRender = false;
 				return json_encode($mediaarray);
-			}else {
+			} else {
 				return 'No Files Uploaded';
 			}
 		 }catch(Exception $e) {
