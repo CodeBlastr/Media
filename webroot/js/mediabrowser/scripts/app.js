@@ -3,7 +3,7 @@ define([
   'jquery',
   'underscore',
   'backbone',
-  'views/media.items.view',
+  'views/media_items_view',
 ], function($, _, Backbone, MediaItemsView){
    
   var initialize = function(){
