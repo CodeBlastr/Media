@@ -27,7 +27,7 @@ define([
     	var model = this;
     	if(this.get('selected')) {
      		Backbone.trigger('updateSelected', model);
-    	}else {
+    	} else {
     		Backbone.trigger('removeSelected', model);
     	}
     },
@@ -55,7 +55,7 @@ define([
     	return false;
 	},
 	isVideo: function() {
-    	if(this.get('type') == 'video') {
+    	if(this.get('type') == 'videos') {
     		return true;
     	}
     	return false;
