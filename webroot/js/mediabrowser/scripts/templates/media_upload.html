@@ -1,0 +1,25 @@
+<div class="upload-container text-center">
+	<br><br><br><div class="input">
+		<div id="mediaUploadForm">
+			Select files from your computer
+			<form accept-charset="utf-8" method="post" id="MediaAddForm" action="/media/media_browser/upload">
+				<input type="hidden" value="POST" name="_method">
+				<div class="upload btn btn-primary">
+					<input type="file" id="MediaFiles" multiple="multiple" name="data[Media][files][]">
+				</div>
+				<input type="submit" value="Upload File" class="btn btn-success">
+			</form>
+		</div>
+		<hr>
+		<div id="youtubeUploadForm">
+			<form accept-charset="utf-8" class="form-inline" method="post" id="YouTubeAddForm" action="/media/media_browser/upload">
+				<input type="hidden" value="POST" name="_method">
+				<div class="form-group">
+					<label for="MediaFiles">Paste YouTube Video Url</label>
+					<input type="text" class="form-control" id="MediaFiles" multiple="multiple" name="data[Media][files][]">
+				</div>
+				<button type="submit" value="Submit" class="btn btn-default"><img src="/Media/img/youtube-icon.png" style="height: 20px;"></button>
+			</form>
+		</div>
+	</div>
+</div>
