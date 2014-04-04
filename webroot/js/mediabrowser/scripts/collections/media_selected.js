@@ -4,9 +4,9 @@ define([
   'models/media',
   'text!templates/media_selected.html',
   'handlebars',
-  'views/media.item.view',
+  'views/media_item_view',
 ], function(_, Backbone, MediaItem, SelectedTemplate, Handlebars, MediaItemView){
-  var SelectedMediaCollection = Backbone.Collection.extend({
+    var SelectedMediaCollection = Backbone.Collection.extend({
 	  model: MediaItem,
 	  comparator: 'order',
 	  
