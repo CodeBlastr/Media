@@ -2,9 +2,10 @@ require.config({
 	name: "mediabrowser",
     include: ["mediabrowser"],
     out: "../build/media-min.js",
+	waitSeconds: 200,
     
 	paths: {
-	    jquery: 'libs/jquery/jquery-min',
+	    jquery: "//code.jquery.com/jquery-latest",
 	    underscore: 'libs/underscore/underscore-min',
 	    backbone: 'libs/backbone/backbone-min',
 	    handlebars: 'libs/handlebars',
