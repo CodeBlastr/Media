@@ -3,8 +3,8 @@ define([
   'underscore',
   'backbone',
   'handlebars',
-  'models/media',
   'popover',
+  'models/media',
   'text!templates/media_item_image.html',
   'text!templates/media_item_audio.html',
   'text!templates/media_item_document.html',
@@ -12,9 +12,9 @@ define([
 ], function($, 
 			_, 
 			Backbone, 
-			Handlebars, 
+			Handlebars,
+			Popover, 
 			MediaItem, 
-			Popover,
 			ImageTemplate,
 			AudioTemplate,
 			DocumentTemplate,
@@ -37,6 +37,7 @@ define([
 	events: {
 		'submit .editor': 'editModel',
 		'click .delete' : 'deleteModel',
+		'click .media-item .content' : 'changeSelected',
 		'change .selected' : 'selectModel',
 		'click .makethumbnail' : 'makeThumbnail',
 	},
@@ -66,13 +67,15 @@ define([
     
     deleteModel: function(e) {
     	e.preventDefault();
-    	if (confirm('Are you sure you want to delete '+this.model.get('title')))
-        {
+    	if (confirm('Are you sure you want to delete '+this.model.get('title'))) {
     		var that = this;
     		this.model.destroy({
     			success: function(data) {
     				that.$el.remove();
-    			}
+    			},
+			    error : function (data) {
+			        console.log('error' + data);
+			    }
     		});
     		return this;
         }
@@ -99,13 +102,24 @@ define([
     	return html;
     },
     
+    changeSelected : function(e) {
+    	//var that = this;
+    	var checkbox = $(e.currentTarget).prev().find('input[name=mediaSelected]');
+    	
+    	if ($(checkbox).is(':checked')) {
+    		$(checkbox).prop('checked', false).trigger('change');
+    	} else {
+    		$(checkbox).prop('checked', true).trigger('change');
+    	}
+    }, 
+    
     selectModel: function(e) {
     	var that = this;
     	if($(e.currentTarget).is(':checked')) {
     		that.model.set('selected', true);
     		var event = new CustomEvent('mediaBrowserMediaSelected', {'detail': that.model});
     		document.dispatchEvent(event);
-    	}else {
+    	} else {
     		that.model.set('selected', false);
     		Backbone.trigger('removeSelected', that);
     		var event = new CustomEvent('mediaBrowserMediaUnSelected', {'detail': that.model});
