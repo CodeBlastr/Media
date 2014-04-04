@@ -131,7 +131,7 @@ class AppMediaController extends MediaAppController {
 			$allMedia = $this->Media->find('all', array(
 				'conditions' => array(
 					'Media.user_id' => $userID,
-					#'Media.type' => $mediaType
+					// 'Media.type' => $mediaType
 					)
 				));
 			$this->set('media', $allMedia);
