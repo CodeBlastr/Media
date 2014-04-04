@@ -46,7 +46,8 @@ class AppMedia extends MediaAppModel {
 		'nsv',
 		'qt',
 		'swf',
-		'xvid'
+		'xvid',
+		'youtube'
 	);
 	/**
 	 * An array of audio types we accept to the media plugin.
@@ -75,7 +76,9 @@ class AppMedia extends MediaAppModel {
 		'bmp',
 		'jpeg'
 	);
+	
 	public $name = 'Media';
+	
 	public $mime_types_map = array(
 		'123' => 'application/vnd.lotus-1-2-3',
 		'3dml' => 'text/vnd.in3d.3dml',
@@ -1074,6 +1077,10 @@ class AppMedia extends MediaAppModel {
 		'zirz' => 'application/vnd.zul',
 		'zmm' => 'application/vnd.handheld-entertainment+xml'
 	);
+	
+	public $uploadExclusionExtensions = array(
+		'youtube'
+		);
 
 	public $belongsTo = array(
 		'User' => array(
@@ -1112,14 +1119,14 @@ class AppMedia extends MediaAppModel {
 	 */
 	public function upload($media = null) {
 		// Format single uploads into a [0] many array.
-		if (!empty($media['Media']['filename']['name'])) {
+		if (!empty($media['Media']['filename'])) {
 			$data['Media'] = array($media['Media']);
 		} else {
 			$data = $media;
 		}
 		$data['Media'] = array_values($data['Media']); // reindex from 0
 		for ($i=0; $i < count(array_values($data['Media'])); $i++) {
-			if (!empty($data['Media'][$i]['filename']['name'])) {
+			if (!empty($data['Media'][$i]['filename'])) { // $data['Media'][$i]['filename']['name'] // unsure if removing ['name'] is going to cause a problem (need it removed for youtube uploads using the media browser)
 				$this->data['Media'] = $data['Media'][$i];
 				if ($mediaFile = $this->beforeUpload()) {
 					$mediaFile = $this->data;
@@ -1150,7 +1157,8 @@ class AppMedia extends MediaAppModel {
 		$this->__createDirectories();
 		$this->data = $this->_handleRecordings($this->data);
 		$this->data = $this->_handleCanvasImages($this->data);
-		$this->fileExtension = $this->getFileExtension($this->data['Media']['filename']['name']);
+		$this->fileExtension = $this->getFileExtension($this->data['Media']['filename']);
+		$this->data['Media']['extension'] = empty($this->data['Media']['extension']) ? $this->fileExtension : $this->data['Media']['extension'];
 		return $this->processFile();
 	}
 
@@ -1206,8 +1214,10 @@ class AppMedia extends MediaAppModel {
 			}
 		}
 		exec($command);
-		$data['Media']['thumbnail'] = DS . 'media' . DS . 'images' . DS . $randomFilename . '.jpg';
-		return $this->save($data);
+		if (file_exists($thumbnailFilePath)) {
+			$data['Media']['thumbnail'] = DS . 'media' . DS . 'images' . DS . $randomFilename . '.jpg';
+			return $this->save($data);
+		}
 	}
 
 	/**
@@ -1285,6 +1295,10 @@ class AppMedia extends MediaAppModel {
 	 * @throws Exception
 	 */
 	public function uploadFile($data) {
+		if (in_array($this->fileExtension, $this->uploadExclusionExtensions)) {
+			// some filename's don't need an upload (done by extension for now)
+			return $data;
+		}
 		$uuid = $this->__uuid() . uniqid();
 		$newFile = $this->themeDirectory . DS . $this->data['Media']['type'] . DS . $uuid . '.' . $this->fileExtension;
 		if (rename($data['Media']['filename']['tmp_name'], $newFile)) {
