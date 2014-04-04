@@ -1,5 +1,5 @@
-<div class="media-item">
-  <div class="actions">
+<div class="media-item text-center {{#if model.selected}}checked{{/if}}">
+  <div class="actions text-left">
 	<a 
 		href="#" 
 		class="edit" 
@@ -15,7 +15,11 @@
 	{{/if}}
   </div>
   <div class="content">
-  	<img alt="{{model.title}}" src="{{model.thumbnail}}" />
+  	{{#if model.thumbnail}}
+  		<img alt="{{model.title}}" src="{{model.thumbnail}}" />
+  	{{else}}
+  		<img alt="{{model.title}}" src="/Media/img/video-icon.png" />
+  	{{/if}}
   </div>
   <div class="title">{{model.title}}</div>
 </div>
