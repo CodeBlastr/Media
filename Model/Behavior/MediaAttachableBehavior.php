@@ -36,7 +36,7 @@ class MediaAttachableBehavior extends ModelBehavior {
 			}
 		}
 		//doing it this way to protect against saveAll
-		if(isset($Model->data['MediaAttachment'])) {
+		if (isset($Model->data['MediaAttachment'])) {
 			$this->data['MediaAttachment'] = $Model->data['MediaAttachment'];
 			unset($Model->data['MediaAttachment']);
 		}

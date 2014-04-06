@@ -1126,10 +1126,10 @@ class AppMedia extends MediaAppModel {
 		}
 		$data['Media'] = array_values($data['Media']); // reindex from 0
 		for ($i=0; $i < count(array_values($data['Media'])); $i++) {
-			if (!empty($data['Media'][$i]['filename'])) { // $data['Media'][$i]['filename']['name'] // unsure if removing ['name'] is going to cause a problem (need it removed for youtube uploads using the media browser)
+			if ((is_array($data['Media'][$i]['filename']) && !empty($data['Media'][$i]['filename']['name'])) || (!empty($data['Media'][$i]['filename']) && is_string($data['Media'][$i]['filename']))) {
 				$this->data['Media'] = $data['Media'][$i];
-				if ($mediaFile = $this->beforeUpload()) {
-					$mediaFile = $this->data;
+				if ($this->beforeUpload()) {
+					$mediaFile = $this->data; // this data was manipulated in beforeUpload()
 					$this->create();
 					if ($this->save($mediaFile)) {
 						$this->afterUpload($mediaFile);
@@ -1237,10 +1237,9 @@ class AppMedia extends MediaAppModel {
 	public function processFile() {
 		$this->data['Media']['type'] = $this->mediaType($this->fileExtension);
 		if ($this->data['Media']['type']) {
-			$this->data = $this->uploadFile($this->data);
-			return true;
+			$this->data = $this->uploadFile($this->data); // this throws an exception if it fails no need for return false
 		}
-		return false;
+		return true;
 	}
 
 	/**

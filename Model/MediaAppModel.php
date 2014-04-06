@@ -32,27 +32,24 @@ class MediaAppModel extends AppModel {
 	public function getFileExtension($filepath) {
 		$filepath = is_array($filepath) ? $filepath['name'] : $filepath; // handles a reduction of how deep into the array we send
 	
-		$result = preg_match($pattern, $filepath, $matches);
-		preg_match('/[^?]*/', $filepath, $matches);
-		$string = $matches [0];	
-		
-		if (strpos($string, 'ttp') && strpos($string, 'youtu')) {
-			// matches a youtube url
-			return 'youtube';
+		if (!empty($filepath)) {
+			preg_match('/[^?]*/', $filepath, $matches);
+			$string = $matches [0];	
+			
+			if (strpos($string, 'ttp') && strpos($string, 'youtu')) {
+				// matches a youtube url
+				return 'youtube';
+			}
+			
+			$pattern = preg_split('/\./', $string, -1, PREG_SPLIT_OFFSET_CAPTURE);
+			
+			if (count($pattern) > 1) {
+				$filenamepart = $pattern [count($pattern) - 1] [0];
+				preg_match('/[^?]*/', $filenamepart, $matches);
+				return strtolower($matches[0]);
+			}
 		}
-		
-		$pattern = preg_split('/\./', $string, -1, PREG_SPLIT_OFFSET_CAPTURE);
-		
-		// check if there is any extension
-		if (count($pattern) == 1) {
-			return FALSE;
-		}
-		
-		if (count($pattern) > 1) {
-			$filenamepart = $pattern [count($pattern) - 1] [0];
-			preg_match('/[^?]*/', $filenamepart, $matches);
-			return strtolower($matches[0]);
-		}
+		return false;
 	}
 
 	
