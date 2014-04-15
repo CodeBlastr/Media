@@ -85,22 +85,21 @@ define([
 		this.filterIndex();
 	},
 	
-    render: function(){
-      var html = this.template();
-      this.$el.html( html );
-      //Select Defaults
-      _.each(this.params, function (value, type) {
-    	  $('select[data-filter='+type+']').val(value);
-      });
-      
-      var that = this;
-      _.each(this.childViews, function(view) {
-    	  view = view.render();
-    	  that.$el.find('.media-container').append(view.$el);
-      });
-      this.trigger('renderEvent');
-      return this;
-    },
+    render: function() {
+		var html = this.template();
+		this.$el.html( html );
+		//Select Defaults
+		_.each(this.params, function (value, type) {
+			$('select[data-filter='+type+']').val(value);
+		});
+		var that = this;
+		_.each(this.childViews, function(view) {
+			view = view.render();
+			that.$el.find('.media-container').append(view.$el);
+		});
+		this.trigger('renderEvent');
+		return this;
+	},
     
     createChildViews: function() {
     	this.childViews = {};
