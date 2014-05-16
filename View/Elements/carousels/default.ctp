@@ -14,7 +14,7 @@
 		<!-- Carousel nav -->
 		<a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>
 		<a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>
-		<div class="carousel-indicators row-fluid" style="position: static;">
+		<div class="carousel-indicators row-fluid">
 	        <?php for($i = 0; $i < count($options['data']['Media']); $i++) : ?>
 			<div data-target="#myCarousel" data-slide-to="<?php echo $i; ?>" class="<?php echo $i == 0 ? 'active' : null; ?> pull-left">
 				<?php echo $this->Media->display($options['data']['Media'][$i], array('width' => '50', 'height' => 50)); ?>
