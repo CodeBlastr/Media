@@ -131,7 +131,7 @@ class AppMediaController extends MediaAppController {
 			$allMedia = $this->Media->find('all', array(
 				'conditions' => array(
 					'Media.user_id' => $userID,
-					#'Media.type' => $mediaType
+					// 'Media.type' => $mediaType
 					)
 				));
 			$this->set('media', $allMedia);
@@ -191,9 +191,6 @@ class AppMediaController extends MediaAppController {
 	
 				$range_end = (!$range_end) ? $size - 1 : intval($range_end);
 				$new_length = $range_end - $range + 1;
-				debug($range);
-				debug($range_end);
-				debug($new_length);
 				$this->response->statusCode(206);
 				$this->response->header(array(
 						'Content-Range' => 'bytes ' . ($range - $range_end / $size)

@@ -30,7 +30,6 @@ $selecteditems = json_encode($selecteditems); ?>
       			<div class="modal-body">
         			<div id="mediaBrowser"> <br>&nbsp;&nbsp;Loading Browser...<br><br> </div>
       			</div>
-      			<div class="modal-footer"></div>
       		</div>
 	 	</div>
 	</div>
@@ -49,6 +48,24 @@ $selecteditems = json_encode($selecteditems); ?>
 	<script data-main="/Media/js/mediabrowser_boot2/build/media-min.js" src="/Media/js/mediabrowser/scripts/require.js"></script>
 <?php else: ?>
 	<!--script data-main="/Media/js/mediabrowser/build/media-min.js" src="/Media/js/mediabrowser/scripts/require.js"></script-->
-	<script data-main="/Media/js/mediabrowser/scripts/mediabrowser.js" src="/Media/js/mediabrowser/scripts/require.js"></script>
+	<script data-main="/Media/js/mediabrowser_boot2/scripts/mediabrowser.js" src="/Media/js/mediabrowser/scripts/require.js"></script>
 	<?php // this is used instead of the line above to make edits... <script data-main="/Media/js/mediabrowser_boot2/scripts/mediabrowser.js" src="/Media/js/mediabrowser/scripts/require.js"></script> ?>
 <?php endif; ?>
+
+
+<style>
+	.media-selected.thumbnail.pull-left {
+		margin: 4px 4px 0 0;
+	}
+	.media-selected .content {
+		text-align: center;
+	}
+	.media-selected img {
+		width: 48px;
+		height: 48px;
+	}
+	.media-selected p {
+		font-size: 10px;
+		color: #777;
+	}
+</style>

@@ -1,37 +1,41 @@
+// these are like adding "include script tags"
 define([
   'jquery',
   'underscore',
   'backbone',
   'handlebars',
+  'models/media',
   'text!templates/media_items.html',
-  'collections/media.items',
+  'collections/media_items',
   'collections/media_selected',
-  'views/media.item.view',
+  'views/media_item_view',
   'jqueryform',
   'text!templates/media_thumbnail_select.html',
-  'models/media'
+  'text!templates/media_upload.html',
 ], function($, _, Backbone, 
-		Handlebars, 
+		Handlebars, // object
+		Media,
 		MediaItemsTemplate, 
 		MediaItems, 
 		SelectedMediaCollection, 
 		MediaItemView, 
 		jqueryForm, 
 		SelectedThumbnail,
-		Media
+		UploadTemplate
 ){
   var MediaItemsView = Backbone.View.extend({
 	  
 	//Default filter params
-	params: {limit: 10},
+	params: {limit: 500},
 	
 	events: {
-		'change .filter-select'	: 'changefilterIndex',
-		'click .upload'			: 'showUploadForm',
+		'click .filter-select a'	: 'changefilterIndex',
+		'click .show-upload'		: 'showUploadForm',
 	},
 	
 	template: Handlebars.compile(MediaItemsTemplate),
 	selectedThumbnail: Handlebars.compile(SelectedThumbnail),
+	uploadtemplate: Handlebars.compile(UploadTemplate),
 	
 	collection: new MediaItems(),
 	selectedCollection: new SelectedMediaCollection(),
@@ -81,18 +85,80 @@ define([
 		this.filterIndex();
 	},
 	
-    render: function(){
-      var html = this.template();
-      this.$el.html( html );
-      //Select Defaults
-      _.each(this.params, function (value, type) {
-    	  $('select[data-filter='+type+']').val(value);
-      });
-      
-      //Upload Form
-      var that = this;
-      var uploadForm = this.$el.find('#MediaAddForm');
-      uploadForm.ajaxForm({
+    render: function() {
+		var html = this.template();
+		this.$el.html( html );
+		//Select Defaults
+		_.each(this.params, function (value, type) {
+			$('select[data-filter='+type+']').val(value);
+		});
+		var that = this;
+		_.each(this.childViews, function(view) {
+			view = view.render();
+			that.$el.find('.media-container').append(view.$el);
+		});
+		this.trigger('renderEvent');
+		return this;
+	},
+    
+    createChildViews: function() {
+    	this.childViews = {};
+		var that = this;
+		this.selectedCollection.forEach(function(model){
+			cmodel = that.collection.get(model.get('id'));
+			if(typeof cmodel != 'undefined') {
+				cmodel.set('selected', true);
+			}
+		});
+		that.collection.forEach(function(model){
+			that.childViews[model.cid] = new MediaItemView({model: model});
+		});
+		this.trigger('childCreation');
+    },
+    
+    changefilterIndex: function (e) {
+    	e.preventDefault();
+    	var paramtype = $(e.currentTarget).data('filter');
+    	var value = $(e.currentTarget).data('type');
+    	var params = {};
+    	params[paramtype] = value;
+    	this.filterIndex(params);
+    },
+    
+    filterIndex: function (args) {
+    	args = typeof args !== 'undefined' ? args : {};
+    	var params = this.params;
+    	if(args.type) {
+    		params.type = args.type;
+    	} 
+    	if(args.limit) {
+    		params.limit = args.limit;
+    	}
+    	this.params = params;
+    	var that = this;
+		this.collection.fetch({
+			success: function() {
+				that.createChildViews();
+				return true;
+			},
+			reset: true,
+			data: params
+		});
+    },
+    
+    showUploadForm: function(e) {
+    	e.preventDefault();
+		if(this.$el.find('.upload-container').html() === '') {
+			this.$el.find('.upload-container').html(this.uploadtemplate());
+		}
+    	this.$el.find('.upload-container').show();
+    	this.$el.find('.media-container').hide();
+        //Upload Form
+        var that = this;
+        
+        // standard file upload form
+        var uploadForm = this.$el.find('#MediaAddForm');
+        uploadForm.ajaxForm({
 		    beforeSend: function() {
 		       that.showLoading();
 		    },
@@ -114,69 +180,37 @@ define([
 			complete: function(xhr) {
 				that.hideLoading();
 			}
-      }); 
-      
-      var that = this;
-      _.each(this.childViews, function(view) {
-    	  view = view.render();
-    	  that.$el.find('.media-container').append(view.$el);
-      });
-      this.trigger('renderEvent');
-      return this;
-    },
-    
-    createChildViews: function() {
-    	this.childViews = {};
-		var that = this;
-		this.selectedCollection.forEach(function(model){
-			cmodel = that.collection.get(model.get('id'));
-			if(typeof cmodel != 'undefined') {
-				cmodel.set('selected', true);
+        });
+        
+        var youtubeForm = this.$el.find('#YouTubeAddForm');
+        youtubeForm.ajaxForm({
+		    beforeSend: function() {
+		       that.showLoading();
+		    },
+		    uploadProgress: function(event, position, total, percentComplete) {
+		        var percentVal = percentComplete + '%';
+		        that.$el.find('.percent').html(percentVal);
+		        console.log(percentVal);
+		    },
+		    success: function(data) {
+		    	that.closeUploadForm();
+		    	youtubeForm.clearForm();
+		    	console.log(data);
+		    	that.collection.add(data);
+		    	that.trigger('renderView');
+		    },
+		    error: function(data) {
+		    	console.log(data);
+		    },
+			complete: function(xhr) {
+				that.hideLoading();
 			}
-		});
-		that.collection.forEach(function(model){
-			that.childViews[model.cid] = new MediaItemView({model: model});
-		});
-		this.trigger('childCreation');
-    },
-    
-    changefilterIndex: function (e) {
-    	e.preventDefault();
-    	var paramtype = $(e.currentTarget).data('filter');
-    	var value = $(e.currentTarget).val();
-    	var params = {};
-    	params[paramtype] = value;
-    	this.filterIndex(params);
-    },
-    
-    filterIndex: function (args) {
-    	args = typeof args !== 'undefined' ? args : {};
-    	var params = this.params;
-    	if(args.type) {
-    		params.type = args.type;
-    	}
-    	if(args.limit) {
-    		params.limit = args.limit;
-    	}
-    	this.params = params;
-    	var that = this;
-		this.collection.fetch({
-			success: function() {
-				that.createChildViews();
-				return true;
-			},
-			reset: true,
-			data: params
-		});
-    },
-    
-    showUploadForm: function(e) {
-    	e.preventDefault();
-    	this.$el.find('#mediaUploadForm').css('display', 'block');
+        });
     },
     
     closeUploadForm: function(e) {
-    	this.$el.find('#mediaUploadForm').css('display', 'none');
+    	this.$el.find('.upload-container').hide();
+    	this.$el.find('.media-container').show();
     },
     
     showLoading: function(e) {
