@@ -3,16 +3,18 @@ define([
   'underscore',
   'backbone',
   'handlebars',
-  'models/media',
+  'tooltip',
   'popover',
+  'models/media',
   'text!templates/media_item_image.html',
   'text!templates/media_item_audio.html'
 ], function($, 
 			_, 
 			Backbone, 
 			Handlebars, 
-			MediaItem, 
+			Tooltip,
 			Popover,
+			MediaItem, 
 			ImageTemplate,
 			AudioTemplate
 ){
@@ -33,6 +35,7 @@ define([
 	events: {
 		'submit .editor': 'editModel',
 		'click .delete' : 'deleteModel',
+		'click .media-item .content' : 'changeSelected',
 		'change .selected' : 'selectModel',
 		'click .makethumbnail' : 'makeThumbnail',
 	},
@@ -88,7 +91,16 @@ define([
     	this.trigger('mediaready');
     	return html;
     },
-    
+
+    changeSelected : function(e) {
+    	var checkbox = $(e.currentTarget).prev().find('input[name=mediaSelected]');
+    	if ($(checkbox).is(':checked')) {
+    		$(checkbox).prop('checked', false).trigger('change');
+    	} else {
+    		$(checkbox).prop('checked', true).trigger('change');
+    	}
+    },
+
     selectModel: function(e) {
     	var that = this;
     	if($(e.currentTarget).is(':checked')) {
