@@ -49,6 +49,6 @@ $selecteditems = json_encode($selecteditems); ?>
 	<script data-main="/Media/js/mediabrowser_boot2/build/media-min.js" src="/Media/js/mediabrowser/scripts/require.js"></script>
 <?php else: ?>
 	<!--script data-main="/Media/js/mediabrowser/build/media-min.js" src="/Media/js/mediabrowser/scripts/require.js"></script-->
-	<script data-main="/Media/js/mediabrowser/scripts/mediabrowser.js" src="/Media/js/mediabrowser/scripts/require.js"></script>
+	<script data-main="/Media/js/mediabrowser/build/media-min.js" src="/Media/js/mediabrowser/scripts/require.js"></script>
 	<?php // this is used instead of the line above to make edits... <script data-main="/Media/js/mediabrowser_boot2/scripts/mediabrowser.js" src="/Media/js/mediabrowser/scripts/require.js"></script> ?>
 <?php endif; ?>
