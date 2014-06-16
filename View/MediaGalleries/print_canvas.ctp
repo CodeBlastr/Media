@@ -9,26 +9,28 @@ foreach ($collectionArray as $page) {
 		}
 	}
 }
-$fonts = array_unique($fonts);
+if ($fonts) {
+	$fonts = array_unique($fonts);
+}
 ?>
 <html>
 	<head>
 		<style type="text/css">
-		<?php foreach ($fonts as $font) : ?>
+		<?php if ($fonts): foreach ($fonts as $font) : ?>
 			@font-face {
 				font-family: <?php echo $font ?>;
 				src: url('/fonts/google/<?php echo str_replace(array('"', "'"), '', $font) ?>.ttf');
 				font-style: normal;
 				font-weight: 400;
 			}
-		<?php endforeach; ?>
+		<?php endforeach; endif; ?>
 		</style>
 	</head>
 	<body>
 
-		<?php foreach ($fonts as $font) : ?>
+		<?php if ($fonts): foreach ($fonts as $font) : ?>
 		<span style="font-family: <?php echo str_replace(array('"', "'"), '', $font) ?>; font-size: 0px;">.</span>
-		<?php endforeach; ?>
+		<?php endforeach; endif; ?>
 
 		<div class="canvasBuildrr" style="width: 4984px;">
 			<!-- canvasBuildrr app goes here -->
