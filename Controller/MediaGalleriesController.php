@@ -204,18 +204,18 @@ class AppMediaGalleriesController extends MediaAppController {
 
 		$this->set('collectionArray', $sides);
 
-		/// comment out this block to view the output in your browser
-		$this->layout = false;
+		if ($_REQUEST['debugger'] !== '3') {
+			$this->layout = false;
 
-		try {
-			$this->WkHtmlToPdf = $this->Components->load('WkHtmlToPdf');
-			$this->WkHtmlToPdf->initialize($this);
-			$pdfLocation = $this->WkHtmlToPdf->rasterizePdf(true, null, 'rasterize.ttysoon');
-		} catch (Exception $e) {
-			$this->Session->setFlash($e->getMessage());
-			$this->redirect($this->referer());
+			try {
+				$this->WkHtmlToPdf = $this->Components->load('WkHtmlToPdf');
+				$this->WkHtmlToPdf->initialize($this);
+				$pdfLocation = $this->WkHtmlToPdf->rasterizePdf(true, null, 'rasterize.ttysoon');
+			} catch (Exception $e) {
+				$this->Session->setFlash($e->getMessage());
+				$this->redirect($this->referer());
+			}
 		}
-		///
 	}
 
 
