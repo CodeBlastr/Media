@@ -154,7 +154,7 @@ class MediaAttachableBehavior extends ModelBehavior {
  * @param boolean $primary
  * @return array
  */
-	public function afterFind(Model $Model, array $results, $primary = false) {
+	public function afterFind(Model $Model, $results, $primary = false) {
 		// handles many
 		for ($i=0; $i < count($results); $i++) {
 			if (!empty($results[$i]['Media'])) {
