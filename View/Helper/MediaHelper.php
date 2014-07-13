@@ -97,7 +97,7 @@ class MediaHelper extends AppHelper {
 /**
  * After render file
  */
-	public function afterRenderFile() {
+	public function afterRenderFile($viewFile, $content) {
 		// reset because there can be conflicts with more than one display() on a page
 		$defaults = get_class_vars('MediaHelper');
 		$this->options = $defaults['options'];
