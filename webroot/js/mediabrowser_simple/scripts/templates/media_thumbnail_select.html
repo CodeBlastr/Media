@@ -1,0 +1,10 @@
+<div class="media-selected">
+	<div class="selected-actions" data-cid="{{cid}}">
+		<a href="#" class="removeThumbail"><span class="glyphicon glyphicon-remove-circle"></span></a>
+		<h6>Selected Thumbnail</h6>
+	</div>
+	{{{innerhtml}}}
+	<input type="hidden" name="data[MediaAttachment][{{index}}][media_id]" value="{{model.id}}">
+	<input type="hidden" name="data[MediaAttachment][{{index}}][primary]" value=1>
+	<div class="clear clearfix"></div>
+</div>

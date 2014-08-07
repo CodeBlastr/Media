@@ -1,0 +1,16 @@
+<div class="upload-container text-center">
+	<br><br><br><div class="input">
+		<div id="mediaUploadForm">
+			Select files from your computer
+			<form accept-charset="utf-8" method="post" id="MediaAddForm" action="/media/media_browser/upload">
+				<input type="hidden" value="POST" name="_method">
+				<div class="upload btn btn-primary">
+					<input type="file" id="MediaFiles" multiple="multiple" name="data[Media][files][]">
+				</div>
+				<input type="submit" value="Upload File" class="btn btn-success">
+			</form>
+		</div>
+		<hr>
+
+	</div>
+</div>
