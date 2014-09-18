@@ -121,6 +121,38 @@ class MediaHelper extends AppHelper {
 	}
 
 /**
+ * Thumb method
+ * 
+ * @param array (Media array)
+ * @param array 
+ */
+	public function thumb($item, $options = array()) {
+		$this->options = array_merge($this->options, $options);
+		$item = isset($item['Media']) ? $item['Media'] : $item;
+		if ($this->getType($item)) {
+			 // call thumb method if it exists, else get the standard pre-dating Media function
+			$method = method_exists($this, $this->type . 'Thumb') ? $this->type . 'Thumb' : $this->type . 'Media';
+			return $this->$method($item);
+		} else {
+			return $this->noImage();
+		}
+	}
+	
+	public function videoThumb($item) {
+		if ($item['extension'] == 'youtube') {
+			parse_str(parse_url($item['filename'], PHP_URL_QUERY), $vars);
+			return $this->_View->element('Media.youtube_thumb_display', array(
+				'youtubeId' => $vars['v'],
+				'id' => $item['id'],
+				'options' => $this->options
+			));
+		} else {
+			debug('have not written any non youtube video thumb functions');
+			exit;
+		}
+	}
+
+/**
  * Find method
  */
  	public function find($type = 'first', $params = array()) {
