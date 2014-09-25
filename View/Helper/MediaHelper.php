@@ -75,7 +75,7 @@ class MediaHelper extends AppHelper {
 			'raw',
 			'wma'
 		),
-		'document' => array(
+		'docs' => array(
 			'pdf',
 			'doc',
 			'docx',
@@ -190,18 +190,16 @@ class MediaHelper extends AppHelper {
  */
 	public function imagesMedia($item) {
 		$imagePath = $this->mediaUrl . $this->type . '/' . $item['filename'] . '.' . $item['extension'];
-		$thumbImageOptions = array(
+		$thumbImageOptions = array_merge(array(
 			'width' => $this->options['width'],
 			'height' => $this->options['height'],
 			'alt' => $item['title'],
 			'class' => $this->options['class'] . ' media-image-thumb',
-		);
-		$image = $this->Html->image($imagePath, $thumbImageOptions, array(
-			'conversion' => $this->options['conversion'],
-			'quality' => 70,
-			'alt' => 'thumbnail',
-			'caller' => 'Media'
-		));
+		), $this->options);
+		
+		$extOptions = array('conversion' => $this->options['conversion'], 'quality' => 70, 'alt' => 'thumbnail', 'caller' => 'Media');
+		$image = $this->Html->image($imagePath, $thumbImageOptions, $extOptions);
+		
 		return $this->_View->element('Media.image_display', array(
 			'image' => $image,
 			'class' => $this->options['class'],
@@ -229,14 +227,14 @@ class MediaHelper extends AppHelper {
  * Audio display helper uses jplayer see
  * http://jplayer.org/
  */
-	public function documentMedia($item) {
-		$track = array($item['extension'] => $this->mediaUrl . $this->type . '/' . $item['filename'] . '.' . $item['extension']);
-		return $this->_View->element('Media.document_display', array(
+	public function docsMedia($item) {
+		$file = array($item['extension'] => $this->mediaUrl . $this->type . '/' . $item['filename'] . '.' . $item['extension']);
+		return $this->_View->element('Media.document_display', array_merge(array(
 			'class' => $this->options['class'],
-			'url' => $this->options['url'],
+			'url' => $file[$item['extension']],
 			'id' => $item['id'],
 			'title' => $item['title']
-		));
+		), $file));
 	}
 
 /**
@@ -295,7 +293,7 @@ class MediaHelper extends AppHelper {
  */
 	public function getType($item) {
 		foreach ($this->types as $type => $extensions) {
-			if (in_array($item['extension'], $extensions)) {
+			if (!empty($item['extension']) && in_array($item['extension'], $extensions)) {
 				$this->type = $type;
 				return $type;
 			}
@@ -331,8 +329,12 @@ class MediaHelper extends AppHelper {
 	public function phpthumb($item, $options = array()) {
 		$this->options = array_merge($this->options, $options);
 		if (!empty($item)) {
+			if (is_array($item)) {
+				$image = $item['filename'] . '.' . $item['extension'];
+			} else {
+				$image = $item;
+			}
 			$this->getType($item);
-			$image = $item['filename'] . '.' . $item['extension'];
 			Configure::write('PhpThumb.thumbsPath', ROOT . DS . SITE_DIR . DS . 'Locale' . DS . 'View' . DS . 'webroot' . DS . 'media' . DS . $this->type . DS );
 			Configure::write('PhpThumb.displayPath', $this->mediaUrl . $this->type . '/' . 'tmp');
 			return $this->PhpThumb->thumbnail($image, $options, $options);
@@ -349,7 +351,10 @@ class MediaHelper extends AppHelper {
  * @return string
  */
  	public function noImage() {
-		Configure::write('PhpThumb.thumbsPath', ROOT . DS . 'app' . DS . 'webroot' . DS . 'img' . DS);
+		$locale = ROOT . DS . SITE_DIR . DS . 'Locale' . DS . 'View' . DS . 'webroot' . DS . 'img' . DS;
+		$root = ROOT . DS . 'app' . DS . 'webroot' . DS . 'img' . DS;
+		$path = file_exists($locale . 'lgnoimage.gif') ? $locale : $root;
+		Configure::write('PhpThumb.thumbsPath', $path);
 		Configure::write('PhpThumb.displayPath', '/' . 'img' . '/' . 'tmp');
  		return $this->PhpThumb->thumbnail('lgnoimage.gif', $this->options, $this->options);
  	}

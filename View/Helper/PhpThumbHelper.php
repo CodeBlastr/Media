@@ -2,7 +2,7 @@
 
 App::uses('HtmlHelper', 'View/Helper');
 
-class PhpThumbHelper extends HtmlHelper {
+class PhpThumbHelper extends ZuhaHtmlHelper {
 
 	private $php_thumb;
 	private $options;
@@ -135,9 +135,7 @@ class PhpThumbHelper extends HtmlHelper {
  */
 	public function generate($options = array()) {
 		$this->init($options);
-
 		$this->validate();
-
 		if (!$this->error) {
 			$this->set_cache_filename();
 			if (!$this->image_is_cached()) {
