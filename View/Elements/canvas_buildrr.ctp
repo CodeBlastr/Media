@@ -184,5 +184,6 @@
 	var baseUrl = '<?php echo $this->Html->url(array('plugin' => 'media', 'controller' => 'media_browser', 'action' => 'media')); ?>';
 	var canvasData = <?php echo json_encode($this->request->data['Media']['data']); ?>;
 </script>
-<script data-main="/Media/js/canvasBuildrr/canvasBuildrr.js" src="/Media/js/canvasBuildrr/require.js"></script>
+<script data-main="/Media/js/canvasBuildrr/canvasBuildrr-built.js" src="/Media/js/canvasBuildrr/require.js"></script>
+<!--<script data-main="/Media/js/canvasBuildrr/canvasBuildrr.js" src="/Media/js/canvasBuildrr/require.js"></script>-->
 
