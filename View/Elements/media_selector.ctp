@@ -21,11 +21,12 @@
 ?>
 
 <div id="MediaSelector">
+	<?php /* seems like the thumbnails show up under the button, not sure so bring this back if it suits you
 	<div class="row">
 		<div class="col-md-4 well clearfix">
-		<div id="mediaThumbnail">No Thumbnail Selected</div>	
+			<div id="mediaThumbnail">No Thumbnail Selected</div>	
 		</div>
-	</div>
+	</div> */ ?>
 	
 	<a data-toggle="modal" href="#mediaBrowserModal" class="btn btn-primary btn-lg">Select Media</a>
 	<p>&nbsp;</p>

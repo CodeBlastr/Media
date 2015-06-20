@@ -1220,20 +1220,20 @@ class AppMedia extends MediaAppModel {
 		}
 	}
 
-	/**
-	 * Give this a Media array and it will give you the full path of the actual file
-	 *
-	 * @param array Standard $data['Media'] array
-	 * @return string Full path of media file
-	 */
+/**
+ * Give this a Media array and it will give you the full path of the actual file
+ *
+ * @param array Standard $data['Media'] array
+ * @return string Full path of media file
+ */
 	public function getMediaFilePath($data) {
 		return $this->themeDirectory . DS . $data['Media']['type'] . DS . $data['Media']['filename'] . '.' . $data['Media']['extension'];
 	}
 
-	/**
-	 *
-	 * @return boolean
-	 */
+/**
+ *
+ * @return boolean
+ */
 	public function processFile() {
 		$this->data['Media']['type'] = $this->mediaType($this->fileExtension);
 		if ($this->data['Media']['type']) {
@@ -1242,17 +1242,12 @@ class AppMedia extends MediaAppModel {
 		return true;
 	}
 
-	/**
-	 * Gets and returns the mime type of the media
-	 *
-	 * @param $ext
-	 * @return string|boolean
-	 */
-	/**
-	 *
-	 * @param string $ext
-	 * @return string|boolean
-	 */
+/**
+ * Gets and returns the mime type of the media
+ *
+ * @param $ext
+ * @return string|boolean
+ */
 	public function mediaType($ext) {
 		if (in_array($ext, $this->supportedFileExtensions)) {
 			return 'docs';
